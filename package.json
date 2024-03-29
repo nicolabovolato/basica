@@ -5,6 +5,7 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "test": "turbo test",
+    "changeset": "changeset",
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
