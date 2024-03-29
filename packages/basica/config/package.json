@@ -1,6 +1,6 @@
 {
   "name": "@basica/config",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
@@ -34,10 +34,10 @@
     "dotenv": "^16.4.1"
   },
   "devDependencies": {
-    "@basica/eslint-config": "workspace:*",
-    "@basica/typescript-config": "workspace:*",
-    "@basica/tsup-config": "workspace:*",
-    "@basica/vitest-config": "workspace:*",
+    "@basica/eslint-config": "workspace:^0.0.0",
+    "@basica/typescript-config": "workspace:^0.0.0",
+    "@basica/tsup-config": "workspace:^0.0.0",
+    "@basica/vitest-config": "workspace:^0.0.0",
     "@types/node": "^20.11.17",
     "@vitest/coverage-v8": "^1.2.2",
     "eslint": "^8.56.0",

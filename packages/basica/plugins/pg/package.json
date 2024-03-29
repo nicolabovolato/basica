@@ -1,6 +1,6 @@
 {
   "name": "@basica/pg",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
@@ -30,16 +30,16 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:*",
+    "@basica/core": "workspace:^0.0.1",
     "@sinclair/typebox": "^0.32.16",
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@basica/core": "workspace:*",
-    "@basica/eslint-config": "workspace:*",
-    "@basica/tsup-config": "workspace:*",
-    "@basica/typescript-config": "workspace:*",
-    "@basica/vitest-config": "workspace:*",
+    "@basica/core": "workspace:^0.0.1",
+    "@basica/eslint-config": "workspace:^0.0.0",
+    "@basica/tsup-config": "workspace:^0.0.0",
+    "@basica/typescript-config": "workspace:^0.0.0",
+    "@basica/vitest-config": "workspace:^0.0.0",
     "@testcontainers/postgresql": "^10.7.2",
     "@types/pg": "^8.11.0",
     "@vitest/coverage-v8": "^1.2.2",

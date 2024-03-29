@@ -1,6 +1,6 @@
 {
   "name": "@basica/telemetry",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
@@ -40,10 +40,10 @@
     "@sinclair/typebox": "^0.32.16"
   },
   "devDependencies": {
-    "@basica/eslint-config": "workspace:*",
-    "@basica/tsup-config": "workspace:*",
-    "@basica/typescript-config": "workspace:*",
-    "@basica/vitest-config": "workspace:*",
+    "@basica/eslint-config": "workspace:^0.0.0",
+    "@basica/tsup-config": "workspace:^0.0.0",
+    "@basica/typescript-config": "workspace:^0.0.0",
+    "@basica/vitest-config": "workspace:^0.0.0",
     "@types/node": "^20.11.17",
     "@vitest/coverage-v8": "^1.2.2",
     "eslint": "^8.56.0",

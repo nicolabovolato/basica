@@ -20,8 +20,8 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@basica/eslint-config": "workspace:*",
-    "@basica/typescript-config": "workspace:*",
+    "@basica/eslint-config": "workspace:^0.0.0",
+    "@basica/typescript-config": "workspace:^0.0.0",
     "@types/node": "^20.11.17",
     "@types/pg": "^8.11.0",
     "eslint": "^8.56.0",

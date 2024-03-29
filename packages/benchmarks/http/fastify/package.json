@@ -17,8 +17,8 @@
     "fastify": "^4.26.2"
   },
   "devDependencies": {
-    "@basica/eslint-config": "workspace:*",
-    "@basica/typescript-config": "workspace:*",
+    "@basica/eslint-config": "workspace:^0.0.0",
+    "@basica/typescript-config": "workspace:^0.0.0",
     "@types/node": "^20.11.17",
     "eslint": "^8.56.0",
     "pino-pretty": "^10.3.1",

@@ -1,6 +1,6 @@
 {
   "name": "bench-crud-basica-fastify",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "author": "Nicola Bovolato",
   "license": "MIT",
@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@basica/config": "workspace:^",
-    "@basica/core": "workspace:*",
-    "@basica/fastify": "workspace:*",
+    "@basica/core": "workspace:^0.0.1",
+    "@basica/fastify": "workspace:^0.0.1",
     "@basica/kysely": "workspace:^",
     "@basica/pg": "workspace:^",
     "@fastify/type-provider-typebox": "^4.0.0",
@@ -26,8 +26,8 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@basica/eslint-config": "workspace:*",
-    "@basica/typescript-config": "workspace:*",
+    "@basica/eslint-config": "workspace:^0.0.0",
+    "@basica/typescript-config": "workspace:^0.0.0",
     "@types/node": "^20.11.17",
     "@types/pg": "^8.11.0",
     "eslint": "^8.56.0",

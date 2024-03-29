@@ -4,7 +4,8 @@
   "scripts": {
     "build": "turbo build",
     "lint": "turbo lint",
-    "test": "turbo test"
+    "test": "turbo test",
+    "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "turbo": "latest"
