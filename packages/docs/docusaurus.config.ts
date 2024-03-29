@@ -7,11 +7,9 @@ const config: Config = {
   tagline: "The Foundational Library of Modern Applications",
   favicon: "img/favicon.png",
 
-  url: "https://nicolabovolato.github.io",
-  baseUrl: "/basica",
+  url: "https://basica.bovolato.dev",
+  baseUrl: "/",
 
-  organizationName: "nicolabovolato",
-  projectName: "basica",
   trailingSlash: false,
 
   onBrokenLinks: "throw",
