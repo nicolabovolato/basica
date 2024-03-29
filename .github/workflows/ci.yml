@@ -1,0 +1,20 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/base
+      - run: pnpm build
+      - run: pnpm lint
+      - env:
+          CI: true
+        run: pnpm test

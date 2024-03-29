@@ -1,0 +1,8 @@
+{
+  "name": "@basica/tsup-config",
+  "private": true,
+  "type": "module",
+  "peerDependencies": {
+    "tsup": "^8.0.2"
+  }
+}

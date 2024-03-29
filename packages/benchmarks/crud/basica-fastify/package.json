@@ -1,0 +1,39 @@
+{
+    "name": "bench-crud-basica-fastify",
+    "version": "0.0.1",
+    "private": true,
+    "author": "Nicola Bovolato",
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "start": "node dist/src/index.js",
+        "dev": "DB_CONNECTIONTIMEOUTMILLIS=1000 DB_CONNECTIONSTRING=postgres://postgres:postgres@localhost:5432/postgres tsx watch --inspect src/index.ts | pino-pretty -c -t",
+        "build": "tsup-node src/index.ts migrations/*.ts",
+        "lint": "tsc --noEmit && eslint \"{src,migrations}/**/*.ts\""
+    },
+    "dependencies": {
+        "@basica/config": "workspace:^",
+        "@basica/core": "workspace:*",
+        "@basica/fastify": "workspace:*",
+        "@basica/kysely": "workspace:^",
+        "@basica/pg": "workspace:^",
+        "@fastify/type-provider-typebox": "^4.0.0",
+        "@sinclair/typebox": "^0.32.16",
+        "fastify": "^4.26.2",
+        "kysely": "^0.27.2",
+        "pg": "^8.11.3"
+    },
+    "devDependencies": {
+        "@basica/eslint-config": "workspace:*",
+        "@basica/typescript-config": "workspace:*",
+        "@types/node": "^20.11.17",
+        "@types/pg": "^8.11.0",
+        "eslint": "^8.56.0",
+        "pino-pretty": "^10.3.1",
+        "tsup": "^8.0.2",
+        "tsx": "^4.7.1",
+        "typescript": "^5.3.3"
+    }
+}

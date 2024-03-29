@@ -1,0 +1,174 @@
+---
+sidebar_position: 3
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Lifecycle
+
+## Lifecycle
+
+Application lifecycle managent is the main feature of Basica. The following flowchart represents how it works.
+
+```mermaid
+graph TD;
+    S((App started))
+    S1[/Start service with timeout/]
+    S2[/Start entrypoint with timeout/]
+    S3((App running))
+    E2[/Stop entrypoint with timeout/]
+    E1[/Stop service with timeout/]
+    E((App stopped))
+    S-->S1
+    S1-- For each service -->S1
+    S1-- Error or Timeout -->E2
+    S1-- Success -->S2
+    S2-- For each entrypoint -->S2
+    S2-- Success --->S3
+    S2-- Error or Timeout -->E1
+    S3-- Control signal ---->E2
+    S3-- Empty event loop ---->E2
+    E2-- For each started entrypoint -->E2
+    E2-- Error or Timeout ---->E1
+    E2-- Success ---->E1
+    E1-- For each started service -->E1
+    E1-- Success --->E
+    E1-- Error or Timeout --->E
+```
+
+For a service or entrypoint to be considered part of the lifecycle, it has to be registered in `configureLifecycle()`.
+
+### Startup
+
+A startup item is a service that performs a one off operation, such as running database migrations or loading a ML model into memory.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="service.ts"
+    import { IStartup } from "@basica/core";
+
+    export class MyService implements IStartup {
+
+        async start(signal: AbortSignal) {
+            // run migrations
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="service.ts"
+    import { IStartup } from "@basica/core";
+
+    export const createMyService = () => ({
+        start: async (signal: AbortSignal) => {
+            // run migrations
+        }
+    }) satisfies IStartup;
+    ```
+
+  </TabItem>
+</Tabs>
+
+```ts title="index.ts"
+// ...
+const app = new AppBuilder(container)
+    .configureLifecycle(b => b
+        b.addStartup("my-service", () => container.myService)
+    )
+    .build();
+// ...
+```
+
+### Shutdown
+
+A shutdown item is a service that performs a cleanup of resources before shutdown, such as closing a database connection or stopping a server from accepting requests.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="service.ts"
+    import { IShutdown } from "@basica/core";
+
+    export class MyService implements IShutdown {
+
+        async shutdown(signal: AbortSignal) {
+            // close db connection
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="service.ts"
+    import { IShutdown } from "@basica/core";
+
+    export const createMyService = () => ({
+        shutdown: async (signal: AbortSignal) => {
+            // close db connection
+        }
+    }) satisfies IShutdown;
+    ```
+
+  </TabItem>
+</Tabs>
+
+```ts title="index.ts"
+// ...
+const app = new AppBuilder(container)
+    .configureLifecycle(b => b
+        b.addGracefulShutdown("my-service", () => container.myService)
+    )
+    .build();
+// ...
+```
+
+### Entrypoint
+
+An entrypoint is a service that performs both startup and shutdown operations, from which external external events interact with your application.
+It should be used as the starting point for your business logic, such as a message broker subscriber or an api server.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="service.ts"
+    import { IEntrypoint } from "@basica/core";
+
+    export class MyService implements IEntrypoint {
+
+        async shutdown(signal: AbortSignal) {
+            // listen for events from the msg broker
+        }
+
+        async shutdown(signal: AbortSignal) {
+            // stop listening
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="service.ts"
+    import { IEntrypoint } from "@basica/core";
+
+    export const createMyService = () => ({
+        start: async (signal: AbortSignal) => {
+            // listen for events from the msg broker
+        }
+        shutdown: async (signal: AbortSignal) => {
+            // stop listening
+        }
+    }) satisfies IEntrypoint;
+    ```
+
+  </TabItem>
+</Tabs>
+
+```ts title="index.ts"
+// ...
+const app = new AppBuilder(container)
+    .configureLifecycle(b => b
+        b.addEntrypoint("my-service", () => container.myService)
+    )
+    .build();
+// ...
+```

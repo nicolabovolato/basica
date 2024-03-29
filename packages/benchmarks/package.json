@@ -1,0 +1,32 @@
+{
+    "name": "bench",
+    "version": "0.0.1",
+    "private": true,
+    "author": "Nicola Bovolato",
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "bench": "tsx src/bench.mts | pino-pretty -c -t -H -o '{if group}{group}{if pkg}:{pkg}{end} | {end}{msg}'",
+        "lint": "tsc --noEmit && eslint \"src/**/*.mts\""
+    },
+    "dependencies": {
+        "@pnpm/find-workspace-dir": "^6.0.3",
+        "autocannon": "^7.15.0",
+        "execa": "^8.0.1",
+        "hdr-histogram-js": "^3.0.0",
+        "pino": "^8.18.0",
+        "testcontainers": "^10.7.2"
+    },
+    "devDependencies": {
+        "@basica/eslint-config": "workspace:*",
+        "@basica/typescript-config": "workspace:*",
+        "@types/autocannon": "^7.12.5",
+        "@types/node": "^20.11.17",
+        "eslint": "^8.56.0",
+        "pino-pretty": "^10.3.1",
+        "tsx": "^4.7.1",
+        "typescript": "^5.3.3"
+    }
+}

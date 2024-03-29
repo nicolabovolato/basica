@@ -1,0 +1,80 @@
+{
+  "name": "@basica/core",
+  "version": "0.0.1",
+  "author": "Nicola Bovolato",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./ioc": {
+      "require": {
+        "types": "./dist/ioc/index.d.ts",
+        "default": "./dist/ioc/index.js"
+      },
+      "import": {
+        "types": "./dist/ioc/index.d.mts",
+        "default": "./dist/ioc/index.mjs"
+      }
+    },
+    "./logger": {
+      "require": {
+        "types": "./dist/logger/index.d.ts",
+        "default": "./dist/logger/index.js"
+      },
+      "import": {
+        "types": "./dist/logger/index.d.mts",
+        "default": "./dist/logger/index.mjs"
+      }
+    },
+    "./utils": {
+      "require": {
+        "types": "./dist/utils/index.d.ts",
+        "default": "./dist/utils/index.js"
+      },
+      "import": {
+        "types": "./dist/utils/index.d.mts",
+        "default": "./dist/utils/index.mjs"
+      }
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsup-node",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest run --dir test/unit",
+    "test:integration": "vitest run --dir test/integration",
+    "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.8.0",
+    "@sinclair/typebox": "^0.32.16",
+    "close-with-grace": "^1.2.0",
+    "pino": "^8.18.0"
+  },
+  "devDependencies": {
+    "@basica/eslint-config": "workspace:*",
+    "@basica/tsup-config": "workspace:*",
+    "@basica/typescript-config": "workspace:*",
+    "@basica/vitest-config": "workspace:*",
+    "@types/node": "^20.11.17",
+    "@vitest/coverage-v8": "^1.2.2",
+    "eslint": "^8.56.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  }
+}

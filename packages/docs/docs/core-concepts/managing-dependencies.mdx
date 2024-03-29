@@ -1,0 +1,223 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Managing Dependencies
+
+## Managing Dependencies
+
+Defining dependencies is an important factor that makes the difference between efficient and poorly organized codebases.
+In basica we introduce containers to store dependencies and the relations between them without polluting the current scope.
+The declarative approach, unlike other frameworks, guarantees you that there will be no circular references.
+
+## Singleton
+
+Singleton registration creates a service once and stores the instance. Each time the service is requested, the same instance will be provided.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+
+    ```ts title="provider.ts"
+    export interface IStrProvider {
+      getStr: () => string
+    }
+
+    export class StrProvider1 implements IStrProvider {
+
+        getStr() {
+          return "provider 1";
+        }
+    }
+
+    export class StrProvider2 implements IStrProvider {
+
+        getStr() {
+          return "provider 2";
+        }
+    }
+    ```
+
+    ```ts title="consumer.ts"
+    import { IStrProvider } from "./service"
+
+    export class ServiceConsumer {
+        constructor(private readonly provider: IStrProvider, private readonly name: string) {}
+
+        sayHello() {
+          return `hello from ${this.name}, using ${this.provider.getStr()}`;
+        }
+    }
+    ```
+
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc"
+
+    import { StrProvider1, StrProvider2 } from "./provider"
+    import { ServiceConsumer } from "./consumer"
+
+    const container = new IocContainer()
+      .addSingleton("provider1", () => new StrProvider1())
+      .addSingleton("provider2", () => new StrProvider2())
+      .addSingleton("consumer1", (c) => new ServiceConsumer(c.provider1, "consumer 1"))
+      .addSingleton("consumer2", (c) => new ServiceConsumer(c.provider2, "consumer 2"))
+
+    console.log(container.services.consumer1.sayHello())
+    console.log(container.services.consumer2.sayHello())
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+
+    ```ts title="provider.ts"
+    export interface IStrProvider {
+      getStr: () => string
+    }
+
+    export const createStrProvider1 = () => ({
+        getStr: () => "provider 1",
+    }) satisfies IStrProvider;
+
+    export const createStrProvider2 = () => ({
+        getStr: () => "provider 2",
+    }) satisfies IStrProvider;
+    ```
+
+    ```ts title="consumer.ts"
+    import { IStrProvider } from "./service"
+
+    export const createServiceConsumer = (provider: IStrProvider, name: string) => ({
+        sayHello: () => `hello from ${this.name}, using ${this.provider.getStr()}`;
+    });
+    ```
+
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc"
+
+    import { createStrProvider1, createStrProvider2 } from "./provider"
+    import { createServiceConsumer } from "./consumer"
+
+    const container = new IocContainer()
+      .addSingleton("provider1", () => createStrProvider1())
+      .addSingleton("provider2", () => createStrProvider2())
+      .addSingleton("consumer1", (c) => createServiceConsumer(c.provider1, "consumer 1"))
+      .addSingleton("consumer2", (c) => createServiceConsumer(c.provider2, "consumer 2"))
+
+    console.log(container.services.consumer1.sayHello())
+    console.log(container.services.consumer2.sayHello())
+    ```
+
+  </TabItem>
+</Tabs>
+
+```
+hello from consumer 1, using provider 1
+hello from consumer 2, using provider 2
+```
+
+## Transient
+
+Transient registration, meaning that a service will be created each time it's requested, is also supported, but should be considered an escape hatch for managing stateful components.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+
+    ```ts title="counter.ts"
+    export class Counter {
+        get count(private count: number) {
+          return this.count
+        }
+
+        increment() {
+          this.count++
+        }
+    }
+    ```
+
+    ```ts title="service.ts"
+    import { Counter } from "./service"
+
+    export class Service {
+        constructor(private readonly counter: Counter) {}
+
+        add(items: number) {
+          for (let i = 0; i < items; i++) {
+            // ...
+            this.counter.increment()
+          }
+        }
+
+        get total() {
+          return this.counter.count
+        }
+    }
+    ```
+
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+
+    import { Counter } from "./counter";
+    import { Service } from "./service";
+
+    const container = new IocContainer()
+      .addTransient("counter", () => new Counter(0))
+      .addSingleton("oranges", (c) => new Service(c.counter(), "orange"))
+      .addSingleton("apples", (c) => new Service(c.counter(), "apple"));
+
+    container.services.oranges.add(3);
+    container.services.apples.add(2);
+
+    console.log("Oranges:", container.services.oranges.total);
+    console.log("Apples:", container.services.apples.total);
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="counter.ts"
+    export const createCounter = (count: number) => ({
+        count,
+        increment: () => {count++}
+    });
+    ```
+
+    ```ts title="service.ts"
+    import { Counter } from "./service"
+
+    export const createService = (counter: Counter) => ({
+        add: (items: number) => {
+          for (let i = 0; i < items; i++) {
+            // ...
+            counter.increment()
+          }
+        },
+        total: counter.count
+    })
+    ```
+
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+
+    import { createCounter } from "./counter";
+    import { createService } from "./service";
+
+    const container = new IocContainer()
+      .addTransient("counter", () => createCounter(0))
+      .addSingleton("oranges", (c) => createService(c.counter(), "orange"))
+      .addSingleton("apples", (c) => createService(c.counter(), "apple"));
+
+    container.services.oranges.add(3);
+    container.services.apples.add(2);
+
+    console.log("Oranges:", container.services.oranges.total);
+    console.log("Apples:", container.services.apples.total);
+    ```
+
+  </TabItem>
+</Tabs>
+
+```
+Oranges: 3
+Apples: 2
+```

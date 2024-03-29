@@ -1,0 +1,94 @@
+---
+sidebar_position: 4
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Healthchecks
+
+## Healthchecks
+
+Healthchecks are a proven way to verify that your application is working correctly,
+usually they consist if simple operations to verify that each part of your program is working,
+such as a database query to check if connectivity works.
+In Basica, they can be easily added in all your services by implementing `IHealthcheck`.
+
+## Implementing IHealthcheck
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="service.ts"
+    import { IHealthcheck } from "@basica/core";
+
+    export class MyService implements IHealthcheck {
+
+        async healthcheck(signal: AbortSignal) {
+            // query the db
+        }
+    }
+    ```
+
+    ```ts title="entrypoint.ts"
+    import { IHealthcheckManager, IEntrypoint } from "@basica/core";
+
+    export class MyEntrypoint implements IEntrypoint {
+
+        constructor(private readonly healthcheckManager) {}
+
+        async start(signal: AbortSignal) {
+            const result = this.healthcheckManager.healthcheck();
+            if(result.status != "healthy") {
+              throw new Error(result);
+            }
+        }
+
+        async stop(signal: AbortSignal) {
+            // ...
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="service.ts"
+    import { IHealthcheck } from "@basica/core";
+
+    export const createMyService = () => ({
+        healthcheck: async (signal: AbortSignal) => {
+            // query the db
+        }
+    }) satisfies IHealthcheck;
+    ```
+
+    ```ts title="entrypoint.ts"
+    import { IHealthcheckManager, IEntrypoint } from "@basica/core";
+
+    export const createMyEntrypoint = (healthcheckManager: IHealthcheckManager) => ({
+        start: async (signal: AbortSignal) => {
+            const result = healthcheckManager.healthcheck();
+            if(result.status != "healthy") {
+              throw new Error(result);
+            }
+        },
+        stop: async (signal: AbortSignal) => {
+            // ...
+        }
+    }) satisfies IEntrypoint;
+    ```
+  </TabItem>
+</Tabs>
+
+```ts title="index.ts"
+// ...
+const app = new AppBuilder(container)
+    .configureHealthchecks(b => b
+        b.addHealthcheck("my-service", () => container.myService)
+    )
+    .configureLifecycle(b =>
+        b.addEntrypoint("test", (s, h) => createMyEntrypoint(h))
+    )
+    .build();
+
+app.run()
+```

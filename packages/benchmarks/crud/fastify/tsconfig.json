@@ -1,0 +1,10 @@
+{
+  "extends": "@basica/typescript-config/base.json",
+  "compilerOptions": {
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "target": "ES2022",
+    "lib": ["ES2022"]
+  },
+  "include": ["src", "migrations"]
+}

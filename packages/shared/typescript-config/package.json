@@ -1,0 +1,7 @@
+{
+  "name": "@basica/typescript-config",
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

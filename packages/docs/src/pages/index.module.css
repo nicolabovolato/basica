@@ -1,0 +1,62 @@
+.heroBanner {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  height: calc(70vh - var(--ifm-navbar-height));
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 4rem;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alternateBg {
+  background-color: var(--ifm-background-surface-color);
+}
+
+.gradientBg {
+  background: var(--ifm-background-surface-color);
+  background: linear-gradient(
+    180deg,
+    var(--ifm-background-surface-color) 0%,
+    var(--ifm-background-color) 100%
+  );
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem 2rem;
+
+  margin: auto;
+}
+
+@media screen and (max-width: 996px) {
+  .grid {
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 664px) {
+  .grid {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+}
+
+.center {
+  text-align: center;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}

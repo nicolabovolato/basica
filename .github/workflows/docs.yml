@@ -1,0 +1,23 @@
+name: Deploy docs
+on:
+  push:
+    branches:
+      - master
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/base
+      - run: pnpm build --filter docs
+      - uses: actions/upload-pages-artifact@v1
+        with:
+          path: packages/docs/build
+      - uses: actions/deploy-pages@v4

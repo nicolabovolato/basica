@@ -1,0 +1,76 @@
+---
+sidebar_position: 6
+---
+
+# Observability
+
+## Observability
+
+When building products at scale, identifying the source of errors and bottlenecks becomes very important.
+Logs, metrics and traces define what is often called observability or telemetry.
+A group of informations that allow you to objectively define and investigate your system efficiency.
+
+Basica has integrated support for [Opentelemetry](https://opentelemetry.io/) and provides a builder interface to Opentelemetry Node SDK.
+
+`npm i @basica/telemetry @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-prometheus @opentelemetry/exporter-trace-otlp-grpc`
+
+Add instrumentation to your app, through a separate file.
+
+```ts title="instrumentation.ts"
+import { TelemetryBuilder } from "@basica/telemetry";
+
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { PrometheusExporter } from "@opentelemetry/exporter-prometheus";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
+
+const telemetry = new TelemetryBuilder()
+  .addTraceExporter(new OTLPTraceExporter())
+  .addMetricReader(new PrometheusExporter())
+  .registerInstrumentations([getNodeAutoInstrumentations()])
+  .build();
+
+telemetry.start();
+```
+
+When launching your service, require the instrumentation file.
+
+`npx tsx --require instrumentation.ts index.ts`
+
+:::note
+Opentelemetry uses monkey-patching to instrument libraries.
+As such it is required for Opentelemetry code to run before any of the libraries you wish to instrument.
+This is usually done in a separate file, loaded into Node with the `--require` flag, but may be loaded through *"clever"* use of imports.
+
+Given the current situation, basica has decided to provide support only for the `--require` flag but may consider future improvements.
+
+With that being said, you can still use `@basica/config` in your instrumentation file.
+
+```ts title="instrumentation.ts"
+import { configure, envProvider } from "@basica/config";
+import { TelemetryBuilder } from "@basica/telemetry";
+
+import { Type } from "@sinclair/typebox";
+
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { PrometheusExporter } from "@opentelemetry/exporter-prometheus";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
+
+const config = configure(
+  envProvider(),
+  Type.Object({
+    telemetry: Type.Boolean(),
+  })
+);
+
+const telemetry = new TelemetryBuilder()
+  .addTraceExporter(new OTLPTraceExporter())
+  .addMetricReader(new PrometheusExporter())
+  .registerInstrumentations([getNodeAutoInstrumentations()])
+  .build();
+
+if (config.telemetry) {
+    telemetry.start();
+}
+```
+
+:::

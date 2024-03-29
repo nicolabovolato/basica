@@ -1,0 +1,173 @@
+---
+sidebar_position: 5
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Configuration
+
+## Configuration
+
+Exposing configuration is of fundamental importance to ensure the versatility of your application,
+but ensuring that said configuration comes in an expected format is also very important,
+you wouldn't want your app to still run and behave incorrectly would you?
+
+`npm i @basica/config`
+
+Basica validates configuration using [Typebox](https://github.com/sinclairzx81/typebox).
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+
+    ```ts title="service.ts"
+    import { setTimeout } from "node:timers/promises"
+
+    export type Config = {
+        delay: number
+    }
+
+    export class Service {
+
+        constructor(private readonly config: Config) {}
+
+        async delay() {
+            console.log(`Waiting ${config.delay}ms`)
+            await setTimeout(config.delay)
+            console.log("Ok!")
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+
+    ```ts title="service.ts"
+    import { setTimeout } from "node:timers/promises"
+
+    export type Config = {
+        delay: number
+    }
+
+    export const createService = (config: Config) => ({
+        delay: async () => {
+            console.log(`Waiting ${config.delay}ms`)
+            await setTimeout(config.delay)
+            console.log("Ok!")
+        }
+    });
+    ```
+
+  </TabItem>
+</Tabs>
+
+```ts title="config.ts"
+import { Type } from "@sinclair/typebox";
+
+export const schema = Type.Object({
+  service: {
+    delay: Type.Number({ minimum: 500, maximum: 5000, default: 1000 }),
+  },
+});
+```
+
+## Environment variables
+
+Using the `envProvider`, we can read configuration from environment variables or a `.env` file into our app.
+By default, nested properties are concatenated with an underscore and variables are uppercase.
+
+```ini title=".env"
+SERVICE_DELAY=3000
+```
+
+:::note
+Typebox records and arrays are parsed as json content.
+
+```ts
+const schema = Type.Object({
+  // Variable WORKING_VALUE will work
+  working: Type.Object({
+    value: Type.String(),
+  }),
+
+  // Variable ONE_PROP won't work, use ONE='{ prop: "..." }' instead
+  one: Type.Record(Type.String(), Type.String()),
+
+  // Variable TWO_0 won't work, use TWO='["..."]' instead
+  two: Type.Array(Type.String()),
+});
+
+const config = configure(configSchema, envProvider());
+```
+
+:::
+
+:::note
+Typebox unions and intersections are also supported.
+
+```ts
+const schema = Type.Object({
+  test: Type.Intersect([
+    Type.Union([
+      Type.Object({
+        // Variable TEST_A
+        a: Type.String(),
+        // Either VARIABLE_D or VARIABLE_D_VALUE (VARIABLE_D takes precedence)
+        d: Type.Union([Type.String(), Type.Object({ value: Type.String() })])
+      }),
+      Type.Object({
+        // Variable TEST_B
+        b: Type.String()
+      })
+    ]),
+    Type.Object({
+      // Variable TEST_C
+      c: Type.String()
+    })
+  ]),
+});
+
+const config = configure(configSchema, envProvider());
+```
+
+:::
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+
+    ```ts title="index.ts"
+    import { configure, envProvider } from "@basica/config"
+
+    import { Service } from "./service"
+    import { schema as configSchema } from "./config"
+
+    const config = configure(configSchema, envProvider())
+
+    const service = new Service(config.service)
+
+    await service.delay()
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+
+    ```ts title="index.ts"
+    import { configure, envProvider } from "@basica/config"
+
+    import { createService } from "./service"
+    import { schema as configSchema } from "./config"
+
+    const config = configure(configSchema, envProvider())
+
+    const service = createService(config.service)
+
+    await service.delay()
+    ```
+
+  </TabItem>
+</Tabs>
+
+```
+Waiting 3000ms
+Ok!
+```

@@ -1,0 +1,129 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Logging
+
+## Logging
+
+Basica internally uses [Pino](https://getpino.io), the fastest javascript logger out there!
+Use loggerFactory to get back an instance and configure it as you please.
+
+```ts title="index.ts"
+import { loggerFactory } from "@basica/core/logger";
+
+const logger = loggerFactory();
+
+logger.info("Hello world!");
+```
+
+```js
+{"level":30,...,"msg":"Hello world!"}
+```
+
+## Custom logger
+
+You can always bring in your own as long as it satisfies ILogger.
+
+```ts title="index.ts"
+import { ILogger } from "@basica/core/logger";
+
+const logger: ILogger = {
+  info: console.info,
+  warn: console.warn,
+  error: console.error,
+  debug: console.debug,
+  trace: console.trace,
+  child: () => console,
+};
+
+logger.info("Hello world!");
+```
+
+```
+Hello world!
+```
+
+## Using logger
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="service.ts"
+    import { ILogger } from "@basica/core/logger";
+
+    export class MyService implements IStartup {
+
+        constructor(private readonly logger: ILogger) {
+            logger.info("Initializing!");
+        }
+
+        //...
+    }
+    ```
+
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+    import { loggerFactory } from "@basica/core/logger";
+
+    import { MyService } from "./service";
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory())
+        .addSingleton("my-svc", (c) => new MyService(c.logger))
+
+    // ...
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="service.ts"
+    import { ILogger } from "@basica/core/logger";
+
+    export const createMyService = (logger: ILogger) => {
+        logger.info("Initializing!");
+
+        return {
+            //...
+        }
+    };
+    ```
+
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+    import { loggerFactory } from "@basica/core/logger";
+
+    import { createMyService } from "./service";
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory())
+        .addSingleton("my-svc", (c) => createMyService(c.logger))
+
+    // ...
+    ```
+
+  </TabItem>
+</Tabs>
+
+```js
+{"level":30,...,"msg":"Initializing!"}
+```
+
+:::note
+Basica's AppBuilder requires you to have a logger in the provided IocContainer.
+
+```ts
+const c1 = new IocContainer();
+const c2 = new IocContainer().addSingleton("test", () => loggerFactory());
+const c3 = new IocContainer().addSingleton("logger", () => "not a logger");
+const c4 = new IocContainer().addSingleton("logger", () => loggerFactory());
+
+const app1 = new AppBuilder(c1).build(); // Error: no key logger
+const app2 = new AppBuilder(c2).build(); // Error: no key logger
+const app3 = new AppBuilder(c3).build(); // Error: logger is not of type ILogger
+const app4 = new AppBuilder(c4).build(); // OK
+```
+
+:::

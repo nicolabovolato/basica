@@ -1,0 +1,10 @@
+{
+  "extends": "@basica/typescript-config/tsup.json",
+  "include": ["src", "test"],
+  "compilerOptions": {
+    "paths": {
+      "src/*": ["./src/*"],
+      "test/*": ["./test/*"]
+    }
+  }
+}

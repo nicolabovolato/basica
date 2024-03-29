@@ -1,0 +1,507 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Getting Started
+
+## What is Basica?
+
+Basica is a low footprint library, designed to help you bootstrap applications by managing logging, lifecycle, configuration, healthchecks and graceful shutdown.
+
+It is designed around a generic and extensible builder interface, powered by Typescript's type inference and augmentation. It also features a growing plugin system, to integrate commonly used libraries and further reduce service boilerplate.
+
+## The basics
+
+Let's install Basica, the core package provides the bare minimum functionality.
+
+`npm i @basica/core`
+
+We start by writing our sample functionality, which is doing nothing but simple logging, so we will bring into scope ILogger.
+
+We will also bring in IEntrypoint to define lifecycle behavior and IHealthcheck to define a sample healthcheck.
+
+We then implement start, shutdown and healthcheck methods.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="sampleService.ts"
+    import { IEntrypoint, IHealthcheck } from "@basica/core";
+    import { ILogger } from "@basica/core/logger";
+
+    export class SampleService implements IEntrypoint, IHealthcheck {
+        constructor(private readonly logger: ILogger) {}
+
+        async start(signal: AbortSignal) {
+            this.logger.info("Hello World!");
+        }
+
+        async shutdown(signal: AbortSignal) {
+            this.logger.info("Goodbye!");
+        }
+
+        async healthcheck(signal: AbortSignal) {
+            return {
+                status: "healthy"
+            }
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="sampleService.ts"
+    import { IEntrypoint, IHealthcheck } from "@basica/core";
+    import { ILogger } from "@basica/core/logger";
+
+    export const createSampleService = (logger: ILogger) => ({
+        start: async (signal: AbortSignal) => {
+            logger.info("Hello World!");
+        },
+
+        stop: async (signal: AbortSignal) => {
+            logger.info("Goodbye!");
+        },
+
+        healthcheck: async (signal: AbortSignal) => {
+            return {
+                status: "healthy"
+            }
+        }
+    }) satisfies IEntrypoint & IHealthcheck;
+    ```
+
+  </TabItem>
+</Tabs>
+
+Now, we should write our index.ts.
+
+Let's start by bringing into scope IocContainer and loggerFactory from @basica/core, and initializing both the logger and our service.
+
+We then import AppBuilder and start registering sample, our service both as a healthcheck and an entrypoint.
+
+We then build our app and start it.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+    import { loggerFactory } from "@basica/core/logger";
+    import { AppBuilder } from "@basica/core";
+
+    import { SampleService } from "./sampleService"
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory())
+        .addSingleton("sample", (c) => new SampleService(c.logger))
+
+    const app = new AppBuilder(container)
+      .configureHealthchecks(b => b
+        .addHealthcheck("sample", (c) => c.sample)
+      )
+      .configureLifecycle((b, c) => b
+        .addEntrypoint("sample", () => c.sample)
+      )
+      .build();
+
+    app.run()
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+    import { loggerFactory } from "@basica/core/logger";
+    import { AppBuilder } from "@basica/core";
+
+    import { createSampleService } from "./sampleService"
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory())
+        .addSingleton("sample", (c) => createSampleService(c.logger))
+
+    const app = new AppBuilder(container)
+      .configureHealthchecks(b => b
+        .addHealthcheck("sample", (c) => c.sample)
+      )
+      .configureLifecycle((b, c) => b
+        .addEntrypoint("sample", () => c.sample)
+      )
+      .build();
+
+    app.run()
+    ```
+
+  </TabItem>
+</Tabs>
+
+Let's start it.
+
+`npx tsx index.ts`
+
+```js
+{...,"name":"@basica:app:lifecycle","msg":"Starting 1/1 entrypoint(s)"}
+{...,"name":"test","msg":"Hello World!"}
+{...,"name":"@basica:app:lifecycle","msg":"Started 1/1 entrypoint(s)"}
+{...,"name":"@basica:app","msg":"Empty event loop, invoking shutdown..."}
+{...,"name":"@basica:app","msg":"Received manual shutdown, shutting down..."}
+{...,"name":"@basica:app:lifecycle","msg":"Stopping gracefully 1/1 service(s)"}
+{...,"name":"test","msg":"Goodbye!"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopped gracefully 1/1 service(s)"}
+```
+
+It looks like our service was started, and because there was no computation keeping the event loop alive, it also got stopped.
+There's also no mention of any healthcheck in the logs, that's because there was nothing configured to handle them.
+
+## Adding HTTP
+
+Let's try now starting an HTTP server with Fastify.
+
+`npm i @basica/fastify`
+
+First, we will slightly modify our service, it's going to return a simple string from a method.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="sampleService.ts"
+    import { IHealthcheck } from "@basica/core";
+    import { ILogger } from "@basica/core/logger";
+
+    export class SampleService implements IHealthcheck {
+        constructor(private readonly logger: ILogger) {}
+
+        sayHello(signal: AbortSignal) {
+            return "Hello World!";
+        }
+
+        async healthcheck(signal: AbortSignal) {
+            return {
+                status: "healthy"
+            }
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="sampleService.ts"
+    import { IHealthcheck } from "@basica/core";
+    import { ILogger } from "@basica/core/logger";
+
+    export const createSampleService = (logger: ILogger) => ({
+        sayHello: (signal: AbortSignal) => "Hello World!";
+
+        healthcheck: async (signal: AbortSignal) => {
+            return {
+                status: "healthy"
+            }
+        }
+    }) satisfies IHealthcheck;
+    ```
+
+  </TabItem>
+</Tabs>
+
+And finally, our index file.
+
+We will register a lifecycle plugin from @basica/fastify in configureLifecycle, this way we will have access to a new builder method.
+
+With that in mind, let's set up fastify to handle our healthchecks, map sayHello to a route and configure swaggerui.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+    import { loggerFactory } from "@basica/core/logger";
+    import { AppBuilder } from "@basica/core";
+
+    import { lifecyclePlugin } from "@basica/fastify";
+
+    import { SampleService } from "./sampleService"
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory())
+        .addSingleton("sample", (c) => new SampleService(c.logger))
+
+    const app = new AppBuilder(container)
+      .configureHealthchecks(b => b
+        .addHealthcheck("sample", (c) => c.sample)
+      )
+      .configureLifecycle((b, c) => b
+        .with(lifecyclePlugin, (b)
+          .addFastifyEntrypoint("http", (f) => f
+            .useOpenapi()
+            .mapHealthchecks()
+            .fastify.get("/hello", () => c.sample.sayHello())
+          )
+        )
+      )
+      .build();
+
+    app.run()
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+    import { loggerFactory } from "@basica/core/logger";
+    import { AppBuilder } from "@basica/core";
+
+    import { lifecyclePlugin } from "@basica/fastify";
+
+    import { createSampleService } from "./sampleService"
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory())
+        .addSingleton("sample", (c) => createSampleService(c.logger))
+
+    const app = new AppBuilder(container)
+      .configureHealthchecks(b => b
+        .addHealthcheck("sample", (c) => c.sample)
+      )
+      .configureLifecycle((b, c) => b
+        .with(lifecyclePlugin, (b)
+          .addFastifyEntrypoint("http", (f) => f
+            .useOpenapi()
+            .mapHealthchecks()
+            .fastify.get("/hello", () => c.sample.sayHello())
+          )
+        )
+      )
+      .build();
+
+    app.run()
+    ```
+
+  </TabItem>
+</Tabs>
+
+Let's start the server and check both /hello and /health
+
+`npx tsx index.ts`
+
+```
+> curl http://127.0.0.1:8080/hello
+Hello world!%
+
+> curl http://127.0.0.1:8080/health
+{"status":"healthy","healthchecks":[{"name":"sample","status":"healthy"}]}%
+```
+
+All good.
+
+Also, visiting http://localhost:8080/documentation from the browser exposes Swagger ui with our route defined!
+
+We should stop the service now, Crtl+C on the terminal.
+
+```js
+^C{..."name":"@basica:app","signal":"SIGINT","msg":"Received signal SIGINT, shutting down..."}
+{...,"name":"@basica:app:lifecycle","msg":"Stopping gracefully 1/1 service(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopped gracefully 1/1 service(s)"}
+```
+
+Great, looks like Basica intercepted SIGINT and stopped fastify
+
+## Configuring the app
+
+All good, but what if we want our server to start on port 3000 instead and logger to only emit logs from warning and up?
+
+`npm i @basica/config @sinclair/typebox`
+
+Let's add a new file to add our configuration in and a .env file.
+
+```ts title="config.ts"
+import { Type } from "@sinclair/typebox";
+import { loggerConfigSchema } from "@basica/core/logger";
+import { fastifyConfigSchema } from "@basica/fastify";
+
+export const schema = Type.Object({
+  logger: loggerConfigSchema,
+  http: fastifyConfigSchema,
+});
+```
+
+```ini title=".env"
+LOGGER_LEVEL=warn
+HTTP_PORT=3000
+```
+
+We should also update our index file.
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+    import { loggerFactory } from "@basica/core/logger";
+    import { AppBuilder } from "@basica/core";
+
+    import { configure, envProvider } from "@basica/config";
+
+    import { lifecyclePlugin } from "@basica/fastify";
+
+    import { schema as configSchema } from "./config"
+    import { createSampleService } from "./sampleService"
+
+    const config = configure(schema, envProvider())
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory(config.logger))
+        .addSingleton("sample", (c) => new SampleService(c.logger))
+
+    const app = new AppBuilder(container)
+      .configureHealthchecks(b =>
+        b.addHealthcheck("sample", (c) => c.sample)
+      )
+      .configureLifecycle((b, c) => b
+        .with(lifecyclePlugin, (b)
+          .addFastifyEntrypoint("http", config.http, (f) => f
+            .useOpenapi()
+            .mapHealthchecks()
+            .fastify.get("/hello", () => c.sample.sayHello())
+          )
+        )
+      )
+      .build();
+
+    app.run()
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="index.ts"
+    import { IocContainer } from "@basica/core/ioc";
+    import { loggerFactory } from "@basica/core/logger";
+    import { AppBuilder } from "@basica/core";
+
+    import { configure, envProvider } from "@basica/config";
+
+    import { lifecyclePlugin } from "@basica/fastify";
+
+    import { schema as configSchema } from "./config"
+    import { createSampleService } from "./sampleService"
+
+    const config = configure(schema, envProvider())
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory(config.logger))
+        .addSingleton("sample", (c) => createSampleService(c.logger))
+
+    const app = new AppBuilder(container)
+      .configureHealthchecks(b => b
+        .addHealthcheck("sample", (c) => c.sample)
+      )
+      .configureLifecycle((b, c) => b
+        .with(lifecyclePlugin, (b)
+          .addFastifyEntrypoint("http", config.http, (f) => f
+            .useOpenapi()
+            .mapHealthchecks()
+            .fastify.get("/hello", () => c.sample.sayHello())
+          )
+        )
+      )
+      .build();
+
+    app.run()
+    ```
+
+  </TabItem>
+</Tabs>
+
+Let's try starting again our app.
+
+`npx tsx index.ts`
+
+No logs, hmm... let's curl on port 3000
+
+```
+> curl http://127.0.0.1:3000/hello
+Hello world!%
+```
+
+Great, configuration seems to be working!
+
+## Breaking things
+
+So far, so good, but what if one of our entrypoints break, or hangs during intialization or shutdown?
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="sampleService.ts"
+    import { IEntrypoint } from "@basica/core";
+    import { ILogger } from "@basica/core/logger";
+
+    import { setTimeout } from "node:timers/promises";
+
+    export class SampleService implements IEntrypoint {
+        constructor(private readonly logger: ILogger) {}
+
+        async start(signal: AbortSignal) {
+            throw new Error("oops!")
+        }
+
+        async shutdown(signal: AbortSignal) {
+            await setTimeout(60 * 60 * 1000);
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="sampleService.ts"
+    import { IEntrypoint } from "@basica/core";
+    import { ILogger } from "@basica/core/logger";
+
+    import { setTimeout } from "node:timers/promises";
+
+    export const createSampleService = (logger: ILogger) => ({
+        start: async (signal: AbortSignal) => {
+            throw new Error("oops!")
+        },
+
+        stop: async (signal: AbortSignal) => {
+            await setTimeout(60 * 60 * 1000);
+        },
+
+    }) satisfies IEntrypoint;
+    ```
+
+  </TabItem>
+</Tabs>
+
+Let's see what happens...
+
+`npx tsx index.ts`
+
+Okokok, so Basica caught the error on startup, but it didn't call stop on that service...
+
+```js
+{...,"name":"@basica:app:lifecycle","msg":"Starting 1/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Started 0/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","err":{"type":"Error","message":"oops!","stack":"Error: oops! ..."}, "msg":"Failed to start 'sample'"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopping gracefully 0/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopped gracefully 0/1 entrypoint(s)"}
+{...,"name":"@basica:app","msg":"Startup failed"}
+```
+
+Let's comment out the error on startup and try again...
+
+`npx tsx index.ts`
+
+```js
+{...,"name":"@basica:app:lifecycle","msg":"Starting 1/1 entrypoint(s)"}
+{...,"name":"test","msg":"Hello World!"}
+{...,"name":"@basica:app:lifecycle","msg":"Started 1/1 entrypoint(s)"}
+{...,"name":"@basica:app","msg":"Empty event loop, invoking shutdown..."}
+{...,"name":"@basica:app","msg":"Received manual shutdown, shutting down..."}
+{...,"name":"@basica:app:lifecycle","msg":"Stopping gracefully 1/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopped gracefully 0/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","err":{"type":"DOMException","message":"This operation was aborted","stack":"AbortError: This operation was aborted ..."}, "msg":"Failed to stop 'sample'"}
+{...,"name":"@basica:app","msg":"Shutdown failed"}
+```
+
+## Next steps
+
+Basica has great potential and flexibility, but to truly understand if it's the right fit for you, I encourage you to try using it on your own, perhaps after reading more about its core concepts.

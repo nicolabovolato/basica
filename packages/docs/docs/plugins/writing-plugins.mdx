@@ -1,0 +1,108 @@
+---
+sidebar_position: 2
+---
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Writing plugins
+
+The functionality of Basica's AppBuilder can be extended to provide reusable builder functions.
+
+## Lifecycle plugin
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="plugin.ts"
+    import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+
+    class LifecyclePlugin<S extends AppRequiredServices> {
+      constructor(readonly lifecycle: LifecycleManagerBuilder<S>) {}
+
+      newMethod() {
+        //...
+      }
+    }
+
+    export const lifecyclePlugin = <S extends AppRequiredServices>(
+      lifecycle: LifecycleManagerBuilder<S>
+    ) => new LifecyclePlugin(lifecycle);
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="sampleService.ts"
+    import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+
+    export const lifecyclePlugin = <S extends AppRequiredServices>(
+      lifecycle: LifecycleManagerBuilder<S>
+    ) => ({
+      newMethod: () => {
+        //...
+      }
+    });
+    ```
+
+  </TabItem>
+</Tabs>
+
+```ts title="index.ts"
+// ...
+
+const app = new AppBuilder(container)
+  .configureLifecycle((b) =>
+    b.with(lifecyclePlugin, (b) => b.newMethod())
+  )
+  .build();
+
+// ...
+```
+
+## Healthcheck plugin
+
+<Tabs groupId="ts-style">
+  <TabItem value="classes" label="Classes">
+    ```ts title="plugin.ts"
+    import { AppRequiredServices, HealthcheckManagerBuilder } from "@basica/core";
+
+    class HealthcheckPlugin<S extends AppRequiredServices> {
+      constructor(readonly healthchecks: HealthcheckManagerBuilder<S>) {}
+
+      newMethod() {
+        //...
+      }
+    }
+
+    export const healthcheckPlugin = <S extends AppRequiredServices>(
+      healthchecks: HealthcheckManagerBuilder<S>
+    ) => new HealthcheckPlugin(healthchecks);
+    ```
+
+  </TabItem>
+  <TabItem value="objects" label="Object Factory">
+    ```ts title="sampleService.ts"
+    import { AppRequiredServices, HealthcheckManagerBuilder } from "@basica/core";
+
+    export const healthcheckPlugin = <S extends AppRequiredServices>(
+      healthchecks: HealthcheckManagerBuilder<S>
+    ) => ({
+      newMethod: () => {
+        //...
+      }
+    });
+    ```
+
+  </TabItem>
+</Tabs>
+
+
+```ts title="index.ts"
+// ...
+
+const app = new AppBuilder(container)
+  .configureHealthchecks((b) =>
+    b.with(healthcheckPlugin, (b) => b.newMethod())
+  )
+  .build();
+
+// ...
+```
