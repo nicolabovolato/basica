@@ -1,6 +1,6 @@
 {
   "name": "@basica/fastify",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
@@ -30,7 +30,7 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "dependencies": {
-    "@basica/core": "workspace:^0.0.1",
+    "@basica/core": "workspace:^0.0.2",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^2.1.0",
     "@sinclair/typebox": "^0.32.16",
