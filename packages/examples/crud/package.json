@@ -1,6 +1,6 @@
 {
   "name": "crud",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "author": "Nicola Bovolato",
   "license": "MIT",
@@ -14,11 +14,11 @@
     "lint": "tsc --noEmit && eslint \"{src,migrations}/**/*.ts\""
   },
   "dependencies": {
-    "@basica/config": "workspace:^0.0.1",
-    "@basica/core": "workspace:^0.0.1",
-    "@basica/fastify": "workspace:^0.0.1",
-    "@basica/kysely": "workspace:^0.0.1",
-    "@basica/pg": "workspace:^0.0.1",
+    "@basica/config": "workspace:^0.0.2",
+    "@basica/core": "workspace:^0.0.2",
+    "@basica/fastify": "workspace:^0.0.2",
+    "@basica/kysely": "workspace:^0.0.2",
+    "@basica/pg": "workspace:^0.0.2",
     "@fastify/type-provider-typebox": "^4.0.0",
     "@sinclair/typebox": "^0.32.16",
     "fastify": "^4.26.2",
