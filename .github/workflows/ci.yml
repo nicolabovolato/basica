@@ -15,6 +15,4 @@ jobs:
       - uses: ./.github/actions/base
       - run: pnpm build
       - run: pnpm lint
-      - env:
-          CI: true
-        run: pnpm test
+      - run: pnpm test
