@@ -15,6 +15,26 @@ class RedisLifecyclePlugin<S extends AppRequiredServices> {
     this.#lifecycle = lifecycle;
   }
 
+  /**
+   * Registers redis subscriber in the application lifecycle
+   * @see {@link RedisSubscriberEntrypointBuilder}
+   * @param name entrypoint name
+   * @param config config {@link RedisWrapperConfig}
+   * @param redisWrapper redis wrapper instance
+   * @param fn builder function
+   * @example
+   * builder.addRedisSubscriber("worker", {url: "redis://localhost:6379" }, (builder) =>
+   *   builder.subscribeTo("channel1", (...) => {
+   *     // ...
+   *   })
+   * )
+   * @example
+   * builder.addRedisSubscriber("worker", services.redis, (builder) =>
+   *   builder.subscribeTo("channel1", (...) => {
+   *     // ...
+   *   })
+   * )
+   */
   addRedisSubscriber<T extends Redis | Cluster>(
     name: string,
     config: RedisWrapperConfig,
@@ -60,6 +80,7 @@ class RedisLifecyclePlugin<S extends AppRequiredServices> {
   }
 }
 
+/** Redis lifecycle plugin */
 export const lifecyclePlugin = (<S extends AppRequiredServices>(
   base: LifecycleManagerBuilder<S>
 ) => new RedisLifecyclePlugin(base)) satisfies Plugin<

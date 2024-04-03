@@ -3,6 +3,13 @@ import { Value } from "@sinclair/typebox/value";
 
 import { ConfigProvider, schemaToObj } from "./utils";
 
+/**
+ * Validates configuration from the given a provider and schema
+ * @param provider configuration provider {@link ConfigProvider}
+ * @param schema typebox {@link TObject}
+ * @returns validated config object
+ * @throws validation error
+ */
 export const configure = <T extends TObject>(
   provider: ConfigProvider,
   schema: T

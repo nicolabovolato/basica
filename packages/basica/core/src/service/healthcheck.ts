@@ -7,13 +7,16 @@ import { ILogger } from "src/logger";
 import { tracer } from "src/utils/tracer";
 import { SpanStatusCode } from "@opentelemetry/api";
 
+/** Healthcheck result schema */
 export const healthcheckResultSchema = Type.Union([
   Type.Object({
     status: Type.Literal("healthy"),
   }),
   Type.Object({
     status: Type.Literal("unhealthy"),
+    /** User-facing error description */
     description: Type.Optional(Type.String()),
+    /** Thrown error */
     error: Type.Optional(Type.Unknown()),
   }),
 ]);
@@ -24,7 +27,12 @@ export interface IHealthcheck {
   healthcheck(signal: AbortSignal): Promise<HealthcheckResult>;
 }
 
+/** healthcheck manager configuration */
 export const healthcheckManagerConfigSchema = Type.Object({
+  /**
+   * timeout before an healthcheck is aborted
+   * @default 5000
+   */
   timeoutMs: Type.Number({ minimum: 0 }),
 });
 
@@ -32,7 +40,14 @@ export type HealthcheckManagerConfig = Static<
   typeof healthcheckManagerConfigSchema
 >;
 
+/** Healthchecks manager */
 export interface IHealthcheckManager {
+  /**
+   * Performs healthcheck
+   * @param filter healthcheck filter function
+   * @example
+   * healthcheckManager.healthcheck((x) => x.contains("db")) // only services with name db will be run
+   */
   healthcheck(
     filter?: (name: string) => boolean
   ): Promise<Record<string, HealthcheckResult>>;
@@ -138,11 +153,21 @@ export class HealthcheckManagerBuilder<S extends AppRequiredServices> {
     this.#config = config;
   }
 
+  /**
+   * Register a healthcheck
+   * @example
+   * builder.addHealthcheck("db", (services) => services.db)
+   */
   addHealthcheck(name: string, fn: (services: S) => IHealthcheck) {
     this.#items.push({ name, value: fn(this.services) });
     return this;
   }
 
+  /**
+   * Use a plugin
+   * @example
+   * builder.with(myPlugin, (builder) => builder.newFunctionality())
+   */
   with<B>(plugin: Plugin<this, B>, fn: (builder: B) => unknown) {
     fn(plugin(this));
     return this;

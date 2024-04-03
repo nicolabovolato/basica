@@ -4,12 +4,35 @@ import { ILogger } from "@basica/core/logger";
 import { Client as PgClient } from "pg";
 import { ClientConfig, getClientConfig } from "./config";
 
+/** Postgres Client */
 export class Client
   extends PgClient
   implements IStartup, IShutdown, IHealthcheck
 {
   readonly #logger: ILogger;
 
+  /**
+   * @param config {@link ClientConfig}
+   * @param logger {@link ILogger}
+   * @param name unique name
+   * @example
+   * new Client(
+   *   {
+   *     connectionString: "postgres://localhost:5432"
+   *     connectionTimeoutMillis: 5000
+   *   },
+   *   services.logger
+   * )
+   * @example
+   * new Client(
+   *   {
+   *     connectionString: "postgres://localhost:5432"
+   *     connectionTimeoutMillis: 5000
+   *   },
+   *   services.logger,
+   *   "db"
+   * )
+   */
   constructor(config: ClientConfig, logger: ILogger);
   constructor(config: ClientConfig, logger: ILogger, name: string);
   constructor(config: ClientConfig, _logger: ILogger, name?: string) {

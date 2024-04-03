@@ -20,6 +20,63 @@ class KyselyLifecyclePlugin<S extends AppRequiredServices> {
     this.#lifecycle = lifecycle;
   }
 
+  /**
+   * Registers kysely migrator in the application lifecycle
+   * @param name
+   * @param db
+   * @param provider
+   * @param options
+   * @param migrator
+   * @example
+   * builder.addKyselyMigrations(
+   *   "migrations",
+   *   services.db,
+   *   path.join(__dirname, "./migrations")
+   * )
+   * @example
+   * builder.addKyselyMigrations(
+   *   "migrations",
+   *   services.db,
+   *   path.join(__dirname, "./migrations"),
+   *   { migrationTableName: "migrations" }
+   * )
+   * @example
+   * builder.addKyselyMigrations(
+   *   "migrations",
+   *   services.db,
+   *    new FileMigrationProvider({
+   *      migrationFolder: path.join(__dirname, "./migrations"),
+   *      path,
+   *      fs,
+   *    })
+   * )
+   * @example
+   * builder.addKyselyMigrations(
+   *   "migrations",
+   *   services.db,
+   *    new FileMigrationProvider({
+   *      migrationFolder: path.join(__dirname, "./migrations"),
+   *      path,
+   *      fs,
+   *    }),
+   *   { migrationTableName: "migrations" }
+   * )
+   * @example
+   * builder.addKyselyMigrations(
+   *   "migrations",
+   *   new Migrator(
+   *     {
+   *       db: services.db,
+   *       provider: new FileMigrationProvider({
+   *         migrationFolder: path.join(__dirname, "./migrations"),
+   *         path,
+   *         fs,
+   *       }),
+   *     },
+   *     services.logger
+   *   )
+   * )
+   */
   addKyselyMigrations<Db>(
     name: string,
     db: Kysely<Db>,
@@ -59,6 +116,7 @@ class KyselyLifecyclePlugin<S extends AppRequiredServices> {
   }
 }
 
+/** Kysely lifecycle plugin */
 export const lifecyclePlugin = (<S extends AppRequiredServices>(
   base: LifecycleManagerBuilder<S>
 ) => new KyselyLifecyclePlugin(base)) satisfies Plugin<

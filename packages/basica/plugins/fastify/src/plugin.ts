@@ -10,6 +10,27 @@ class FastifyLifecyclePlugin<S extends AppRequiredServices> {
     this.#lifecycle = lifecycle;
   }
 
+  /**
+   * Registers fastify instance in the application lifecycle
+   * @see {@link FastifyEntrypointBuilder}
+   * @param name entrypoint name
+   * @param config config {@link FastifyConfig}
+   * @param fn builder function
+   * @example
+   * builder.addFastifyEntrypoint("http", (builder) =>
+   *   builder.configureApp((builder) =>
+   *     builder.useOpenApi()
+   *       .fastify.get("/" => "Hello world!")
+   *     )
+   * )
+   * @example
+   * builder.addFastifyEntrypoint("http", { host: "127.0.0.1" }, (builder) =>
+   *   builder.configureApp((builder) =>
+   *     builder.useOpenApi()
+   *       .fastify.get("/" => "Hello world!")
+   *     )
+   * )
+   */
   addFastifyEntrypoint<B extends FastifyEntrypointBuilder<S>>(
     name: string,
     fn: (builder: B, services: S) => B
@@ -40,6 +61,7 @@ class FastifyLifecyclePlugin<S extends AppRequiredServices> {
   }
 }
 
+/** Fastify lifecycle plugin */
 export const lifecyclePlugin = (<S extends AppRequiredServices>(
   lifecycle: LifecycleManagerBuilder<S>
 ) => new FastifyLifecyclePlugin(lifecycle)) satisfies Plugin<

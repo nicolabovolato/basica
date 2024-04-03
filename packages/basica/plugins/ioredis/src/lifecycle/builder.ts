@@ -20,17 +20,39 @@ export class RedisSubscriberEntrypointBuilder<T extends Redis | Cluster> {
     this.#name = name;
   }
 
+  /**
+   * Subscribes to redis channel
+   * @example
+   * builder.subscribeTo("channel1", (msg, reqId, channel, ioredis) => {
+   *   //...
+   * })
+   */
   subscribeTo(channel: string, fn: SubscribeFn<T>) {
     this.#channels.push({ channel, fn });
 
     return this;
   }
+
+  /**
+   * Subscribes to sharded redis channel
+   * @example
+   * builder.subscribeToShard("channel1", (msg, reqId, channel, ioredis) => {
+   *   //...
+   * })
+   */
   subscribeToShard(shard: string, fn: SubscribeFn<T>) {
     this.#shards.push({ channel: shard, fn });
 
     return this;
   }
 
+  /**
+   * Subscribes to pattern redis channel
+   * @example
+   * builder.subscribeToPattern("channel*", (msg, reqId, channel, ioredis) => {
+   *   //...
+   * })
+   */
   subscribeToPattern(pattern: string, fn: SubscribeFn<T>) {
     this.#patterns.push({ channel: pattern, fn });
 

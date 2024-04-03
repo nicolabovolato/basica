@@ -1,9 +1,22 @@
 import { Type, Static } from "@sinclair/typebox";
 import { ClusterOptions, RedisOptions } from "ioredis";
 
+const timeoutConfigSchema = Type.Union([
+  Type.Object({
+    connectTimeout: Type.Number(),
+    commandTimeout: Type.Number(),
+  }),
+  Type.Object({
+    /** connectTimeout and commandTimeout */
+    timeout: Type.Number(),
+  }),
+]);
+
+/** Redis wrapper configuration schema */
 export const redisWrapperConfigSchema = Type.Intersect([
   Type.Union([
     Type.Object({
+      /** @example "redis://user:pass@127.0.0.1:6379/2" */
       url: Type.String(),
     }),
     Type.Object({
@@ -14,27 +27,27 @@ export const redisWrapperConfigSchema = Type.Intersect([
       password: Type.Optional(Type.String()),
     }),
   ]),
-  Type.Union([
-    Type.Object({
-      connectTimeout: Type.Number(),
-      commandTimeout: Type.Number(),
-    }),
-    Type.Object({
-      timeout: Type.Number(),
-    }),
-  ]),
+  timeoutConfigSchema,
 ]);
 
-export const clusterWrapperConfigSchema = Type.Object({
-  nodes: Type.Array(Type.Object({ host: Type.String(), port: Type.Number() }), {
-    minItems: 1,
+/** Redis cluster wrapper configuration schema */
+export const clusterWrapperConfigSchema = Type.Intersect([
+  Type.Object({
+    nodes: Type.Array(
+      Type.Object({ host: Type.String(), port: Type.Number() }),
+      {
+        minItems: 1,
+      }
+    ),
   }),
-  timeout: Type.Number(),
-});
+  timeoutConfigSchema,
+]);
 
+/** @see {@link RedisOptions} */
 export type RedisWrapperConfig = RedisOptions &
   Static<typeof redisWrapperConfigSchema>;
 
+/** @see {@link ClusterOptions} */
 export type ClusterWrapperConfig = ClusterOptions &
   Static<typeof clusterWrapperConfigSchema>;
 
@@ -55,7 +68,9 @@ export const getRedisConfig = (options: RedisWrapperConfig) => {
 };
 
 export const getClusterConfig = (options: ClusterWrapperConfig) => {
-  const { nodes, timeout, ...cfg } = options;
+  const { nodes, timeout, ...cfg } = options as ClusterWrapperConfig & {
+    timeout?: number;
+  };
 
   const config = {
     showFriendlyErrorStack: true,
