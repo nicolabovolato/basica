@@ -1,6 +1,7 @@
 import { Type, Static } from "@sinclair/typebox";
 import { ClientConfig as PGClientConfig, PoolConfig as PGPoolConfig } from "pg";
 
+/** Postgres configuration schema */
 export const pgConfigSchema = Type.Intersect([
   Type.Union([
     Type.Object({
@@ -15,7 +16,7 @@ export const pgConfigSchema = Type.Intersect([
     }),
   ]),
   Type.Object({
-    connectionString: Type.String(),
+    connectionTimeoutMillis: Type.Number(),
   }),
 ]);
 

@@ -3,9 +3,40 @@ import { ILogger } from "@basica/core/logger";
 
 import { Migrator as KyselyMigrator, MigratorProps } from "kysely";
 
+/** Kysely migrator */
 export class Migrator extends KyselyMigrator implements IStartup {
   #logger: ILogger;
 
+  /**
+   * @param props {@link MigratorProps}
+   * @param logger {@link ILogger}
+   * @param name unique name
+   * @example
+   * new Migrator(
+   *   {
+   *     db: services.db,
+   *     provider: new FileMigrationProvider({
+   *       migrationFolder: path.join(__dirname, "./migrations"),
+   *       path,
+   *       fs,
+   *     }),
+   *   },
+   *   services.logger
+   * )
+   * @example
+   * new Migrator(
+   *   {
+   *     db: services.db,
+   *     provider: new FileMigrationProvider({
+   *       migrationFolder: path.join(__dirname, "./migrations"),
+   *       path,
+   *       fs,
+   *     }),
+   *   },
+   *   services.logger,
+   *   "migrations"
+   * )
+   */
   constructor(props: MigratorProps, logger: ILogger);
   constructor(props: MigratorProps, logger: ILogger, name: string);
   constructor(props: MigratorProps, logger: ILogger, name?: string) {

@@ -14,6 +14,7 @@ import {
 
 // TODO: sdk-trace-base instead?
 // TODO: serverless
+/** Opentelemetry builder */
 export class TelemetryBuilder {
   #resource: IResource = new Resource({
     [SEMRESATTRS_SERVICE_NAME]: process.env.npm_package_name,
@@ -25,26 +26,31 @@ export class TelemetryBuilder {
   #sampler: Sampler | undefined;
   #instrumentations: InstrumentationOption[] | undefined;
 
+  /** Adds resource attributes */
   withAttributes(attributes: ResourceAttributes) {
     this.#resource = this.#resource.merge(new Resource(attributes));
     return this;
   }
 
+  /** Adds traces exporter */
   addTraceExporter(exporter: SpanExporter) {
     this.#traceExporter = exporter;
     return this;
   }
 
+  /** Adds metrics exporter */
   addMetricReader(reader: MetricReader) {
     this.#metricReader = reader;
     return this;
   }
 
+  /** Registers node instrumentations */
   registerInstrumentations(instrumentations: InstrumentationOption[]) {
     this.#instrumentations = instrumentations;
     return this;
   }
 
+  /** Adds trace sampling */
   withSampling(sampler: Sampler) {
     this.#sampler = sampler;
     return this;

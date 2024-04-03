@@ -36,6 +36,20 @@ export class AppBuilder<S extends AppRequiredServices> {
     );
   }
 
+  /**
+   * Configure application healthchecks
+   * @see {@link HealthcheckManagerBuilder}
+   * @param fn builder function
+   * @param cfg healthcheck manager {@link HealthcheckManagerConfig config}
+   * @example
+   * builder.configureHealthchecks((builder, services) =>
+   *   builder.addHealthcheck("db", services.db)
+   * )
+   * @example
+   * builder.configureHealthchecks({ timeoutMs: 30000 }, (builder, services) =>
+   *   builder.addHealthcheck("db", services.db)
+   * )
+   */
   configureHealthchecks(
     fn: (
       builder: HealthcheckManagerBuilder<S>,
@@ -68,6 +82,22 @@ export class AppBuilder<S extends AppRequiredServices> {
     return this as Pick<AppBuilder<S>, "build">;
   }
 
+  /**
+   * Configure application lifecycle
+   * @see {@link LifecycleManagerBuilder}
+   * @param fn builder function
+   * @param cfg lifecycle manager {@link LifecycleManagerConfig config}
+   * @example
+   * builder.configureLifecycle((builder, services) =>
+   *   builder.addService("db", services.db)
+   *          .addEntrypoint("http", services.http)
+   * )
+   * @example
+   * builder.configureLifecycle({ startupTimeoutMs: 5000, shutdownTimeoutMs: 10000 }, (builder, services) =>
+   *   builder.addService("db", services.db)
+   *          .addEntrypoint("http", services.http)
+   * )
+   */
   configureLifecycle(
     fn: (
       builder: LifecycleManagerBuilder<S>,
@@ -115,6 +145,7 @@ export class App {
     this.#lifecycle = lifecycle;
   }
 
+  /** Start the application */
   async run(): Promise<void> {
     const { close } = closeWithGrace(
       { delay: this.#lifecycle.config.shutdownTimeoutMs + 1000 },

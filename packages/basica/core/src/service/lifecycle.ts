@@ -17,8 +17,17 @@ export interface IStartup {
 
 export interface IEntrypoint extends IStartup, IShutdown {}
 
+/** lifecycle manager configuration */
 export const lifecycleManagerConfigSchema = Type.Object({
+  /**
+   * timeout before application startup is aborted
+   * @default 5000
+   */
   startupTimeoutMs: Type.Number({ minimum: 0 }),
+  /**
+   * timeout before application shutdown is aborted
+   * @default 5000
+   */
   shutdownTimeoutMs: Type.Number({ minimum: 0 }),
 });
 
@@ -26,9 +35,12 @@ export type LifecycleManagerConfig = Static<
   typeof lifecycleManagerConfigSchema
 >;
 
+/** Lifecycle manager */
 export interface ILifecycleManager {
   config: LifecycleManagerConfig;
+  /** Start the application */
   start(): Promise<boolean>;
+  /** Start the application */
   stop(): Promise<boolean>;
 }
 
@@ -305,6 +317,11 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
     this.#config = config;
   }
 
+  /**
+   * Registers a service in the application lifecycle
+   * @example
+   * builder.addService("db", (services) => services.db)
+   */
   addService(
     name: string,
     fn: (services: S) => IStartup | IShutdown | (IStartup & IShutdown)
@@ -314,6 +331,11 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
     return this;
   }
 
+  /**
+   * Registers an entrypoint in the application lifecycle
+   * @example
+   * builder.addEntrypoint("db", (services) => services.db)
+   */
   addEntrypoint(
     name: string,
     fn: (services: S, healthchecks: IHealthcheckManager) => IEntrypoint
@@ -326,6 +348,11 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
     return this;
   }
 
+  /**
+   * Use a plugin
+   * @example
+   * builder.with(myPlugin, (builder) => builder.newFunctionality())
+   */
   with<B>(plugin: Plugin<this, B>, fn: (builder: B) => unknown) {
     fn(plugin(this));
     return this;

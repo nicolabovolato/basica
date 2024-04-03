@@ -1,12 +1,38 @@
 import { ConfigProvider, ConfigSchema } from "./utils";
 import { config as dotenv, DotenvConfigOptions } from "dotenv";
 
+/** {@link envProvider} configuration */
 export type Config = {
+  /**
+   * Dotenv config options
+   * @see {@link DotenvConfigOptions}
+   * @default undefined
+   */
   dotenv?: DotenvConfigOptions;
+  /**
+   * environment variable interpolator
+   * @default "_"
+   * @example
+   * const schema = Type.Object({ nested: Type.Object({ value: Type.String() }) })
+   * // interpolator = '_' -> env var = "NESTED_VALUE"
+   * // interpolator = ':' -> env var = "NESTED:VALUE"
+   */
   interpolator?: string;
+  /**
+   * environment variable casing
+   * @default "upper"
+   * const schema = Type.Object({ Nested: Type.Object({ Value: Type.String() }) })
+   * // casing = 'upper' -> env var = "NESTED_VALUE"
+   * // casing = 'lower' -> env var = "nested_value"
+   * // casing = 'maintain' -> env var = "Nested_Value"
+   */
   casing?: "upper" | "lower" | "maintain";
 };
 
+/**
+ * Environment variables config provider
+ * @param config envProvider configuration {@link Config}
+ */
 export const envProvider = (config?: Config) => {
   const {
     dotenv: dotenvConfig,

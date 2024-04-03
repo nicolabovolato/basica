@@ -2,12 +2,37 @@ import { IHealthcheck, IShutdown } from "@basica/core";
 import { ILogger } from "@basica/core/logger";
 import { Kysely as KyselyDatabase, KyselyConfig, sql } from "kysely";
 
+/** Kysely database */
 export class Kysely<T>
   extends KyselyDatabase<T>
   implements IShutdown, IHealthcheck
 {
   readonly #logger: ILogger;
 
+  /**
+   * @param config {@link KyselyConfig}
+   * @param logger {@link ILogger}
+   * @param name unique name
+   * @example
+   * new Kysely<DB>(
+   *   {
+   *     dialect: new PostgreSqlDialect({
+   *       pool: new Pool({ connectionString: "postgres://localhost:5432" })
+   *     })
+   *   },
+   *   services.logger
+   * )
+   * @example
+   * new Kysely<DB>(
+   *   {
+   *     dialect: new PostgreSqlDialect({
+   *       pool: new Pool({ connectionString: "postgres://localhost:5432" })
+   *     })
+   *   },
+   *   services.logger,
+   *   "db"
+   * )
+   */
   constructor(config: KyselyConfig, logger: ILogger);
   constructor(config: KyselyConfig, logger: ILogger, name: string);
   constructor(config: KyselyConfig, _logger: ILogger, name?: string) {

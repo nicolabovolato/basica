@@ -34,6 +34,13 @@ export class FastifyEntrypointBuilder<S extends AppRequiredServices> {
     this.#healthchecks = healthchecks;
   }
 
+  /**
+   * Configures fastify application
+   * @example
+   * builder.configureApp((app, services) =>
+   *   app.useOpenApi()
+   * )
+   */
   configureApp(fn: (app: FastifyAppBuilder, services: S) => void) {
     new FastifyAppBuilder(this.#entrypoint.fastify).mapRoutes("", (app) =>
       fn(new FastifyAppBuilder(app.fastify), this.#services)
@@ -42,6 +49,16 @@ export class FastifyEntrypointBuilder<S extends AppRequiredServices> {
     return this;
   }
 
+  /** Maps Basica healthchecks
+   * @param config healthcheck {@link MapHealthchecksConfig config}
+   * @param filter filter healthchecks by name
+   * @example
+   * builder.mapHealthchecks()
+   * @example
+   * builder.mapHealthchecks({ path: "/healthcheck" })
+   * @example
+   * builder.mapHealthchecks({ path: "/healthcheck" }, (name) => name.contains("db"))
+   */
   mapHealthchecks(
     config?: MapHealthchecksConfig,
     filter?: (name: string) => boolean
@@ -110,6 +127,15 @@ type HttpErrorMap = Map<Constructor<Error>, (e: Error) => number>;
 export class FastifyErrorMapperBuilder {
   #errors: HttpErrorMap = new Map();
 
+  /**
+   * map error
+   * @param error Error class
+   * @param statusCodeOrFn either number or function for dynamic logic
+   * @example
+   * builder.mapError(NotFoundError, 404)
+   * @example
+   * builder.mapError(DynamicError, (e) => e.type == "user-error" ? 400 : 500)
+   */
   mapError<T extends Error>(
     error: Constructor<T>,
     statusCodeOrFn: ((e: T) => number) | number
@@ -130,6 +156,17 @@ export class FastifyErrorMapperBuilder {
 export class FastifyRouterBuilder {
   constructor(readonly fastify: FastifyInstance) {}
 
+  /**
+   * map errors
+   * @see {@link FastifyErrorMapperBuilder}
+   * @param fn builder function
+   * @example
+   * builder.mapErrors((builder) =>
+   *   builder
+   *     .mapError(NotFoundError, 404)
+   *     .mapError(DynamicError, (e) => e.type == "user-error" ? 400 : 500)
+   * )
+   */
   mapErrors(
     fn: (builder: FastifyErrorMapperBuilder) => FastifyErrorMapperBuilder
   ) {
@@ -156,6 +193,20 @@ export class FastifyRouterBuilder {
   }
 
   // TODO: any better name? (addController or some stuff)
+  /**
+   * map routes
+   * @see {@link FastifyRouterBuilder}
+   * @param prefix prefix path
+   * @param fn builder function
+   * @example
+   * builder.mapRoutes("/todos", (builder) =>
+   *   builder.mapErrors((builder) =>
+   *     builder
+   *       .mapError(NotFoundError, 404)
+   *       .mapError(DynamicError, (e) => e.type == "user-error" ? 400 : 500))
+   *     .fastify.register(todos)
+   * )
+   */
   mapRoutes(prefix: string, fn: (builder: FastifyRouterBuilder) => void) {
     this.fastify.register(
       (fastify, _options, next) => {
@@ -172,6 +223,21 @@ export class FastifyRouterBuilder {
 }
 
 export class FastifyAppBuilder extends FastifyRouterBuilder {
+  /**
+   * registers swagger plugins
+   * @param config {@link SwaggerConfig}
+   * @example
+   * builder.useOpenapi()
+   * @example
+   * builder.useOpenapi({
+   *   swagger: {
+   *     openapi: {
+   *       info: { title: "my-api" }
+   *     }
+   *   },
+   *   swaggerUi: { routePrefix: "/docs" }
+   * })
+   */
   useOpenapi(config?: SwaggerConfig) {
     const { swagger: swaggerCfg, swaggerUi: swaggerUiCfg } = config ?? {};
 
