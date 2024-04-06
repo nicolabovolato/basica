@@ -10,7 +10,7 @@ import { RedisWrapper } from "@basica/ioredis";
 
 import { BullMqWorkerEntrypoint } from "src/entrypoint";
 
-const logger = loggerFactory({ level: "info" });
+const logger = loggerFactory({ level: "silent" });
 let redis: StartedRedisContainer;
 
 beforeAll(async () => {
@@ -59,7 +59,7 @@ test.each(["ioredis", "wrapper"])(
       .fn()
       .mockImplementationOnce(async () => {})
       .mockImplementationOnce(async () => {
-        throw new Error("aaa");
+        throw new Error("error handling job");
       })
       .mockImplementationOnce(async () => {});
 
