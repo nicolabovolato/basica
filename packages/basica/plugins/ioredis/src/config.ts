@@ -59,6 +59,7 @@ export const getRedisConfig = (options: RedisWrapperConfig) => {
   const config = {
     connectTimeout: timeout,
     commandTimeout: timeout,
+    reconnectOnError: () => true,
     lazyConnect: true,
     showFriendlyErrorStack: true,
     ...cfg,

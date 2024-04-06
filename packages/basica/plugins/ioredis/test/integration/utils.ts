@@ -30,7 +30,7 @@ export const getClusterWrapper = (
       timeout: 3000,
       ...cfg,
     },
-    loggerFactory({ level: "info" }),
+    loggerFactory({ level: "silent" }),
     "test"
   );
 };
