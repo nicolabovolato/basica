@@ -50,7 +50,9 @@ test.each(["ioredis", "wrapper"])(
       workerConnection = new Redis(redis.getConnectionUrl(), {
         maxRetriesPerRequest: null,
       });
-      (queueConnection = new Redis(redis.getConnectionUrl())), {};
+      queueConnection = new Redis(redis.getConnectionUrl());
+      workerConnection.on("error", () => {});
+      queueConnection.on("error", () => {});
     }
 
     const queueName = "queue";
