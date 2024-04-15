@@ -1,7 +1,8 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { findWorkspaceDir } from "@pnpm/find-workspace-dir";
-import path from "path";
 import { pino } from "pino";
-import { fileURLToPath } from "url";
 
 export const packages = {
   http: ["basica-fastify", "fastify", "nestjs", "nestjs-fastify"],
@@ -31,4 +32,4 @@ export const rootDir = await (async () => {
   }
   return dir;
 })();
-export const dockerfilePath = path.join(__dirname, "Dockerfile");
+export const dockerfilePath = path.join(__dirname, "../Dockerfile");

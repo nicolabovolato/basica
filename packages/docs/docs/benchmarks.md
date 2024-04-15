@@ -39,7 +39,7 @@ Benchmarks run with autocannon (100 requests, 10 pipelines, 40 seconds)
 
 | Framework            | Startup Time (ms) | Throughput (MB/s) (p90) | Requests/s (p90) | Latency (ms) (p90) | CPU (%) (p90) | RAM (%) (p90) |
 | -------------------- | ----------------: | ----------------------: | ---------------: | -----------------: | ------------: | ------------: |
-| **Basica + Fastify** |               183 |                    4.29 |             1594 |                677 |           129 |             5 |
-| Fastify              |                96 |                    4.29 |             1600 |                700 |           126 |             5 |
-| NestJS               |               844 |                    2.11 |              638 |               2669 |           126 |             8 |
-| NestJS + Fastify     |               859 |                    1.88 |              581 |               2352 |           129 |            10 |
+| **Basica + Fastify** |               183 |                    4.22 |             1573 |                717 |           126 |             5 |
+| Fastify              |                69 |                    4.21 |             1562 |                781 |           124 |             5 |
+| NestJS               |               804 |                    1.91 |              573 |               2450 |           123 |             8 |
+| NestJS + Fastify     |               836 |                    2.54 |              772 |               2309 |           122 |            10 |

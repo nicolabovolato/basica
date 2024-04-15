@@ -16,14 +16,14 @@ RUN turbo prune --scope ${WORKSPACE_NAME} --docker
 FROM base as builder
 COPY --from=pruned /app/out/json ./
 COPY --from=pruned /app/out/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 COPY turbo.json turbo.json
 COPY --from=pruned /app/out/full .
 RUN pnpm run build --filter=${WORKSPACE_NAME}
 
 FROM base as installer-prod
 COPY --from=builder /app ./
-RUN pnpm install --frozen-lockfile --prod --filter=${WORKSPACE_NAME}
+RUN pnpm install --no-frozen-lockfile --prod --filter=${WORKSPACE_NAME}
 
 FROM base as prod
 COPY --from=installer-prod /app ./

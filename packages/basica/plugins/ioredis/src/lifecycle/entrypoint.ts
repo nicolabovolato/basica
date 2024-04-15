@@ -75,7 +75,7 @@ export class RedisSubscriberEntrypoint<T extends Redis | Cluster>
   async #handle(channel: string, msg: string, fn: SubscribeFn<T>) {
     const reqId = randomUUID();
 
-    tracer.startActiveSpan(
+    await tracer.startActiveSpan(
       `handle:${channel}`,
       {
         attributes: {

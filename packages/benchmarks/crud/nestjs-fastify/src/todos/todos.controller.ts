@@ -27,7 +27,6 @@ export class TodosController {
   @Get(":id")
   @UseInterceptors(new ResponseValidationInterceptor(TodoResponseDto))
   async getById(@Param("id", ParseUUIDPipe) id: string) {
-    console.log(id);
     return await this.service.getById(id);
   }
 

@@ -1,9 +1,10 @@
-import path from "path";
-import fs from "fs/promises";
-import { createWriteStream } from "fs";
+import { createWriteStream } from "node:fs";
+import fs from "node:fs/promises";
+import path from "node:path";
 
-import { packages, __dirname } from "./config.mjs";
 import { pino } from "pino";
+
+import { __dirname, packages } from "./config.mjs";
 import { benchmark, buildContainerAndDeps } from "./utils.mjs";
 
 const logger = pino();
@@ -15,7 +16,9 @@ for (const [_group, pkgs] of Object.entries(packages)) {
 
   for (const pkg of pkgs) {
     const pkgLogger = groupLogger.child({ pkg });
-    const resultsDir = path.join(__dirname, "results", group, pkg);
+    const resultsDir = path.join(__dirname, "..", "results", group, pkg);
+
+    await fs.mkdir(resultsDir, { recursive: true });
 
     const { container, deps } = await buildContainerAndDeps(
       group,
@@ -43,7 +46,6 @@ for (const [_group, pkgs] of Object.entries(packages)) {
 
     pkgLogger.info("Writing bench results for package " + pkg);
 
-    await fs.mkdir(resultsDir, { recursive: true });
     await fs.writeFile(
       path.join(resultsDir, `results.json`),
       JSON.stringify(results)
