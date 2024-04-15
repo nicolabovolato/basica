@@ -4,6 +4,7 @@ import { ILogger } from "@basica/core/logger";
 import amqp, {
   AmqpConnectionManager,
   AmqpConnectionManagerOptions,
+  ChannelWrapper,
   CreateChannelOpts,
 } from "amqp-connection-manager";
 
@@ -117,7 +118,7 @@ export class AMQPClient implements IStartup, IShutdown, IHealthcheck {
   }
 
   /** see {@link AmqpConnectionManager.createChannel} */
-  createChannel(options?: CreateChannelOpts) {
+  createChannel(options?: CreateChannelOpts): ChannelWrapper {
     return this.connection.createChannel({
       json: true,
       publishTimeout: this.connection.heartbeatIntervalInSeconds * 1000,
