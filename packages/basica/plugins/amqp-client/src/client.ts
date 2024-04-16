@@ -117,7 +117,7 @@ export class AMQPClient implements IStartup, IShutdown, IHealthcheck {
     return { status: "unhealthy" } as const;
   }
 
-  /** see {@link AmqpConnectionManager.createChannel} */
+  /** @see {@link AmqpConnectionManager.createChannel} */
   createChannel(options?: CreateChannelOpts): ChannelWrapper {
     return this.connection.createChannel({
       json: true,

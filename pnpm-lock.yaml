@@ -196,7 +196,7 @@ importers:
   packages/basica/plugins/bullmq:
     dependencies:
       '@basica/ioredis':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../ioredis
       '@opentelemetry/api':
         specifier: ^1.8.0
