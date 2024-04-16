@@ -5,7 +5,7 @@ import { ClusterWrapper, RedisWrapper } from "@basica/ioredis";
 import { Processor } from "bullmq";
 import { Cluster, Redis } from "ioredis";
 
-import { WorkerConfig, isClusterWrapperConfig } from "./config";
+import { WorkerConfig, isClusterWrapperConfig } from "../config";
 import { BullMqWorkerEntrypoint } from "./entrypoint";
 
 class BullMqLifecyclePlugin<S extends AppRequiredServices> {

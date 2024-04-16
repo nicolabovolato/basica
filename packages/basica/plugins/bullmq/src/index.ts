@@ -1,4 +1,4 @@
-export { lifecyclePlugin } from "./plugin";
+export { lifecyclePlugin } from "./lifecycle/plugin";
 export {
   RedisWrapperConfig,
   redisWrapperConfigSchema,

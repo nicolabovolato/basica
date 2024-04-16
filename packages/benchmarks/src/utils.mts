@@ -1,15 +1,18 @@
-import path from "path";
+import path from "node:path";
 
-import { Logger } from "pino";
-import { $, ExecaReturnValue } from "execa";
 import autocannon from "autocannon";
+import { randomUUID } from "crypto";
+import { $, ExecaReturnValue } from "execa";
+import hdr from "hdr-histogram-js";
+import { Logger } from "pino";
 import {
   GenericContainer,
   Network,
   StartedTestContainer,
 } from "testcontainers";
-import hdr from "hdr-histogram-js";
+
 import {
+  __dirname,
   benchmarkConnections,
   benchmarkDuration,
   benchmarkPipelines,
@@ -21,9 +24,7 @@ import {
   rootDir,
   startupTimeLogRegex,
   statsRefreshInterval,
-  __dirname,
 } from "./config.mjs";
-import { randomUUID } from "crypto";
 
 export const buildContainerAndDeps = async (
   group: keyof typeof packages,
@@ -33,7 +34,7 @@ export const buildContainerAndDeps = async (
   const workspaceName = `bench-${group}-${pkg}`;
   const workspacePath = path.relative(
     rootDir,
-    path.join(__dirname, group, pkg)
+    path.join(__dirname, "..", group, pkg)
   );
 
   logger.info(

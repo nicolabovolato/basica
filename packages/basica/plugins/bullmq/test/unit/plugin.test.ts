@@ -1,9 +1,9 @@
 import { LifecycleManagerBuilder } from "@basica/core";
-import { lifecyclePlugin } from "src/plugin";
+import { lifecyclePlugin } from "src/lifecycle/plugin";
 import { beforeEach, expect, test, vi } from "vitest";
 
 import { hcManager, services } from "./utils";
-import { BullMqWorkerEntrypoint } from "src/entrypoint";
+import { BullMqWorkerEntrypoint } from "src/lifecycle/entrypoint";
 import { ClusterWrapper, RedisWrapper } from "@basica/ioredis";
 import { Job } from "bullmq";
 

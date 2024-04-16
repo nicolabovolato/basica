@@ -8,7 +8,7 @@ import { Queue } from "bullmq";
 import { loggerFactory } from "@basica/core/logger";
 import { RedisWrapper } from "@basica/ioredis";
 
-import { BullMqWorkerEntrypoint } from "src/entrypoint";
+import { BullMqWorkerEntrypoint } from "src/lifecycle/entrypoint";
 
 const logger = loggerFactory({ level: "silent" });
 let redis: StartedRedisContainer;
