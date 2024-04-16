@@ -1,3 +1,3 @@
-# @basica/ioredis
+# @basica/amqp-connection-manager
 
-[ioredis](https://github.com/redis/ioredis) plugin for Basica.
+[amqp-connection-manager](https://github.com/jwalton/node-amqp-connection-manager) plugin for Basica.
