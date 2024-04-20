@@ -39,7 +39,7 @@ export class AMQPQueueConsumerEntrypoint implements IEntrypoint {
   ) {
     this.#config = config;
     this.#logger = logger.child({
-      name: `@basica:entrypoint:amqp:${name}`,
+      name: `@basica:entrypoint:amqp:consumer:${name}`,
     });
 
     this.#channel = client.createChannel(this.#config.channel);

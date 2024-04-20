@@ -5,7 +5,7 @@ import { AMQPClient } from "../client";
 import { AMQPClientConfig } from "../config";
 import { AMQPQueueConsumerEntrypoint, EntrypointConfig } from "./entrypoint";
 
-class AMQPConsumerLifecyclePlugin<S extends AppRequiredServices> {
+class AMQPLifecyclePlugin<S extends AppRequiredServices> {
   readonly #lifecycle: LifecycleManagerBuilder<S>;
   constructor(lifecycle: LifecycleManagerBuilder<S>) {
     this.#lifecycle = lifecycle;
@@ -87,9 +87,9 @@ class AMQPConsumerLifecyclePlugin<S extends AppRequiredServices> {
   }
 }
 
-/** BullMQ lifecycle plugin */
+/** AMQP lifecycle plugin */
 export const lifecyclePlugin = (<S extends AppRequiredServices>(
   lifecycle: LifecycleManagerBuilder<S>
-) => new AMQPConsumerLifecyclePlugin(lifecycle)) satisfies Plugin<
+) => new AMQPLifecyclePlugin(lifecycle)) satisfies Plugin<
   LifecycleManagerBuilder<AppRequiredServices>
 >;
