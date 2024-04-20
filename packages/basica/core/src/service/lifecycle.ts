@@ -330,9 +330,14 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
     config?: Partial<LifecycleManagerBuilderConfig>
   ) {
     this.#config = config;
-    this.#healthchecks = new HealthcheckManager(services.logger, {
-      healthcheckTimeoutMs: this.#config?.healthcheckTimeoutMs,
-    });
+    this.#healthchecks = new HealthcheckManager(
+      services.logger,
+      this.#config?.healthcheckTimeoutMs
+        ? {
+            healthcheckTimeoutMs: this.#config?.healthcheckTimeoutMs,
+          }
+        : undefined
+    );
   }
 
   get healthchecks() {
