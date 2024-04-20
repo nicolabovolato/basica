@@ -1,7 +1,7 @@
 import { IHealthcheck, IShutdown, IStartup } from "@basica/core";
-import { Consumer } from "kafkajs";
+import { Consumer as KafkaConsumer } from "kafkajs";
 
-export const consumerWrapper = (consumer: Consumer) => {
+export const consumerWrapper = (consumer: KafkaConsumer) => {
   let healthy = false;
   consumer.on("consumer.connect", () => (healthy = true));
   consumer.on("consumer.disconnect", () => (healthy = false));
@@ -20,5 +20,7 @@ export const consumerWrapper = (consumer: Consumer) => {
         status: healthy ? "healthy" : "unhealthy",
       };
     },
-  } satisfies Consumer & IShutdown & IStartup & IHealthcheck;
+  } satisfies KafkaConsumer & IShutdown & IStartup & IHealthcheck;
 };
+
+export type Consumer = ReturnType<typeof consumerWrapper>;

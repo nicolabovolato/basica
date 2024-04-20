@@ -3,22 +3,32 @@ import { ILogger } from "@basica/core/logger";
 import { SpanStatusCode } from "@opentelemetry/api";
 
 import {
-  Consumer,
   ConsumerConfig,
   ConsumerRunConfig,
   ConsumerSubscribeTopic,
   ConsumerSubscribeTopics,
   EachBatchPayload,
   EachMessagePayload,
-  Kafka,
 } from "kafkajs";
+
+import { Kafka } from "src/client";
+import { Consumer } from "src/consumer";
 
 import { tracer } from "src/tracer";
 
 export type EntrypointConfig = {
   create: ConsumerConfig;
   subscribe: ConsumerSubscribeTopics | ConsumerSubscribeTopic;
-  run: ConsumerRunConfig;
+  run: ConsumerRunConfig & {
+    eachMessage?: (
+      payload: EachMessagePayload,
+      consumer: Consumer
+    ) => Promise<void>;
+    eachBatch?: (
+      payload: EachBatchPayload,
+      consumer: Consumer
+    ) => Promise<void>;
+  };
 };
 
 // TODO: metrics
@@ -62,7 +72,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
         );
 
         try {
-          await this.#config.run.eachBatch!(payload);
+          await this.#config.run.eachBatch!(payload, this.#consumer);
         } catch (err) {
           this.#logger.error(
             { err, topic, partition, firstOffset },
@@ -99,7 +109,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
         );
 
         try {
-          await this.#config.run.eachMessage!(payload);
+          await this.#config.run.eachMessage!(payload, this.#consumer);
         } catch (err) {
           this.#logger.error(
             { err, topic, partition, offset },
@@ -117,7 +127,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
   }
 
   async start() {
-    await this.#consumer.connect();
+    await this.#consumer.start();
 
     await this.#consumer.subscribe(this.#config.subscribe);
     await this.#consumer.run({
@@ -132,6 +142,10 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
   }
 
   async shutdown() {
-    await this.#consumer.disconnect();
+    await this.#consumer.stop();
+  }
+
+  async healthcheck() {
+    return await this.#consumer.healthcheck();
   }
 }
