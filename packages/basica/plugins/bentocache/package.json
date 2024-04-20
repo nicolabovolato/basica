@@ -1,6 +1,6 @@
 {
   "name": "@basica/bentocache",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
@@ -31,12 +31,12 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.2",
+    "@basica/core": "workspace:^0.0.3",
     "@sinclair/typebox": "^0.32.16",
     "bentocache": "^1.0.0-beta.7"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.2",
+    "@basica/core": "workspace:^0.0.3",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",
