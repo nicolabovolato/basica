@@ -1,4 +1,3 @@
-import { setTimeout } from "node:timers/promises";
 import { loggerFactory } from "src/logger";
 import { App } from "src/service";
 import { ILifecycleManager } from "src/service/lifecycle";
