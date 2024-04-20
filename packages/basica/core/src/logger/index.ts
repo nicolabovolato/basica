@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import pino, { LoggerOptions, BaseLogger, DestinationStream } from "pino";
+import pino, { BaseLogger, DestinationStream, LoggerOptions } from "pino";
 
 /** Logger configuration schema */
 export const loggerConfigSchema = Type.Object({
@@ -34,6 +34,15 @@ export type ILogger = BaseLogger &
   Readonly<{
     child: (properties: Record<string, unknown>) => ILogger;
   }>;
+
+export type Level =
+  | "fatal"
+  | "error"
+  | "warn"
+  | "info"
+  | "debug"
+  | "trace"
+  | "silent";
 
 // TODO: worker thread transport?
 /**
