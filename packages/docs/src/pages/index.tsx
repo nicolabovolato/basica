@@ -90,12 +90,9 @@ const container = new IocContainer()
   }));
 
 const app = new AppBuilder(container)
-  // Healthchecks
-  .configureHealthchecks(b =>
-    b.addHealthcheck("svc", (c) => c.svc)
-  )
   // Lifecycle management
   .configureLifecycle((b, c) => b
+    .addHealthcheck("svc", (c) => c.svc)   // Healthchecks
     // Plugins
     .with(lifecyclePlugin, (b) => b
       .addFastifyEntrypoint("http", (f) => f
@@ -104,8 +101,8 @@ const app = new AppBuilder(container)
           app
             .useOpenapi()
             .fastify.get("/", () => c.svc.hello());
-          });
-        })
+          }
+        )
       )
     )
   ).build();

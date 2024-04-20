@@ -14,6 +14,10 @@ usually they consist if simple operations to verify that each part of your progr
 such as a database query to check if connectivity works.
 In Basica, they can be easily added in all your services by implementing `IHealthcheck`.
 
+:::note
+Services and Entrypoint registered in the lifecycle will automatically be registered as healthchecks if they have a healthcheck function.
+:::
+
 ## Implementing IHealthcheck
 
 <Tabs groupId="ts-style">
@@ -82,11 +86,9 @@ In Basica, they can be easily added in all your services by implementing `IHealt
 ```ts title="index.ts"
 // ...
 const app = new AppBuilder(container)
-    .configureHealthchecks(b => b
-        b.addHealthcheck("my-service", () => container.myService)
-    )
     .configureLifecycle(b =>
-        b.addEntrypoint("test", (s, h) => createMyEntrypoint(h))
+        b.addHealthcheck("my-service", () => container.myService)
+        .addEntrypoint("test", (s, h) => createMyEntrypoint(h))
     )
     .build();
 
