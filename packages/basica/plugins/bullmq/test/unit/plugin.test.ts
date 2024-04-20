@@ -2,17 +2,17 @@ import { LifecycleManagerBuilder } from "@basica/core";
 import { lifecyclePlugin } from "src/lifecycle/plugin";
 import { beforeEach, expect, test, vi } from "vitest";
 
-import { hcManager, services } from "./utils";
-import { BullMqWorkerEntrypoint } from "src/lifecycle/entrypoint";
 import { ClusterWrapper, RedisWrapper } from "@basica/ioredis";
 import { Job } from "bullmq";
+import { BullMqWorkerEntrypoint } from "src/lifecycle/entrypoint";
+import { hcManager, services } from "./utils";
 
 beforeEach(() => {
   vi.restoreAllMocks();
 });
 
 test("addFastifyEntrypoint", async () => {
-  const builder = new LifecycleManagerBuilder(services, hcManager);
+  const builder = new LifecycleManagerBuilder(services);
   vi.spyOn(builder, "addEntrypoint");
   vi.spyOn(builder, "addService");
 

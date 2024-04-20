@@ -2,9 +2,9 @@ import { LifecycleManagerBuilder } from "@basica/core";
 import { lifecyclePlugin } from "src/lifecycle/plugin";
 import { beforeEach, expect, test, vi } from "vitest";
 
+import { RedisSubscriberEntrypoint } from "src/lifecycle/entrypoint";
 import { RedisWrapper } from "src/redis";
 import { hcManager, logger, services } from "../utils";
-import { RedisSubscriberEntrypoint } from "src/lifecycle/entrypoint";
 
 const wrapper = new RedisWrapper(
   {
@@ -19,7 +19,7 @@ beforeEach(() => {
 });
 
 test("addRedisSubscriber", async () => {
-  const builder = new LifecycleManagerBuilder(services, hcManager);
+  const builder = new LifecycleManagerBuilder(services);
   vi.spyOn(builder, "addEntrypoint");
 
   builder.with(lifecyclePlugin, (builder) =>

@@ -1,9 +1,9 @@
 import { setTimeout } from "node:timers/promises";
 
-import { afterAll, beforeAll, beforeEach, expect, test, vi } from "vitest";
 import { RedisContainer, StartedRedisContainer } from "@testcontainers/redis";
+import { Queue, Worker } from "bullmq";
 import { Redis } from "ioredis";
-import { Queue } from "bullmq";
+import { afterAll, beforeAll, beforeEach, expect, test, vi } from "vitest";
 
 import { loggerFactory } from "@basica/core/logger";
 import { RedisWrapper } from "@basica/ioredis";
@@ -97,17 +97,20 @@ test.each(["ioredis", "wrapper"])(
     expect(handler).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({ name: "test1" }),
-      expect.anything()
+      expect.any(String),
+      expect.any(Worker)
     );
     expect(handler).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({ name: "test2" }),
-      expect.anything()
+      expect.any(String),
+      expect.any(Worker)
     );
     expect(handler).toHaveBeenNthCalledWith(
       3,
       expect.objectContaining({ name: "test2" }),
-      expect.anything()
+      expect.any(String),
+      expect.any(Worker)
     );
   },
   60000

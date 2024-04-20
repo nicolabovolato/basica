@@ -1,13 +1,12 @@
 import { setTimeout } from "node:timers/promises";
 import { loggerFactory } from "src/logger";
 import { AppRequiredServices } from "src/service";
-import { HealthcheckManager } from "src/service/healthcheck";
 import {
   LifecycleManager,
   LifecycleManagerBuilder,
   LifecycleManagerConfig,
 } from "src/service/lifecycle";
-import { test, expect, vi, afterEach, beforeEach } from "vitest";
+import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 const logger = loggerFactory({ level: "silent" });
 const config: LifecycleManagerConfig = {
@@ -33,20 +32,30 @@ afterEach(() => {
 test.todo("config"); // TODO: test config
 
 test("builder", async () => {
-  const healthchecks = new HealthcheckManager(logger, []);
   const start1 = vi.fn();
   const shutdown1 = vi.fn();
   const start2 = vi.fn();
   const shutdown2 = vi.fn();
+  const healthcheck1 = vi.fn().mockResolvedValue({ status: "healthy" });
+  const healthcheck2 = vi.fn().mockResolvedValue({ status: "unhealthy" });
 
-  const manager = new LifecycleManagerBuilder(services, healthchecks, config)
+  const m = new LifecycleManagerBuilder(services, config)
     .addEntrypoint("entrypoint", () => ({
       start: start1,
       shutdown: shutdown1,
+      healthcheck: healthcheck1,
     }))
     .addService("startup", () => ({ start: start2 }))
-    .addService("shutdown", () => ({ shutdown: shutdown2 }))
-    .build();
+    .addService("shutdown", () => ({
+      shutdown: shutdown2,
+      healthcheck: healthcheck2,
+    }));
+
+  const manager = m.build();
+
+  await m.healthchecks.healthcheck();
+  expect(healthcheck1).toHaveBeenCalledOnce();
+  expect(healthcheck2).toHaveBeenCalledOnce();
 
   await manager.start();
   expect(start1).toHaveBeenCalledOnce();

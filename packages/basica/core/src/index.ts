@@ -1,19 +1,18 @@
 export { AppBuilder, AppRequiredServices } from "./service";
 
 export {
-  IHealthcheck,
   HealthcheckResult,
+  IHealthcheck,
   IHealthcheckManager,
-  HealthcheckManagerBuilder,
   healthcheckManagerConfigSchema,
   healthcheckResultSchema,
 } from "./service/healthcheck";
 
 export {
   IEntrypoint,
-  IStartup,
-  IShutdown,
   ILifecycleManager,
+  IShutdown,
+  IStartup,
   LifecycleManagerBuilder,
   lifecycleManagerConfigSchema,
 } from "./service/lifecycle";

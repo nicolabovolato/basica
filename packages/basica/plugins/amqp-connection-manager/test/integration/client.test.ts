@@ -1,5 +1,5 @@
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 import { randomUUID } from "node:crypto";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { GenericContainer, StartedTestContainer } from "testcontainers";
 
@@ -26,7 +26,10 @@ afterAll(async () => {
 describe("AMQPClient", () => {
   test("healthcheck", async () => {
     const client = getAMQPClient(rabbitmq);
-    expect(await client.healthcheck()).toEqual({ status: "unhealthy" });
+    expect(await client.healthcheck()).toEqual({
+      status: "unhealthy",
+      description: "Client is not connected",
+    });
     await client.start();
     expect(await client.healthcheck()).toEqual({ status: "healthy" });
   });

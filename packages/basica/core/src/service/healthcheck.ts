@@ -1,11 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
 import { abortable } from "src/utils";
 
-import { AppRequiredServices } from ".";
-import { Plugin } from "src/utils";
+import { SpanStatusCode } from "@opentelemetry/api";
 import { ILogger } from "src/logger";
 import { tracer } from "src/utils/tracer";
-import { SpanStatusCode } from "@opentelemetry/api";
 
 /** Healthcheck result schema */
 export const healthcheckResultSchema = Type.Union([
@@ -30,10 +28,10 @@ export interface IHealthcheck {
 /** healthcheck manager configuration */
 export const healthcheckManagerConfigSchema = Type.Object({
   /**
-   * timeout before an healthcheck is aborted
+   * timeout before application healthcheck is aborted
    * @default 5000
    */
-  timeoutMs: Type.Number({ minimum: 0 }),
+  healthcheckTimeoutMs: Type.Number({ minimum: 0 }),
 });
 
 export type HealthcheckManagerConfig = Static<
@@ -54,19 +52,19 @@ export interface IHealthcheckManager {
 }
 
 export class HealthcheckManager implements IHealthcheckManager {
+  readonly #builderItems: { name: string; value: IHealthcheck }[] = [];
+
   readonly #items: Map<string, IHealthcheck> = new Map();
   readonly #config: HealthcheckManagerConfig;
   readonly #logger: ILogger;
 
-  constructor(
-    logger: ILogger,
-    items: { name: string; value: IHealthcheck }[],
-    config?: Partial<HealthcheckManagerConfig>
-  ) {
+  constructor(logger: ILogger, config?: Partial<HealthcheckManagerConfig>) {
     this.#logger = logger.child({ name: "@basica:app:healthcheck" });
-    this.#config = { timeoutMs: 5000, ...(config ?? {}) };
+    this.#config = { healthcheckTimeoutMs: 5000, ...(config ?? {}) };
+  }
 
-    for (const item of items) {
+  buildInPlace() {
+    for (const item of this.#builderItems) {
       if (this.#items.has(item.name)) {
         this.#logger.warn(
           { healthcheck: item.name },
@@ -76,6 +74,12 @@ export class HealthcheckManager implements IHealthcheckManager {
         this.#items.set(item.name, item.value);
       }
     }
+    return this;
+  }
+
+  addHealthcheck(name: string, value: IHealthcheck) {
+    this.#builderItems.push({ name, value });
+    return this;
   }
 
   async healthcheck(
@@ -83,7 +87,10 @@ export class HealthcheckManager implements IHealthcheckManager {
   ): Promise<Record<string, HealthcheckResult>> {
     return tracer.startActiveSpan(`healthcheck`, async (span) => {
       const ac = new AbortController();
-      const acTimeout = setTimeout(() => ac.abort(), this.#config.timeoutMs);
+      const acTimeout = setTimeout(
+        () => ac.abort(),
+        this.#config.healthcheckTimeoutMs
+      );
 
       const healthchecks = Array.from(this.#items, ([key, value]) => ({
         name: key,
@@ -139,45 +146,5 @@ export class HealthcheckManager implements IHealthcheckManager {
       span.end();
       return response;
     });
-  }
-}
-
-export class HealthcheckManagerBuilder<S extends AppRequiredServices> {
-  readonly #items: { name: string; value: IHealthcheck }[] = [];
-  readonly #config: Partial<HealthcheckManagerConfig> | undefined;
-
-  constructor(
-    readonly services: S,
-    config?: Partial<HealthcheckManagerConfig>
-  ) {
-    this.#config = config;
-  }
-
-  /**
-   * Register a healthcheck
-   * @example
-   * builder.addHealthcheck("db", (services) => services.db)
-   */
-  addHealthcheck(name: string, fn: (services: S) => IHealthcheck) {
-    this.#items.push({ name, value: fn(this.services) });
-    return this;
-  }
-
-  /**
-   * Use a plugin
-   * @example
-   * builder.with(myPlugin, (builder) => builder.newFunctionality())
-   */
-  with<B>(plugin: Plugin<this, B>, fn: (builder: B) => unknown) {
-    fn(plugin(this));
-    return this;
-  }
-
-  build() {
-    return new HealthcheckManager(
-      this.services.logger,
-      this.#items,
-      this.#config
-    );
   }
 }

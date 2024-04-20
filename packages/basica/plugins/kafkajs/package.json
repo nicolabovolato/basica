@@ -1,0 +1,55 @@
+{
+  "name": "@basica/kafkajs",
+  "version": "0.0.0",
+  "author": "Nicola Bovolato",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsup-node",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest run --dir test/unit",
+    "test:integration": "vitest run --dir test/integration",
+    "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
+  },
+  "peerDependencies": {
+    "@basica/core": "workspace:^0.0.2",
+    "@sinclair/typebox": "^0.32.16",
+    "kafkajs": "^2.2.4"
+  },
+  "devDependencies": {
+    "@basica/core": "workspace:^0.0.2",
+    "@basica/eslint-config": "workspace:^0.0.0",
+    "@basica/tsup-config": "workspace:^0.0.0",
+    "@basica/typescript-config": "workspace:^0.0.0",
+    "@basica/vitest-config": "workspace:^0.0.0",
+    "@testcontainers/kafka": "^10.8.2",
+    "@vitest/coverage-v8": "^1.2.2",
+    "eslint": "^8.56.0",
+    "pino": "^8.18.0",
+    "testcontainers": "^10.7.2",
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.8.0"
+  }
+}

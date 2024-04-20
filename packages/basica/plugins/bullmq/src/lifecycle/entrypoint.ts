@@ -1,23 +1,29 @@
 import { IEntrypoint } from "@basica/core";
 import { ILogger } from "@basica/core/logger";
 
+import { SpanStatusCode } from "@opentelemetry/api";
 import { Job, Processor, Worker, WorkerOptions } from "bullmq";
 import { tracer } from "../tracer";
-import { SpanStatusCode } from "@opentelemetry/api";
+
+export type WorkerProcessor<T, R> = (
+  ...args: [...Parameters<Processor<T, R>>, Worker<T, R>]
+) => ReturnType<Processor<T, R>>;
 
 export class BullMqWorkerEntrypoint<T, R> implements IEntrypoint {
   #worker: Worker<T, R>;
   #logger: ILogger;
-  #processor: Processor<T, R>;
+  #processor: WorkerProcessor<T, R>;
 
   constructor(
     logger: ILogger,
     name: string,
     queueName: string,
-    processor: Processor<T, R>,
+    processor: WorkerProcessor<T, R>,
     options: WorkerOptions
   ) {
-    this.#logger = logger.child({ name: `@basica:entrypoint:bullmq:${name}` });
+    this.#logger = logger.child({
+      name: `@basica:entrypoint:bullmq:worker:${name}`,
+    });
     this.#processor = processor;
 
     this.#worker = new Worker(
@@ -58,7 +64,7 @@ export class BullMqWorkerEntrypoint<T, R> implements IEntrypoint {
         );
 
         try {
-          return await this.#processor(job, token);
+          return await this.#processor(job, token, this.#worker);
         } catch (err) {
           this.#logger.error(
             { err, queue, jobId: job.id },

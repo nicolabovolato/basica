@@ -1,18 +1,12 @@
-import { ILogger } from "src/logger";
+import closeWithGrace from "close-with-grace";
 import { IocContainer } from "src/ioc";
-import {
-  IHealthcheckManager,
-  HealthcheckManager,
-  HealthcheckManagerBuilder,
-  HealthcheckManagerConfig,
-} from "./healthcheck";
+import { ILogger } from "src/logger";
 import {
   ILifecycleManager,
   LifecycleManager,
   LifecycleManagerBuilder,
   LifecycleManagerConfig,
 } from "./lifecycle";
-import closeWithGrace from "close-with-grace";
 
 export type AppRequiredServices = {
   logger: ILogger;
@@ -21,7 +15,6 @@ export type AppRequiredServices = {
 export class AppBuilder<S extends AppRequiredServices> {
   #container: IocContainer<S>;
   #lifecycle: ILifecycleManager;
-  #healthchecks: IHealthcheckManager;
 
   constructor(container: IocContainer<S>) {
     this.#container = container;
@@ -30,56 +23,6 @@ export class AppBuilder<S extends AppRequiredServices> {
       [],
       []
     );
-    this.#healthchecks = new HealthcheckManager(
-      this.#container.services.logger,
-      []
-    );
-  }
-
-  /**
-   * Configure application healthchecks
-   * @see {@link HealthcheckManagerBuilder}
-   * @param fn builder function
-   * @param cfg healthcheck manager {@link HealthcheckManagerConfig config}
-   * @example
-   * builder.configureHealthchecks((builder, services) =>
-   *   builder.addHealthcheck("db", services.db)
-   * )
-   * @example
-   * builder.configureHealthchecks({ timeoutMs: 30000 }, (builder, services) =>
-   *   builder.addHealthcheck("db", services.db)
-   * )
-   */
-  configureHealthchecks(
-    fn: (
-      builder: HealthcheckManagerBuilder<S>,
-      services: S
-    ) => HealthcheckManagerBuilder<S>
-  ): AppBuilder<S>;
-  configureHealthchecks(
-    cfg: HealthcheckManagerConfig,
-    fn: (
-      builder: HealthcheckManagerBuilder<S>,
-      services: S
-    ) => HealthcheckManagerBuilder<S>
-  ): AppBuilder<S>;
-  configureHealthchecks<
-    Fn extends (
-      builder: HealthcheckManagerBuilder<S>,
-      services: S
-    ) => HealthcheckManagerBuilder<S>,
-  >(configOrFn: HealthcheckManagerConfig | Fn, maybeFn?: Fn) {
-    const fn = typeof configOrFn === "object" ? maybeFn! : configOrFn;
-    const config = typeof configOrFn === "object" ? configOrFn : undefined;
-
-    const builder = new HealthcheckManagerBuilder<S>(
-      this.#container.services,
-      config
-    );
-
-    this.#healthchecks = fn(builder, this.#container.services).build();
-
-    return this as Pick<AppBuilder<S>, "build">;
   }
 
   /**
@@ -89,12 +32,14 @@ export class AppBuilder<S extends AppRequiredServices> {
    * @param cfg lifecycle manager {@link LifecycleManagerConfig config}
    * @example
    * builder.configureLifecycle((builder, services) =>
-   *   builder.addService("db", services.db)
+   *   builder.addHealthcheck("upstream-service", services.upstreamService)
+   *          .addService("db", services.db)
    *          .addEntrypoint("http", services.http)
    * )
    * @example
-   * builder.configureLifecycle({ startupTimeoutMs: 5000, shutdownTimeoutMs: 10000 }, (builder, services) =>
-   *   builder.addService("db", services.db)
+   * builder.configureLifecycle({ startupTimeoutMs: 5000, shutdownTimeoutMs: 10000, healthcheckTimeoutMs: 1000 }, (builder, services) =>
+   *   builder.addHealthcheck("upstream-service", services.upstreamService)
+   *          .addService("db", services.db)
    *          .addEntrypoint("http", services.http)
    * )
    */
@@ -122,7 +67,6 @@ export class AppBuilder<S extends AppRequiredServices> {
 
     const builder = new LifecycleManagerBuilder<S>(
       this.#container.services,
-      this.#healthchecks,
       config
     );
 

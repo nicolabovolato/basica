@@ -80,7 +80,7 @@ Now, we should write our index.ts.
 
 Let's start by bringing into scope IocContainer and loggerFactory from @basica/core, and initializing both the logger and our service.
 
-We then import AppBuilder and start registering sample, our service both as a healthcheck and an entrypoint.
+We then import AppBuilder and start registering sample, our service as an entrypoint.
 
 We then build our app and start it.
 
@@ -98,9 +98,6 @@ We then build our app and start it.
         .addSingleton("sample", (c) => new SampleService(c.logger))
 
     const app = new AppBuilder(container)
-      .configureHealthchecks(b => b
-        .addHealthcheck("sample", (c) => c.sample)
-      )
       .configureLifecycle((b, c) => b
         .addEntrypoint("sample", () => c.sample)
       )
@@ -123,9 +120,6 @@ We then build our app and start it.
         .addSingleton("sample", (c) => createSampleService(c.logger))
 
     const app = new AppBuilder(container)
-      .configureHealthchecks(b => b
-        .addHealthcheck("sample", (c) => c.sample)
-      )
       .configureLifecycle((b, c) => b
         .addEntrypoint("sample", () => c.sample)
       )
@@ -226,10 +220,8 @@ With that in mind, let's set up fastify to handle our healthchecks, map sayHello
         .addSingleton("sample", (c) => new SampleService(c.logger))
 
     const app = new AppBuilder(container)
-      .configureHealthchecks(b => b
-        .addHealthcheck("sample", (c) => c.sample)
-      )
       .configureLifecycle((b, c) => b
+        .addHealthcheck("sample", () => c.sample)
         .with(lifecyclePlugin, (b)
           .addFastifyEntrypoint("http", (f) => f
             .useOpenapi()
@@ -259,10 +251,8 @@ With that in mind, let's set up fastify to handle our healthchecks, map sayHello
         .addSingleton("sample", (c) => createSampleService(c.logger))
 
     const app = new AppBuilder(container)
-      .configureHealthchecks(b => b
-        .addHealthcheck("sample", (c) => c.sample)
-      )
       .configureLifecycle((b, c) => b
+        .addHealthcheck("sample", () => c.sample)
         .with(lifecyclePlugin, (b)
           .addFastifyEntrypoint("http", (f) => f
             .useOpenapi()
@@ -352,10 +342,8 @@ We should also update our index file.
         .addSingleton("sample", (c) => new SampleService(c.logger))
 
     const app = new AppBuilder(container)
-      .configureHealthchecks(b =>
-        b.addHealthcheck("sample", (c) => c.sample)
-      )
       .configureLifecycle((b, c) => b
+        .addHealthcheck("sample", () => c.sample)
         .with(lifecyclePlugin, (b)
           .addFastifyEntrypoint("http", config.http, (f) => f
             .useOpenapi()
@@ -390,10 +378,8 @@ We should also update our index file.
         .addSingleton("sample", (c) => createSampleService(c.logger))
 
     const app = new AppBuilder(container)
-      .configureHealthchecks(b => b
-        .addHealthcheck("sample", (c) => c.sample)
-      )
       .configureLifecycle((b, c) => b
+        .addHealthcheck("sample", () => c.sample)
         .with(lifecyclePlugin, (b)
           .addFastifyEntrypoint("http", config.http, (f) => f
             .useOpenapi()

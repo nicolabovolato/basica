@@ -1,11 +1,16 @@
 import { Static, Type } from "@sinclair/typebox";
 
-import { AppRequiredServices } from ".";
-import { IHealthcheckManager } from "./healthcheck";
+import { SpanStatusCode } from "@opentelemetry/api";
 import { ILogger } from "src/logger";
 import { abortable, Plugin } from "src/utils";
 import { tracer } from "src/utils/tracer";
-import { SpanStatusCode } from "@opentelemetry/api";
+import { AppRequiredServices } from ".";
+import {
+  HealthcheckManager,
+  healthcheckManagerConfigSchema,
+  IHealthcheck,
+  IHealthcheckManager,
+} from "./healthcheck";
 
 export interface IShutdown {
   shutdown(signal: AbortSignal): Promise<void>;
@@ -18,21 +23,29 @@ export interface IStartup {
 export interface IEntrypoint extends IStartup, IShutdown {}
 
 /** lifecycle manager configuration */
-export const lifecycleManagerConfigSchema = Type.Object({
-  /**
-   * timeout before application startup is aborted
-   * @default 5000
-   */
-  startupTimeoutMs: Type.Number({ minimum: 0 }),
-  /**
-   * timeout before application shutdown is aborted
-   * @default 5000
-   */
-  shutdownTimeoutMs: Type.Number({ minimum: 0 }),
-});
+export const lifecycleManagerConfigSchema = Type.Intersect([
+  Type.Object({
+    /**
+     * timeout before application startup is aborted
+     * @default 5000
+     */
+    startupTimeoutMs: Type.Number({ minimum: 0 }),
+    /**
+     * timeout before application shutdown is aborted
+     * @default 5000
+     */
+    shutdownTimeoutMs: Type.Number({ minimum: 0 }),
+  }),
+  healthcheckManagerConfigSchema,
+]);
 
-export type LifecycleManagerConfig = Static<
+export type LifecycleManagerBuilderConfig = Static<
   typeof lifecycleManagerConfigSchema
+>;
+
+export type LifecycleManagerConfig = Omit<
+  LifecycleManagerBuilderConfig,
+  "healthcheckTimeoutMs"
 >;
 
 /** Lifecycle manager */
@@ -304,17 +317,42 @@ export class LifecycleManager implements ILifecycleManager {
   }
 }
 
+type NotIHealthcheck = { healthcheck?: never };
+
 export class LifecycleManagerBuilder<S extends AppRequiredServices> {
   readonly #svcs: Item[] = [];
   readonly #entrypoints: Item[] = [];
-  readonly #config: Partial<LifecycleManagerConfig> | undefined;
+  readonly #config: Partial<LifecycleManagerBuilderConfig> | undefined;
+  readonly #healthchecks: HealthcheckManager;
 
   constructor(
     readonly services: S,
-    readonly healthchecks: IHealthcheckManager,
-    config?: Partial<LifecycleManagerConfig>
+    config?: Partial<LifecycleManagerBuilderConfig>
   ) {
     this.#config = config;
+    this.#healthchecks = new HealthcheckManager(
+      services.logger,
+      this.#config?.healthcheckTimeoutMs
+        ? {
+            healthcheckTimeoutMs: this.#config?.healthcheckTimeoutMs,
+          }
+        : undefined
+    );
+  }
+
+  get healthchecks() {
+    return this.#healthchecks as IHealthcheckManager;
+  }
+
+  /**
+   * Register an healthcheck in the application lifecycle
+   * @example
+   * builder.addHealthcheck("downstream-service", (services) => services.downstreamService)
+   */
+  addHealthcheck(name: string, fn: (services: S) => IHealthcheck) {
+    const svc = fn(this.services);
+    this.#healthchecks.addHealthcheck(name, svc);
+    return this;
   }
 
   /**
@@ -324,10 +362,14 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
    */
   addService(
     name: string,
-    fn: (services: S) => IStartup | IShutdown | (IStartup & IShutdown)
+    fn: (
+      services: S
+    ) => (IStartup | IShutdown | (IStartup & IShutdown)) &
+      (IHealthcheck | NotIHealthcheck)
   ) {
     const svc = fn(this.services);
     this.#svcs.push({ name, svc });
+    if (svc.healthcheck) return this.addHealthcheck(name, () => svc);
     return this;
   }
 
@@ -338,13 +380,18 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
    */
   addEntrypoint(
     name: string,
-    fn: (services: S, healthchecks: IHealthcheckManager) => IEntrypoint
+    fn: (
+      services: S,
+      healthchecks: IHealthcheckManager
+    ) => IEntrypoint & (IHealthcheck | NotIHealthcheck)
   ) {
     const entrypoint = fn(this.services, this.healthchecks);
     this.#entrypoints.push({
       name,
       svc: entrypoint,
     });
+    if (entrypoint.healthcheck)
+      return this.addHealthcheck(name, () => entrypoint);
     return this;
   }
 
@@ -359,6 +406,8 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
   }
 
   build() {
+    this.#healthchecks.buildInPlace();
+
     return new LifecycleManager(
       this.services.logger,
       this.#svcs,

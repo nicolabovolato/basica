@@ -3,8 +3,8 @@ import { lifecyclePlugin } from "src/lifecycle/plugin";
 import { beforeEach, expect, test, vi } from "vitest";
 
 import { AMQPClient } from "src/client";
-import { hcManager, logger, services } from "../utils";
 import { AMQPQueueConsumerEntrypoint } from "src/lifecycle/entrypoint";
+import { hcManager, logger, services } from "../utils";
 
 const client = new AMQPClient(
   {
@@ -19,7 +19,7 @@ beforeEach(() => {
 });
 
 test("addAMQPConsumer", async () => {
-  const builder = new LifecycleManagerBuilder(services, hcManager);
+  const builder = new LifecycleManagerBuilder(services);
   vi.spyOn(builder, "addEntrypoint");
   vi.spyOn(builder, "addService");
 

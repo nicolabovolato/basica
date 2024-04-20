@@ -1,7 +1,7 @@
 const time = process.hrtime();
 
-import { AppBuilder } from "@basica/core";
 import { configure, envProvider } from "@basica/config";
+import { AppBuilder } from "@basica/core";
 import { IocContainer } from "@basica/core/ioc";
 import { loggerFactory } from "@basica/core/logger";
 
@@ -9,17 +9,17 @@ import {
   Kysely,
   lifecyclePlugin as kyselyLifecyclePlugin,
 } from "@basica/kysely";
+import { pgConfigSchema } from "@basica/pg";
 import { PostgresDialect } from "kysely";
 import { Pool } from "pg";
-import { pgConfigSchema } from "@basica/pg";
 
 import { lifecyclePlugin as fastifyLifecyclePlugin } from "@basica/fastify";
 
 import { Type } from "@sinclair/typebox";
 
-import { ConflictError, NotFoundError, TodoService } from "./service";
 import { Database } from "./db";
 import { routes } from "./routes";
+import { ConflictError, NotFoundError, TodoService } from "./service";
 
 const config = configure(
   envProvider(),
@@ -45,9 +45,6 @@ const container = new IocContainer()
   .addSingleton("todos", (services) => new TodoService(services.db));
 
 const app = new AppBuilder(container)
-  .configureHealthchecks((builder) =>
-    builder.addHealthcheck("db", (services) => services.db)
-  )
   .configureLifecycle((builder, services) =>
     builder
       .addService("db", () => services.db)
