@@ -2,15 +2,15 @@ import { LifecycleManagerBuilder } from "@basica/core";
 import { lifecyclePlugin } from "src/plugin";
 import { beforeEach, expect, test, vi } from "vitest";
 
-import { hcManager, services } from "./utils";
 import { FastifyEntrypoint } from "src/entrypoint";
+import { hcManager, services } from "./utils";
 
 beforeEach(() => {
   vi.restoreAllMocks();
 });
 
 test("addFastifyEntrypoint", async () => {
-  const builder = new LifecycleManagerBuilder(services, hcManager);
+  const builder = new LifecycleManagerBuilder(services);
   vi.spyOn(builder, "addEntrypoint");
 
   builder.with(lifecyclePlugin, (builder) =>

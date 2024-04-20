@@ -19,7 +19,7 @@ beforeEach(() => {
 });
 
 test("addAMQPConsumer", async () => {
-  const builder = new LifecycleManagerBuilder(services, hcManager);
+  const builder = new LifecycleManagerBuilder(services);
   vi.spyOn(builder, "addEntrypoint");
 
   builder.with(lifecyclePlugin, (builder) =>

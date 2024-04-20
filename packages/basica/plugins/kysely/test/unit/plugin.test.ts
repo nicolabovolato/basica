@@ -1,12 +1,12 @@
 import { LifecycleManagerBuilder } from "@basica/core";
+import Sqlite from "better-sqlite3";
+import { FileMigrationProvider, SqliteDialect } from "kysely";
 import { lifecyclePlugin } from "src/plugin";
 import { beforeEach, expect, test, vi } from "vitest";
-import { FileMigrationProvider, SqliteDialect } from "kysely";
-import Sqlite from "better-sqlite3";
 
-import { hcManager, logger, services } from "./utils";
 import { Kysely } from "src/db";
 import { Migrator } from "src/migrator";
+import { logger, services } from "./utils";
 
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -25,7 +25,7 @@ beforeEach(() => {
 });
 
 test("addKyselyMigrations", async () => {
-  const builder = new LifecycleManagerBuilder(services, hcManager);
+  const builder = new LifecycleManagerBuilder(services);
   vi.spyOn(builder, "addService");
 
   builder.with(lifecyclePlugin, (builder) =>
