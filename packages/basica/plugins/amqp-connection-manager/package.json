@@ -1,6 +1,6 @@
 {
   "name": "@basica/amqp-connection-manager",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
@@ -30,13 +30,13 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.3",
+    "@basica/core": "workspace:^0.0.4",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.4",
     "@sinclair/typebox": "^0.32.16"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.3",
+    "@basica/core": "workspace:^0.0.4",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",

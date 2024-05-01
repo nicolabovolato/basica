@@ -1,6 +1,6 @@
 {
   "name": "@basica/kafkajs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
@@ -30,12 +30,12 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.3",
+    "@basica/core": "workspace:^0.0.4",
     "@sinclair/typebox": "^0.32.16",
     "kafkajs": "^2.2.4"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.3",
+    "@basica/core": "workspace:^0.0.4",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",

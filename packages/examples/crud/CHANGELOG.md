@@ -1,5 +1,16 @@
 # crud
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [[`fc0c82e`](https://github.com/nicolabovolato/basica/commit/fc0c82ed38a8045cbb485241054a230a48a1f70e)]:
+  - @basica/fastify@0.0.4
+  - @basica/kysely@0.0.4
+  - @basica/pg@0.0.4
+  - @basica/config@0.0.3
+  - @basica/core@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes

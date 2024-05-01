@@ -1,6 +1,6 @@
 {
   "name": "@basica/pg",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
@@ -30,12 +30,12 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.3",
+    "@basica/core": "workspace:^0.0.4",
     "@sinclair/typebox": "^0.32.16",
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.3",
+    "@basica/core": "workspace:^0.0.4",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",
