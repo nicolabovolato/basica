@@ -117,7 +117,7 @@ importers:
         version: 0.10.4
     devDependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../core
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -163,7 +163,7 @@ importers:
         version: 1.0.0-beta.7(tslib@2.6.2)
     devDependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../core
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -196,7 +196,7 @@ importers:
   packages/basica/plugins/bullmq:
     dependencies:
       '@basica/ioredis':
-        specifier: workspace:^0.0.5
+        specifier: workspace:^0.0.6
         version: link:../ioredis
       '@opentelemetry/api':
         specifier: ^1.8.0
@@ -212,7 +212,7 @@ importers:
         version: 5.3.2
     devDependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../core
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -251,7 +251,7 @@ importers:
   packages/basica/plugins/fastify:
     dependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../core
       '@fastify/swagger':
         specifier: ^8.14.0
@@ -310,7 +310,7 @@ importers:
         version: 5.3.2
     devDependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../core
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -359,7 +359,7 @@ importers:
         version: 2.2.4
     devDependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../core
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -408,7 +408,7 @@ importers:
         version: 0.27.3
     devDependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../core
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -454,7 +454,7 @@ importers:
         version: 8.11.3
     devDependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../core
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -600,10 +600,10 @@ importers:
         specifier: workspace:^
         version: link:../../../basica/config
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../../basica/plugins/fastify
       '@basica/kysely':
         specifier: workspace:^
@@ -865,10 +865,10 @@ importers:
   packages/benchmarks/http/basica-fastify:
     dependencies:
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../../basica/plugins/fastify
       fastify:
         specifier: ^4.26.2
@@ -1083,19 +1083,19 @@ importers:
   packages/examples/crud:
     dependencies:
       '@basica/config':
-        specifier: workspace:^0.0.2
+        specifier: workspace:^0.0.3
         version: link:../../basica/config
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../basica/plugins/fastify
       '@basica/kysely':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../basica/plugins/kysely
       '@basica/pg':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../basica/plugins/pg
       '@fastify/type-provider-typebox':
         specifier: ^4.0.0
@@ -1156,13 +1156,13 @@ importers:
   packages/examples/telemetry/svc1:
     dependencies:
       '@basica/config':
-        specifier: workspace:^0.0.2
+        specifier: workspace:^0.0.3
         version: link:../../../basica/config
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../../basica/plugins/fastify
       '@basica/telemetry':
         specifier: workspace:^0.0.2
@@ -1214,13 +1214,13 @@ importers:
   packages/examples/telemetry/svc2:
     dependencies:
       '@basica/config':
-        specifier: workspace:^0.0.2
+        specifier: workspace:^0.0.3
         version: link:../../../basica/config
       '@basica/core':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.3
+        specifier: workspace:^0.0.4
         version: link:../../../basica/plugins/fastify
       '@basica/telemetry':
         specifier: workspace:^0.0.2
