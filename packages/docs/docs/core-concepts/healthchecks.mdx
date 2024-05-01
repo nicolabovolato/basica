@@ -15,7 +15,7 @@ such as a database query to check if connectivity works.
 In Basica, they can be easily added in all your services by implementing `IHealthcheck`.
 
 :::note
-Services and Entrypoint registered in the lifecycle will automatically be registered as healthchecks if they have a healthcheck function.
+Any registered service or entrypoint implementing `IHealthcheck` will also be registered as an healthcheck.
 :::
 
 ## Implementing IHealthcheck

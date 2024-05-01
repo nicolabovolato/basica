@@ -92,7 +92,8 @@ const container = new IocContainer()
 const app = new AppBuilder(container)
   // Lifecycle management
   .configureLifecycle((b, c) => b
-    .addHealthcheck("svc", (c) => c.svc)   // Healthchecks
+    // Healthchecks
+    .addHealthcheck("svc", (c) => c.svc)
     // Plugins
     .with(lifecyclePlugin, (b) => b
       .addFastifyEntrypoint("http", (f) => f
@@ -141,7 +142,7 @@ export default function Home(): JSX.Element {
               Seamless integration with your favorite library
             </Card>
             <Card title={"Healthchecks"} icon={<Icon name="heartbeat" />}>
-              Check on a glance if your service up and running
+              Check on a glance if your service is up and running
             </Card>
             <Card title={"Structured logging"} icon={<Icon name="brackets" />}>
               Fast, structured logging provided by Pino
