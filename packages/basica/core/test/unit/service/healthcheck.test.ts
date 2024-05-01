@@ -1,6 +1,5 @@
 import { setTimeout } from "node:timers/promises";
 import { loggerFactory } from "src/logger";
-import { AppRequiredServices } from "src/service";
 import {
   HealthcheckManager,
   HealthcheckManagerConfig,
@@ -11,7 +10,6 @@ const config: HealthcheckManagerConfig = {
   healthcheckTimeoutMs: 1000,
 };
 const logger = loggerFactory({ level: "silent" });
-const services = { logger } satisfies AppRequiredServices;
 
 beforeEach(() => {
   //vi.useFakeTimers(); // TODO: timers/promises and AbortSignal are not mocked https://github.com/vitest-dev/vitest/issues/3088
@@ -27,11 +25,12 @@ test("healthy", async () => {
   const hc = vi.fn().mockResolvedValue({
     status: "healthy",
   });
-  const manager = new HealthcheckManager(logger, config)
-    .addHealthcheck("test", {
+  const manager = new HealthcheckManager(logger, config).addHealthcheck(
+    "test",
+    {
       healthcheck: hc,
-    })
-    .buildInPlace();
+    }
+  );
 
   const result = await manager.healthcheck();
 
@@ -45,11 +44,12 @@ test("unhealthy", async () => {
     description: "test description",
   });
 
-  const manager = new HealthcheckManager(logger, config)
-    .addHealthcheck("test", {
+  const manager = new HealthcheckManager(logger, config).addHealthcheck(
+    "test",
+    {
       healthcheck: hc,
-    })
-    .buildInPlace();
+    }
+  );
 
   const result = await manager.healthcheck();
 
@@ -62,11 +62,12 @@ test("unhealthy", async () => {
 test("throw", async () => {
   const hc = vi.fn().mockRejectedValue(new Error("test error"));
 
-  const manager = new HealthcheckManager(logger, config)
-    .addHealthcheck("test", {
+  const manager = new HealthcheckManager(logger, config).addHealthcheck(
+    "test",
+    {
       healthcheck: hc,
-    })
-    .buildInPlace();
+    }
+  );
 
   const result = await manager.healthcheck();
 
@@ -91,8 +92,7 @@ test("filter", async () => {
     })
     .addHealthcheck("test2", {
       healthcheck: hc2,
-    })
-    .buildInPlace();
+    });
 
   const result = await manager.healthcheck((name) => name == "test1");
 
@@ -106,11 +106,12 @@ test("filter", async () => {
 });
 
 test("abort", async () => {
-  const manager = new HealthcheckManager(logger, config)
-    .addHealthcheck("test", {
+  const manager = new HealthcheckManager(logger, config).addHealthcheck(
+    "test",
+    {
       healthcheck: (signal) => setTimeout(2000, { status: "healthy" }),
-    })
-    .buildInPlace();
+    }
+  );
 
   const result = await manager.healthcheck();
 

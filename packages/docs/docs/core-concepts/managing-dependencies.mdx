@@ -64,8 +64,8 @@ Singleton registration creates a service once and stores the instance. Each time
       .addSingleton("consumer1", (c) => new ServiceConsumer(c.provider1, "consumer 1"))
       .addSingleton("consumer2", (c) => new ServiceConsumer(c.provider2, "consumer 2"))
 
-    console.log(container.services.consumer1.sayHello())
-    console.log(container.services.consumer2.sayHello())
+    console.log(container.items.consumer1.sayHello())
+    console.log(container.items.consumer2.sayHello())
     ```
 
   </TabItem>
@@ -105,8 +105,8 @@ Singleton registration creates a service once and stores the instance. Each time
       .addSingleton("consumer1", (c) => createServiceConsumer(c.provider1, "consumer 1"))
       .addSingleton("consumer2", (c) => createServiceConsumer(c.provider2, "consumer 2"))
 
-    console.log(container.services.consumer1.sayHello())
-    console.log(container.services.consumer2.sayHello())
+    console.log(container.items.consumer1.sayHello())
+    console.log(container.items.consumer2.sayHello())
     ```
 
   </TabItem>
@@ -166,11 +166,11 @@ Transient registration, meaning that a service will be created each time it's re
       .addSingleton("oranges", (c) => new Service(c.counter(), "orange"))
       .addSingleton("apples", (c) => new Service(c.counter(), "apple"));
 
-    container.services.oranges.add(3);
-    container.services.apples.add(2);
+    container.items.oranges.add(3);
+    container.items.apples.add(2);
 
-    console.log("Oranges:", container.services.oranges.total);
-    console.log("Apples:", container.services.apples.total);
+    console.log("Oranges:", container.items.oranges.total);
+    console.log("Apples:", container.items.apples.total);
     ```
 
   </TabItem>
@@ -207,11 +207,11 @@ Transient registration, meaning that a service will be created each time it's re
       .addSingleton("oranges", (c) => createService(c.counter(), "orange"))
       .addSingleton("apples", (c) => createService(c.counter(), "apple"));
 
-    container.services.oranges.add(3);
-    container.services.apples.add(2);
+    container.items.oranges.add(3);
+    container.items.apples.add(2);
 
-    console.log("Oranges:", container.services.oranges.total);
-    console.log("Apples:", container.services.apples.total);
+    console.log("Oranges:", container.items.oranges.total);
+    console.log("Apples:", container.items.apples.total);
     ```
 
   </TabItem>

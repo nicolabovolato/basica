@@ -1,11 +1,11 @@
-import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 import { Plugin } from "@basica/core/utils";
 
 import { Kafka } from "src/client";
 import { KafkaConfig } from "src/config";
 import { EntrypointConfig, KafkaConsumerEntrypoint } from "./entrypoint";
 
-class KafkaLifecyclePlugin<S extends AppRequiredServices> {
+class KafkaLifecyclePlugin<S extends AppRequiredDeps> {
   readonly #lifecycle: LifecycleManagerBuilder<S>;
   constructor(lifecycle: LifecycleManagerBuilder<S>) {
     this.#lifecycle = lifecycle;
@@ -17,7 +17,7 @@ class KafkaLifecyclePlugin<S extends AppRequiredServices> {
    * @param clientOrClientConfig kafka client {@link Kafka} or config {@link KafkaConfig}
    * @param config config {@link EntrypointConfig}
    * @example
-   * builder.addKafkaConsumer("consumer", services.client, {
+   * builder.addKafkaConsumer("consumer", deps.client, {
    *   create: {
    *     groupId: "test",
    *   },
@@ -61,14 +61,13 @@ class KafkaLifecyclePlugin<S extends AppRequiredServices> {
         ? clientOrClientConfig
         : new Kafka(
             clientOrClientConfig as KafkaConfig,
-            this.#lifecycle.services.logger,
+            this.#lifecycle.deps.logger,
             `consumer:${name}`
           );
 
     this.#lifecycle.addEntrypoint(
       name,
-      (services) =>
-        new KafkaConsumerEntrypoint(name, client, services.logger, config)
+      (deps) => new KafkaConsumerEntrypoint(name, client, deps.logger, config)
     );
 
     return this;
@@ -76,8 +75,8 @@ class KafkaLifecyclePlugin<S extends AppRequiredServices> {
 }
 
 /** Kafka lifecycle plugin */
-export const lifecyclePlugin = (<S extends AppRequiredServices>(
+export const lifecyclePlugin = (<S extends AppRequiredDeps>(
   lifecycle: LifecycleManagerBuilder<S>
 ) => new KafkaLifecyclePlugin(lifecycle)) satisfies Plugin<
-  LifecycleManagerBuilder<AppRequiredServices>
+  LifecycleManagerBuilder<AppRequiredDeps>
 >;

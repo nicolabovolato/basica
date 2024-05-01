@@ -1,8 +1,10 @@
 import { Static, Type } from "@sinclair/typebox";
-import { abortable } from "src/utils";
 
 import { SpanStatusCode } from "@opentelemetry/api";
+
+import { IocContainer } from "src/ioc";
 import { ILogger } from "src/logger";
+import { abortable } from "src/utils";
 import { tracer } from "src/utils/tracer";
 
 /** Healthcheck result schema */
@@ -38,23 +40,26 @@ export type HealthcheckManagerConfig = Static<
   typeof healthcheckManagerConfigSchema
 >;
 
+export type HealthcheckServices = Record<string, unknown>;
+
 /** Healthchecks manager */
 export interface IHealthcheckManager {
   /**
    * Performs healthcheck
    * @param filter healthcheck filter function
    * @example
-   * healthcheckManager.healthcheck((x) => x.contains("db")) // only services with name db will be run
+   * healthcheckManager.healthcheck((x) => x == "db") // only healthchecks with name db will be run
    */
   healthcheck(
     filter?: (name: string) => boolean
   ): Promise<Record<string, HealthcheckResult>>;
 }
 
-export class HealthcheckManager implements IHealthcheckManager {
-  readonly #builderItems: { name: string; value: IHealthcheck }[] = [];
+export class HealthcheckManager<H extends HealthcheckServices>
+  implements IHealthcheckManager
+{
+  readonly #builderItems = new IocContainer<H>();
 
-  readonly #items: Map<string, IHealthcheck> = new Map();
   readonly #config: HealthcheckManagerConfig;
   readonly #logger: ILogger;
 
@@ -63,23 +68,20 @@ export class HealthcheckManager implements IHealthcheckManager {
     this.#config = { healthcheckTimeoutMs: 5000, ...(config ?? {}) };
   }
 
-  buildInPlace() {
-    for (const item of this.#builderItems) {
-      if (this.#items.has(item.name)) {
-        this.#logger.warn(
-          { healthcheck: item.name },
-          `Duplicate healthcheck ${item.name}, will not be registered`
-        );
-      } else {
-        this.#items.set(item.name, item.value);
-      }
-    }
-    return this;
+  get healthchecks() {
+    return this.#builderItems.items;
   }
 
-  addHealthcheck(name: string, value: IHealthcheck) {
-    this.#builderItems.push({ name, value });
-    return this;
+  addHealthcheck<K extends string, V extends IHealthcheck>(name: K, value: V) {
+    if (name in this.healthchecks) {
+      this.#logger.warn(
+        "Duplicate healthcheck name, previous value will be overwritten",
+        { name }
+      );
+    }
+
+    const svcs = this.#builderItems.addSingleton(name, () => value).items;
+    return this as HealthcheckManager<typeof svcs>;
   }
 
   async healthcheck(
@@ -92,10 +94,13 @@ export class HealthcheckManager implements IHealthcheckManager {
         this.#config.healthcheckTimeoutMs
       );
 
-      const healthchecks = Array.from(this.#items, ([key, value]) => ({
-        name: key,
-        value,
-      })).filter((x) => (filter ? filter(x.name) : true));
+      const healthchecks = Array.from(
+        Object.entries(this.healthchecks),
+        ([key, value]) => ({
+          name: key,
+          value: value as IHealthcheck,
+        })
+      ).filter((x) => (filter ? filter(x.name) : true));
 
       const result = await Promise.allSettled(
         healthchecks.map(async (h) =>

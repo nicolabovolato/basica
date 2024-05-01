@@ -1,5 +1,5 @@
 import {
-  AppRequiredServices,
+  AppRequiredDeps,
   IHealthcheckManager,
   healthcheckResultSchema,
 } from "@basica/core";
@@ -7,43 +7,39 @@ import { Constructor } from "@basica/core/utils";
 
 import { Type } from "@sinclair/typebox";
 
-import { FastifyInstance } from "fastify";
-import swaggerUi from "@fastify/swagger-ui";
 import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
+import { FastifyInstance } from "fastify";
 
 import { FastifyConfig, MapHealthchecksConfig, SwaggerConfig } from "./config";
 import { FastifyEntrypoint } from "./entrypoint";
 
-export class FastifyEntrypointBuilder<S extends AppRequiredServices> {
-  readonly #services: S;
+export class FastifyEntrypointBuilder<D extends AppRequiredDeps> {
+  readonly #deps: D;
   readonly #entrypoint: FastifyEntrypoint;
   readonly #healthchecks: IHealthcheckManager;
 
   constructor(
-    services: S,
+    deps: D,
     healthchecks: IHealthcheckManager,
     name: string,
     config?: FastifyConfig
   ) {
-    this.#services = services;
-    this.#entrypoint = new FastifyEntrypoint(
-      config ?? {},
-      services.logger,
-      name
-    );
+    this.#deps = deps;
+    this.#entrypoint = new FastifyEntrypoint(config ?? {}, deps.logger, name);
     this.#healthchecks = healthchecks;
   }
 
   /**
    * Configures fastify application
    * @example
-   * builder.configureApp((app, services) =>
+   * builder.configureApp((app, deps) =>
    *   app.useOpenApi()
    * )
    */
-  configureApp(fn: (app: FastifyAppBuilder, services: S) => void) {
+  configureApp(fn: (app: FastifyAppBuilder, deps: D) => void) {
     new FastifyAppBuilder(this.#entrypoint.fastify).mapRoutes("", (app) =>
-      fn(new FastifyAppBuilder(app.fastify), this.#services)
+      fn(new FastifyAppBuilder(app.fastify), this.#deps)
     );
 
     return this;

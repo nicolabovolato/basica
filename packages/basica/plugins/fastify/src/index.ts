@@ -1,9 +1,10 @@
-export { lifecyclePlugin } from "./plugin";
 export {
   FastifyConfig,
-  fastifyConfigSchema,
   MapHealthchecksConfig,
-  mapHealthchecksConfigSchema,
   SwaggerConfig,
+  fastifyConfigSchema,
+  mapHealthchecksConfigSchema,
   swaggerConfigSchema,
 } from "./config";
+export { FastifyEntrypoint } from "./entrypoint";
+export { lifecyclePlugin } from "./plugin";

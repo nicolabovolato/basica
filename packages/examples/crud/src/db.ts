@@ -11,7 +11,7 @@ type TodosTable = {
   completed: boolean;
   created_at: ColumnType<string, string, never>;
   updated_at: string;
-  deleted_at: ColumnType<string, never, string>;
+  deleted_at: ColumnType<string | null, never, string>;
 };
 
 export type Todo = Selectable<TodosTable>;

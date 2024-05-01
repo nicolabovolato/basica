@@ -6,7 +6,7 @@ import { beforeEach, expect, test, vi } from "vitest";
 
 import { Kysely } from "src/db";
 import { Migrator } from "src/migrator";
-import { logger, services } from "./utils";
+import { deps, logger } from "./utils";
 
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -25,7 +25,7 @@ beforeEach(() => {
 });
 
 test("addKyselyMigrations", async () => {
-  const builder = new LifecycleManagerBuilder(services);
+  const builder = new LifecycleManagerBuilder(deps);
   vi.spyOn(builder, "addService");
 
   builder.with(lifecyclePlugin, (builder) =>
@@ -71,7 +71,7 @@ test("addKyselyMigrations", async () => {
   expect(builder.addService).toHaveBeenCalledTimes(5);
   for (const [name, fn] of vi.mocked(builder.addService).mock.calls) {
     expect(name).toBe("test");
-    expect(fn(services)).toBeInstanceOf(Migrator);
+    expect(fn(deps)).toBeInstanceOf(Migrator);
   }
 });
 

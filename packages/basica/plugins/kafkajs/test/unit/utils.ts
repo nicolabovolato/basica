@@ -4,7 +4,7 @@ import { vi } from "vitest";
 
 export const logger = loggerFactory({ level: "silent" });
 
-export const services = { logger };
+export const deps = { logger };
 
 export const hcManager = {
   healthcheck: vi.fn(),

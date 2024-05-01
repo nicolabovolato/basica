@@ -4,7 +4,7 @@ import { beforeEach, expect, test, vi } from "vitest";
 
 import { AMQPClient } from "src/client";
 import { AMQPQueueConsumerEntrypoint } from "src/lifecycle/entrypoint";
-import { hcManager, logger, services } from "../utils";
+import { deps, hcManager, logger } from "../utils";
 
 const client = new AMQPClient(
   {
@@ -19,7 +19,7 @@ beforeEach(() => {
 });
 
 test("addAMQPConsumer", async () => {
-  const builder = new LifecycleManagerBuilder(services);
+  const builder = new LifecycleManagerBuilder(deps);
   vi.spyOn(builder, "addEntrypoint");
   vi.spyOn(builder, "addService");
 
@@ -45,13 +45,13 @@ test("addAMQPConsumer", async () => {
   expect(builder.addService).toHaveBeenCalledTimes(1);
   for (const [name, fn] of vi.mocked(builder.addService).mock.calls) {
     expect(name).toBe("amqp:client:test");
-    expect(fn(services)).toBeInstanceOf(AMQPClient);
+    expect(fn(deps)).toBeInstanceOf(AMQPClient);
   }
 
   expect(builder.addEntrypoint).toHaveBeenCalledTimes(2);
   for (const [name, fn] of vi.mocked(builder.addEntrypoint).mock.calls) {
     expect(name).toBe("test");
-    expect(fn(services, hcManager)).toBeInstanceOf(AMQPQueueConsumerEntrypoint);
+    expect(fn(deps, hcManager)).toBeInstanceOf(AMQPQueueConsumerEntrypoint);
   }
 });
 

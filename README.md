@@ -37,7 +37,8 @@ const container = new IocContainer()
 const app = new AppBuilder(container)
   // Lifecycle management
   .configureLifecycle((b, c) => b
-    .addHealthcheck("svc", (c) => c.svc)   // Healthchecks
+    // Healthchecks
+    .addHealthcheck("svc", (c) => c.svc)
     // Plugins
     .with(lifecyclePlugin, (b) => b
       .addFastifyEntrypoint("http", (f) => f

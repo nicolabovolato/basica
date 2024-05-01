@@ -1,4 +1,4 @@
-export { AppBuilder, AppRequiredServices } from "./service";
+export { AppBuilder, AppRequiredDeps } from "./service";
 
 export {
   HealthcheckResult,

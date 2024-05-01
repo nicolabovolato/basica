@@ -21,7 +21,7 @@ export class Client
    *     connectionString: "postgres://localhost:5432"
    *     connectionTimeoutMillis: 5000
    *   },
-   *   services.logger
+   *   deps.logger
    * )
    * @example
    * new Client(
@@ -29,7 +29,7 @@ export class Client
    *     connectionString: "postgres://localhost:5432"
    *     connectionTimeoutMillis: 5000
    *   },
-   *   services.logger,
+   *   deps.logger,
    *   "db"
    * )
    */

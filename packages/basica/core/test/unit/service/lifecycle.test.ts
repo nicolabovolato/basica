@@ -1,6 +1,6 @@
 import { setTimeout } from "node:timers/promises";
 import { loggerFactory } from "src/logger";
-import { AppRequiredServices } from "src/service";
+import { AppRequiredDeps } from "src/service";
 import {
   LifecycleManager,
   LifecycleManagerBuilder,
@@ -13,7 +13,7 @@ const config: LifecycleManagerConfig = {
   startupTimeoutMs: 1000,
   shutdownTimeoutMs: 1000,
 };
-const services = { logger } satisfies AppRequiredServices;
+const deps = { logger } satisfies AppRequiredDeps;
 
 // let mockExit: MockInstance<Parameters<typeof process.exit>, never[]>;
 
@@ -39,7 +39,7 @@ test("builder", async () => {
   const healthcheck1 = vi.fn().mockResolvedValue({ status: "healthy" });
   const healthcheck2 = vi.fn().mockResolvedValue({ status: "unhealthy" });
 
-  const m = new LifecycleManagerBuilder(services, config)
+  const m = new LifecycleManagerBuilder(deps, config)
     .addEntrypoint("entrypoint", () => ({
       start: start1,
       shutdown: shutdown1,

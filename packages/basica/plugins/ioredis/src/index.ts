@@ -1,12 +1,12 @@
-export { RedisWrapper } from "./redis";
 export { ClusterWrapper } from "./cluster";
+export { RedisWrapper } from "./redis";
 
 export {
-  RedisWrapperConfig,
   ClusterWrapperConfig,
-  redisWrapperConfigSchema,
+  RedisWrapperConfig,
   clusterWrapperConfigSchema,
+  redisWrapperConfigSchema,
 } from "./config";
 
+export { RedisSubscriberEntrypoint, SubscribeFn } from "./lifecycle/entrypoint";
 export { lifecyclePlugin } from "./lifecycle/plugin";
-export { SubscribeFn } from "./lifecycle/entrypoint";

@@ -1,0 +1,250 @@
+---
+sidebar_position: 7
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Testing
+
+## Testing
+
+Implementing unit and integration tests is a proven way to make sure that your application behaves the way you expect it to.
+In many frameworks this is often a cumbersome and complicated experience, but not in Basica.
+You are always free to test your own code any way you want to, and if you need to test the interactions with Basica we got you covered.
+
+Let's take the following application as a starting example.
+
+```ts title="sample.ts"
+import { ILogger } from "@basica/core/logger"
+import { IStartup } from "@basica/core"
+
+export type Config = {
+    msg: string
+}
+
+export const createSample = (logger: ILogger, config: Config) => ({
+    start: async () => {
+        deps.logger.info(config.msg);
+    },
+    sum: (n1: number, n2: number) => n1 + n2,
+}) satisfies IStartup & Record<string, unknown>;
+
+```
+
+```ts title="index.ts"
+import { loggerFactory } from "@basica/core/logger"
+import { IocContainer } from "@basica/core/ioc"
+import { configure, envProvider } from "@basica/config"
+
+import { Type } from "@sinclair/typebox"
+
+import { createSample } from "./sample"
+
+const config = configure(
+    envProvider(),
+    Type.Object({
+        logger: loggerConfigSchema,
+        sample: Type.Object({
+            msg: Type.String()
+        })
+    })
+)
+
+const container = new IocContainer()
+    .addSingleton("logger", () => loggerFactory(config.logger))
+    .addSingleton("sample", (deps) => createSample(deps.logger, config.sample))
+
+const app = new AppBuilder(container)
+    .configureLifecycle((b) => b
+        .addService("sample", (deps) => deps.sample)
+    )
+    .build()
+
+app.run()
+```
+
+We are of course, free from any constraint when trying to test sample.ts. Using vitest we could write the following:
+
+```ts title="sample.test.ts"
+
+import { loggerFactory } from "@basica/core/logger"
+
+import { expect, test, vi, beforeEach } from "vitest"
+
+import { createSample, Config } from "./sample"
+
+const logger = loggerFactory({ level: "silent" })
+const config = { msg: "Hello" } satisfies Config
+const sample = createSample(logger, config)
+
+beforeEach(() => {
+    vi.clearAllMocks()
+})
+
+test("start", async () => {
+    const spy = vi.spyOn(logger, "info")
+
+    expect(spy).toHaveBeenCalledWith(config.msg)
+})
+
+test.each([
+    [2,  2,   4]
+    [1, -1,   0]
+    [1, -10, -9]
+])("sum %d + %d = %d", (n1, n2, expected) => {
+    const result = sample.sum(n1, n2) 
+
+    expect(result).toEqual(expected)
+})
+
+```
+
+## Testing With Basica
+
+But what if we want to test the wiring with Basica?
+We can easily do that by first moving the application boostrap in its own file.
+
+```ts title="app.ts"
+import { loggerFactory, loggerConfigSchema } from "@basica/core/logger"
+import { IocContainer } from "@basica/core/ioc"
+import { AppBuilder } from "@basica/core"
+import { configure, envProvider, ConfigProvider } from "@basica/config"
+
+import { Static, Type } from "@sinclair/typebox"
+
+import { createSample } from "./sample"
+
+const configSchema = Type.Object({
+    logger: loggerConfigSchema,
+    sample: Type.Object({
+        msg: Type.String()
+    })
+})
+
+export type Config = Static<typeof configSchema>
+
+export const getApp = (provider: ConfigProvider = envProvider()) => {
+    const config = configure(provider, configSchema);
+
+    const container = new IocContainer()
+        .addSingleton("logger", () => loggerFactory(config.logger))
+        .addSingleton("sample", (deps) => createSample(deps.logger, config.sample))
+
+    return new AppBuilder(container)
+        .configureLifecycle((b) => b
+            .addService("sample", (deps) => deps.sample)
+        )
+        .build()
+}
+```
+
+```ts title="index.ts"
+import { Type } from "@sinclair/typebox"
+
+import { getApp } from "./app"
+
+const app = getApp()
+
+app.run()
+```
+
+Now, we can call getApp in our tests, passing another config provider.
+
+```ts title="testConfig.ts"
+import { ConfigProvider } from "@basica/config"
+import { Config } from "./app"
+
+export const config = {
+    sample: {
+        msg: "Hello",
+    },
+    logger: {
+        level: "silent",
+    },
+} satisfies Config
+
+export const testConfigProvider = {
+    get: () => config,
+} satisfies ConfigProvider
+```
+
+We are now able to check if the service starts and stops correctly.
+We can also use the other exposed properties to check if our service was called properly during the startup.
+
+```ts title="app.test.ts"
+import { expect, test, vi, beforeEach } from "vitest"
+
+import { getApp } from "./app"
+import { config, testConfigProvider } from "./testConfig"
+
+beforeEach(() => {
+    vi.clearAllMocks()
+})
+
+test("start/stop", async () => {
+    const app = getApp(testConfigProvider)
+    
+    const started = await app.lifecycle.start();
+    const stopped = await app.lifecycle.stop();
+
+    expect(started).toBe(true)
+    expect(stopped).toBe(true)
+})
+
+test("sample called correctly", async () => {
+    const app = getApp(testConfigProvider)
+
+    // app exposes deps, healthchecks, services and entrypoints
+    const spy = vi.spyOn(app.services.sample, "start")
+
+    await app.lifecycle.start();
+
+    expect(spy).toHaveBeenCalledWith(config.msg)
+})
+
+```
+
+:::note
+App does not infer the type of healthchecks/services/entrypoints registered by Plugins. Manual casting is required.
+
+```ts title="app.ts"
+import { lifecyclePlugin } from "@basica/fastify"
+
+//...
+
+export const getApp = (provider: ConfigProvider = envProvider()) => {
+
+    // ...
+    return new AppBuilder(container)
+        .configureLifecycle((b) => b
+            .with(lifecyclePlugin, (b) => 
+                b.addFastifyEntrypoint("http", (b) => {
+                    //...
+                })
+            )
+        )
+        .build()
+}
+```
+
+```ts title="app.test.ts"
+import { FastifyEntrypoint } from "@basica/fastify"
+
+//...
+
+const app = getApp(testConfigProvider)
+
+// app.entrypoints.http = unknown
+const fastify = (app.entrypoints.http as FastifyEntrypoint).fastify
+
+//...
+
+test("GET /hello - 200" async () => {
+    const response = await fastify.inject("/hello")
+    expect(response.statusCode).toEqual(200)
+})
+
+//...
+```
+:::

@@ -1,4 +1,4 @@
-import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 import { Plugin } from "@basica/core/utils";
 
 import { Migrator } from "./migrator";
@@ -13,7 +13,7 @@ import {
 import fs from "node:fs/promises";
 import path from "node:path";
 
-class KyselyLifecyclePlugin<S extends AppRequiredServices> {
+class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
   #lifecycle: LifecycleManagerBuilder<S>;
 
   constructor(lifecycle: LifecycleManagerBuilder<S>) {
@@ -30,20 +30,20 @@ class KyselyLifecyclePlugin<S extends AppRequiredServices> {
    * @example
    * builder.addKyselyMigrations(
    *   "migrations",
-   *   services.db,
+   *   deps.db,
    *   path.join(__dirname, "./migrations")
    * )
    * @example
    * builder.addKyselyMigrations(
    *   "migrations",
-   *   services.db,
+   *   deps.db,
    *   path.join(__dirname, "./migrations"),
    *   { migrationTableName: "migrations" }
    * )
    * @example
    * builder.addKyselyMigrations(
    *   "migrations",
-   *   services.db,
+   *   deps.db,
    *    new FileMigrationProvider({
    *      migrationFolder: path.join(__dirname, "./migrations"),
    *      path,
@@ -53,7 +53,7 @@ class KyselyLifecyclePlugin<S extends AppRequiredServices> {
    * @example
    * builder.addKyselyMigrations(
    *   "migrations",
-   *   services.db,
+   *   deps.db,
    *    new FileMigrationProvider({
    *      migrationFolder: path.join(__dirname, "./migrations"),
    *      path,
@@ -66,14 +66,14 @@ class KyselyLifecyclePlugin<S extends AppRequiredServices> {
    *   "migrations",
    *   new Migrator(
    *     {
-   *       db: services.db,
+   *       db: deps.db,
    *       provider: new FileMigrationProvider({
    *         migrationFolder: path.join(__dirname, "./migrations"),
    *         path,
    *         fs,
    *       }),
    *     },
-   *     services.logger
+   *     deps.logger
    *   )
    * )
    */
@@ -106,7 +106,7 @@ class KyselyLifecyclePlugin<S extends AppRequiredServices> {
                   : provider,
               ...options,
             },
-            this.#lifecycle.services.logger,
+            this.#lifecycle.deps.logger,
             name
           );
 
@@ -117,8 +117,8 @@ class KyselyLifecyclePlugin<S extends AppRequiredServices> {
 }
 
 /** Kysely lifecycle plugin */
-export const lifecyclePlugin = (<S extends AppRequiredServices>(
+export const lifecyclePlugin = (<S extends AppRequiredDeps>(
   base: LifecycleManagerBuilder<S>
 ) => new KyselyLifecyclePlugin(base)) satisfies Plugin<
-  LifecycleManagerBuilder<AppRequiredServices>
+  LifecycleManagerBuilder<AppRequiredDeps>
 >;

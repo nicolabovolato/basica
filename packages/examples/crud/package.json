@@ -11,7 +11,11 @@
     "start": "node dist/src/index.js",
     "dev": "DB_CONNECTIONTIMEOUTMILLIS=1000 DB_CONNECTIONSTRING=postgres://postgres:postgres@localhost:5432/postgres tsx watch --inspect src/index.ts | pino-pretty -c -t",
     "build": "tsup-node src/index.ts migrations/*.ts",
-    "lint": "tsc --noEmit && eslint \"{src,migrations}/**/*.ts\""
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest run --dir test/unit",
+    "test:integration": "vitest run --dir test/integration",
+    "lint": "tsc --noEmit && eslint \"{src,test,migrations}/**/*.ts\""
   },
   "dependencies": {
     "@basica/config": "workspace:^0.0.2",
@@ -28,12 +32,16 @@
   "devDependencies": {
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",
+    "@basica/vitest-config": "workspace:^0.0.0",
+    "@testcontainers/postgresql": "^10.7.2",
     "@types/node": "^20.11.17",
     "@types/pg": "^8.11.0",
+    "@vitest/coverage-v8": "^1.2.2",
     "eslint": "^8.56.0",
     "pino-pretty": "^10.3.1",
     "tsup": "^8.0.2",
     "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
   }
 }
