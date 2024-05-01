@@ -13,9 +13,9 @@ The functionality of Basica's AppBuilder can be extended to provide reusable bui
 <Tabs groupId="ts-style">
   <TabItem value="classes" label="Classes">
     ```ts title="plugin.ts"
-    import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+    import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 
-    class LifecyclePlugin<S extends AppRequiredServices> {
+    class LifecyclePlugin<S extends AppRequiredDeps> {
       constructor(readonly lifecycle: LifecycleManagerBuilder<S>) {}
 
       newMethod() {
@@ -23,7 +23,7 @@ The functionality of Basica's AppBuilder can be extended to provide reusable bui
       }
     }
 
-    export const lifecyclePlugin = <S extends AppRequiredServices>(
+    export const lifecyclePlugin = <S extends AppRequiredDeps>(
       lifecycle: LifecycleManagerBuilder<S>
     ) => new LifecyclePlugin(lifecycle);
     ```
@@ -31,9 +31,9 @@ The functionality of Basica's AppBuilder can be extended to provide reusable bui
   </TabItem>
   <TabItem value="objects" label="Object Factory">
     ```ts title="sampleService.ts"
-    import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+    import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 
-    export const lifecyclePlugin = <S extends AppRequiredServices>(
+    export const lifecyclePlugin = <S extends AppRequiredDeps>(
       lifecycle: LifecycleManagerBuilder<S>
     ) => ({
       newMethod: () => {

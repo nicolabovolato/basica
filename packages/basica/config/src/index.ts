@@ -40,3 +40,4 @@ const safeParse = <T extends TObject>(T: T, value: unknown) => {
 };
 
 export { envProvider } from "./env";
+export { ConfigProvider } from "./utils";

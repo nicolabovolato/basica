@@ -1,6 +1,6 @@
 import { IHealthcheck, IShutdown } from "@basica/core";
 import { ILogger } from "@basica/core/logger";
-import { Kysely as KyselyDatabase, KyselyConfig, sql } from "kysely";
+import { KyselyConfig, Kysely as KyselyDatabase, sql } from "kysely";
 
 /** Kysely database */
 export class Kysely<T>
@@ -20,7 +20,7 @@ export class Kysely<T>
    *       pool: new Pool({ connectionString: "postgres://localhost:5432" })
    *     })
    *   },
-   *   services.logger
+   *   deps.logger
    * )
    * @example
    * new Kysely<DB>(
@@ -29,7 +29,7 @@ export class Kysely<T>
    *       pool: new Pool({ connectionString: "postgres://localhost:5432" })
    *     })
    *   },
-   *   services.logger,
+   *   deps.logger,
    *   "db"
    * )
    */

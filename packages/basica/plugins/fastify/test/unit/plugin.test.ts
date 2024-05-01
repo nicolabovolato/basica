@@ -3,14 +3,14 @@ import { lifecyclePlugin } from "src/plugin";
 import { beforeEach, expect, test, vi } from "vitest";
 
 import { FastifyEntrypoint } from "src/entrypoint";
-import { hcManager, services } from "./utils";
+import { deps, hcManager } from "./utils";
 
 beforeEach(() => {
   vi.restoreAllMocks();
 });
 
 test("addFastifyEntrypoint", async () => {
-  const builder = new LifecycleManagerBuilder(services);
+  const builder = new LifecycleManagerBuilder(deps);
   vi.spyOn(builder, "addEntrypoint");
 
   builder.with(lifecyclePlugin, (builder) =>
@@ -26,7 +26,7 @@ test("addFastifyEntrypoint", async () => {
   expect(builder.addEntrypoint).toHaveBeenCalledTimes(2);
   for (const [name, fn] of vi.mocked(builder.addEntrypoint).mock.calls) {
     expect(name).toBe("test");
-    expect(fn(services, hcManager)).toBeInstanceOf(FastifyEntrypoint);
+    expect(fn(deps, hcManager)).toBeInstanceOf(FastifyEntrypoint);
   }
 });
 

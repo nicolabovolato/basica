@@ -1,10 +1,10 @@
-import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 import { Plugin } from "@basica/core/utils";
 
-import { FastifyConfig } from "./config";
 import { FastifyEntrypointBuilder } from "./builder";
+import { FastifyConfig } from "./config";
 
-class FastifyLifecyclePlugin<S extends AppRequiredServices> {
+class FastifyLifecyclePlugin<S extends AppRequiredDeps> {
   readonly #lifecycle: LifecycleManagerBuilder<S>;
   constructor(lifecycle: LifecycleManagerBuilder<S>) {
     this.#lifecycle = lifecycle;
@@ -33,27 +33,27 @@ class FastifyLifecyclePlugin<S extends AppRequiredServices> {
    */
   addFastifyEntrypoint<B extends FastifyEntrypointBuilder<S>>(
     name: string,
-    fn: (builder: B, services: S) => B
+    fn: (builder: B, deps: S) => B
   ): this;
   addFastifyEntrypoint<B extends FastifyEntrypointBuilder<S>>(
     name: string,
     config: FastifyConfig,
-    fn: (builder: B, services: S) => B
+    fn: (builder: B, deps: S) => B
   ): this;
   addFastifyEntrypoint<
     B extends FastifyEntrypointBuilder<S>,
-    Fn extends (builder: B, services: S) => B,
+    Fn extends (builder: B, deps: S) => B,
   >(name: string, configOrFn: FastifyConfig | Fn, maybeFn?: Fn) {
     const fn = typeof configOrFn === "object" ? maybeFn! : configOrFn;
     const config = typeof configOrFn === "object" ? configOrFn : undefined;
 
     const builder = new FastifyEntrypointBuilder(
-      this.#lifecycle.services,
+      this.#lifecycle.deps,
       this.#lifecycle.healthchecks,
       name,
       config
     );
-    const entrypoint = fn(builder as B, this.#lifecycle.services).build();
+    const entrypoint = fn(builder as B, this.#lifecycle.deps).build();
 
     this.#lifecycle.addEntrypoint(name, () => entrypoint);
 
@@ -62,8 +62,8 @@ class FastifyLifecyclePlugin<S extends AppRequiredServices> {
 }
 
 /** Fastify lifecycle plugin */
-export const lifecyclePlugin = (<S extends AppRequiredServices>(
+export const lifecyclePlugin = (<S extends AppRequiredDeps>(
   lifecycle: LifecycleManagerBuilder<S>
 ) => new FastifyLifecyclePlugin(lifecycle)) satisfies Plugin<
-  LifecycleManagerBuilder<AppRequiredServices>
+  LifecycleManagerBuilder<AppRequiredDeps>
 >;

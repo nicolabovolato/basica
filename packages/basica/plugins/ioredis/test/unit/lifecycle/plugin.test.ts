@@ -4,7 +4,7 @@ import { beforeEach, expect, test, vi } from "vitest";
 
 import { RedisSubscriberEntrypoint } from "src/lifecycle/entrypoint";
 import { RedisWrapper } from "src/redis";
-import { hcManager, logger, services } from "../utils";
+import { deps, hcManager, logger } from "../utils";
 
 const wrapper = new RedisWrapper(
   {
@@ -19,7 +19,7 @@ beforeEach(() => {
 });
 
 test("addRedisSubscriber", async () => {
-  const builder = new LifecycleManagerBuilder(services);
+  const builder = new LifecycleManagerBuilder(deps);
   vi.spyOn(builder, "addEntrypoint");
 
   builder.with(lifecyclePlugin, (builder) =>
@@ -38,7 +38,7 @@ test("addRedisSubscriber", async () => {
   expect(builder.addEntrypoint).toHaveBeenCalledTimes(2);
   for (const [name, fn] of vi.mocked(builder.addEntrypoint).mock.calls) {
     expect(name).toBe("test");
-    expect(fn(services, hcManager)).toBeInstanceOf(RedisSubscriberEntrypoint);
+    expect(fn(deps, hcManager)).toBeInstanceOf(RedisSubscriberEntrypoint);
   }
 });
 

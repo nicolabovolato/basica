@@ -1,17 +1,17 @@
-import { TodoService } from "./service";
 import {
   FastifyPluginAsyncTypebox,
   Type,
 } from "@fastify/type-provider-typebox";
+import { TodoService } from "./service";
 
 const todo = Type.Object({
   id: Type.String({ format: "uuid" }),
   title: Type.String({ minLength: 0 }),
-  description: Type.Union([Type.String({ minLength: 0 }), Type.Null()]),
+  description: Type.Union([Type.Null(), Type.String({ minLength: 0 })]),
   completed: Type.Boolean(),
   created_at: Type.String({ format: "date-time" }),
   updated_at: Type.String({ format: "date-time" }),
-  deleted_at: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
+  deleted_at: Type.Union([Type.Null(), Type.String({ format: "date-time" })]),
 });
 
 const updateableTodo = Type.Omit(todo, [

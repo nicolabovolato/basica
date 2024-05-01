@@ -4,7 +4,7 @@ import { FastifyEntrypointBuilder } from "src/builder";
 import { mapHealthchecksConfigSchema } from "src/config";
 import { beforeEach, expect, test, vi } from "vitest";
 
-import { hcManager, services } from "./utils";
+import { deps, hcManager } from "./utils";
 
 const name = "fastify";
 
@@ -54,7 +54,7 @@ test.each([
 ][])("healthchecks", async (config, healthcheckResult, expected, filterFn) => {
   hcManager.healthcheck.mockResolvedValue(healthcheckResult);
 
-  const entrypoint = new FastifyEntrypointBuilder(services, hcManager, name)
+  const entrypoint = new FastifyEntrypointBuilder(deps, hcManager, name)
     .mapHealthchecks(config, filterFn)
     .build();
 
@@ -122,7 +122,7 @@ test.each([
     },
   ],
 ])("mapErrors", async (err, status, body) => {
-  const entrypoint = new FastifyEntrypointBuilder(services, hcManager, name)
+  const entrypoint = new FastifyEntrypointBuilder(deps, hcManager, name)
     .configureApp((app) =>
       app
         .mapErrors((e) =>
@@ -144,7 +144,7 @@ test.each([
 });
 
 test("useOpenapi", async () => {
-  const entrypoint = new FastifyEntrypointBuilder(services, hcManager, name)
+  const entrypoint = new FastifyEntrypointBuilder(deps, hcManager, name)
     .configureApp((app) => app.useOpenapi().fastify.get("/", () => "OK"))
     .build();
 
@@ -154,7 +154,7 @@ test("useOpenapi", async () => {
 });
 
 test("mapRoutes", async () => {
-  const entrypoint = new FastifyEntrypointBuilder(services, hcManager, name)
+  const entrypoint = new FastifyEntrypointBuilder(deps, hcManager, name)
     .configureApp((app) =>
       app
         .mapRoutes("/test", (app) =>

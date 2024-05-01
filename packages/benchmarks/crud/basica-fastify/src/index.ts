@@ -32,26 +32,26 @@ const container = new IocContainer()
   .addSingleton("logger", () => loggerFactory())
   .addSingleton(
     "db",
-    (services) =>
+    (deps) =>
       new Kysely<Database>(
         {
           dialect: new PostgresDialect({
             pool: new Pool(config.db),
           }),
         },
-        services.logger
+        deps.logger
       )
   )
-  .addSingleton("todos", (services) => new TodoService(services.db));
+  .addSingleton("todos", (deps) => new TodoService(deps.db));
 
 const app = new AppBuilder(container)
-  .configureLifecycle((builder, services) =>
+  .configureLifecycle((builder, deps) =>
     builder
-      .addService("db", () => services.db)
+      .addService("db", () => deps.db)
       .with(kyselyLifecyclePlugin, (builder) =>
         builder.addKyselyMigrations(
           "migrations",
-          services.db,
+          deps.db,
           __dirname + "/../migrations"
         )
       )
@@ -66,7 +66,7 @@ const app = new AppBuilder(container)
                     .mapError(NotFoundError, 404)
                     .mapError(ConflictError, 409)
                 )
-                .fastify.register(routes(services.todos))
+                .fastify.register(routes(deps.todos))
             )
             .mapHealthchecks()
         )

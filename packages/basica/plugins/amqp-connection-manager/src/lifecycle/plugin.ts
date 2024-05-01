@@ -1,11 +1,11 @@
-import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 import { Plugin } from "@basica/core/utils";
 
 import { AMQPClient } from "../client";
 import { AMQPClientConfig } from "../config";
 import { AMQPQueueConsumerEntrypoint, EntrypointConfig } from "./entrypoint";
 
-class AMQPLifecyclePlugin<S extends AppRequiredServices> {
+class AMQPLifecyclePlugin<S extends AppRequiredDeps> {
   readonly #lifecycle: LifecycleManagerBuilder<S>;
   constructor(lifecycle: LifecycleManagerBuilder<S>) {
     this.#lifecycle = lifecycle;
@@ -19,7 +19,7 @@ class AMQPLifecyclePlugin<S extends AppRequiredServices> {
    * @param clientConfig amqp client config {@link AMQPClientConfig}
    * @param config config {@link EntrypointConfig}
    * @example
-   * builder.addAMQPConsumer("consumer", services.client, {
+   * builder.addAMQPConsumer("consumer", deps.client, {
    *   handler: async () => {
    *     //...
    *   },
@@ -62,7 +62,7 @@ class AMQPLifecyclePlugin<S extends AppRequiredServices> {
     if (!client) {
       client = new AMQPClient(
         clientOrClientConfig as AMQPClientConfig,
-        this.#lifecycle.services.logger,
+        this.#lifecycle.deps.logger,
         `consumer:${name}`
       );
 
@@ -74,11 +74,11 @@ class AMQPLifecyclePlugin<S extends AppRequiredServices> {
 
     this.#lifecycle.addEntrypoint(
       name,
-      (services) =>
+      (deps) =>
         new AMQPQueueConsumerEntrypoint(
           name,
           client as AMQPClient,
-          services.logger,
+          deps.logger,
           config
         )
     );
@@ -88,8 +88,8 @@ class AMQPLifecyclePlugin<S extends AppRequiredServices> {
 }
 
 /** AMQP lifecycle plugin */
-export const lifecyclePlugin = (<S extends AppRequiredServices>(
+export const lifecyclePlugin = (<S extends AppRequiredDeps>(
   lifecycle: LifecycleManagerBuilder<S>
 ) => new AMQPLifecyclePlugin(lifecycle)) satisfies Plugin<
-  LifecycleManagerBuilder<AppRequiredServices>
+  LifecycleManagerBuilder<AppRequiredDeps>
 >;

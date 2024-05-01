@@ -32,7 +32,7 @@ test.todo("app ok", async () => {
   lifecycle.start.mockResolvedValue(true);
   lifecycle.stop.mockResolvedValue(true);
 
-  const app = new App(logger, lifecycle);
+  const app = new App({ logger }, {}, {}, {}, lifecycle);
   await app.run();
 
   expect(lifecycle.start).toHaveBeenCalledOnce();

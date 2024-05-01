@@ -1,7 +1,7 @@
 import { Kysely } from "kysely";
 import { DatabaseError } from "pg";
-import { randomUUID } from "crypto";
 
+import { randomUUID } from "crypto";
 import { Database, NewTodo, Todo, UpdatedTodo } from "./db";
 
 export class NotFoundError extends Error {
@@ -12,7 +12,11 @@ export class ConflictError extends Error {
 }
 
 export class TodoService {
-  constructor(readonly db: Kysely<Database>) {}
+  constructor(
+    readonly db: Kysely<Database>,
+    readonly uuidFn = randomUUID as () => string,
+    readonly nowFn = () => new Date()
+  ) {}
 
   async getAll(offset: number, limit: number, showDeleted: boolean) {
     let query = this.db
@@ -40,8 +44,8 @@ export class TodoService {
   async create(
     todo: Omit<NewTodo, "id" | "completed" | "created_at" | "updated_at">
   ) {
-    const id = randomUUID();
-    const now = new Date().toISOString();
+    const id = this.uuidFn();
+    const now = this.nowFn().toISOString();
 
     try {
       return await this.db
@@ -59,6 +63,7 @@ export class TodoService {
       if (err instanceof DatabaseError && err.code == "23505") {
         throw new ConflictError(`Todo ${id} already exists`);
       }
+      throw err;
     }
   }
 
@@ -66,7 +71,7 @@ export class TodoService {
     todo: Pick<Todo, "id"> &
       Omit<UpdatedTodo, "id" | "created_at" | "updated_at">
   ) {
-    const now = new Date().toISOString();
+    const now = this.nowFn().toISOString();
 
     return await this.db
       .updateTable("todos")
@@ -80,7 +85,7 @@ export class TodoService {
 
   async delete(id: Todo["id"], forceDelete: boolean) {
     if (!forceDelete) {
-      return await this.update({ id, deleted_at: new Date().toISOString() });
+      return await this.update({ id, deleted_at: this.nowFn().toISOString() });
     }
 
     return await this.db

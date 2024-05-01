@@ -1,4 +1,4 @@
-import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 import { Plugin } from "@basica/core/utils";
 import { ClusterWrapper, RedisWrapper } from "@basica/ioredis";
 
@@ -8,7 +8,7 @@ import { Cluster, Redis } from "ioredis";
 import { WorkerConfig, isClusterWrapperConfig } from "../config";
 import { BullMqWorkerEntrypoint } from "./entrypoint";
 
-class BullMqLifecyclePlugin<S extends AppRequiredServices> {
+class BullMqLifecyclePlugin<S extends AppRequiredDeps> {
   readonly #lifecycle: LifecycleManagerBuilder<S>;
   constructor(lifecycle: LifecycleManagerBuilder<S>) {
     this.#lifecycle = lifecycle;
@@ -71,12 +71,12 @@ class BullMqLifecyclePlugin<S extends AppRequiredServices> {
       const wrapper = isClusterWrapperConfig(connection)
         ? new ClusterWrapper(
             connection,
-            this.#lifecycle.services.logger,
+            this.#lifecycle.deps.logger,
             `bullmq:${name}`
           )
         : new RedisWrapper(
             connection,
-            this.#lifecycle.services.logger,
+            this.#lifecycle.deps.logger,
             `bullmq:${name}`
           );
       connection = wrapper.ioredis;
@@ -85,8 +85,8 @@ class BullMqLifecyclePlugin<S extends AppRequiredServices> {
 
     this.#lifecycle.addEntrypoint(
       name,
-      (services) =>
-        new BullMqWorkerEntrypoint(services.logger, name, queueName, fn, {
+      (deps) =>
+        new BullMqWorkerEntrypoint(deps.logger, name, queueName, fn, {
           ...config,
           connection,
         })
@@ -96,8 +96,8 @@ class BullMqLifecyclePlugin<S extends AppRequiredServices> {
 }
 
 /** BullMQ lifecycle plugin */
-export const lifecyclePlugin = (<S extends AppRequiredServices>(
+export const lifecyclePlugin = (<S extends AppRequiredDeps>(
   lifecycle: LifecycleManagerBuilder<S>
 ) => new BullMqLifecyclePlugin(lifecycle)) satisfies Plugin<
-  LifecycleManagerBuilder<AppRequiredServices>
+  LifecycleManagerBuilder<AppRequiredDeps>
 >;

@@ -1,13 +1,16 @@
 import { Static, Type } from "@sinclair/typebox";
 
 import { SpanStatusCode } from "@opentelemetry/api";
+
+import { IocContainer } from "src/ioc";
 import { ILogger } from "src/logger";
 import { abortable, Plugin } from "src/utils";
 import { tracer } from "src/utils/tracer";
-import { AppRequiredServices } from ".";
+import { AppRequiredDeps } from ".";
 import {
   HealthcheckManager,
   healthcheckManagerConfigSchema,
+  HealthcheckServices,
   IHealthcheck,
   IHealthcheckManager,
 } from "./healthcheck";
@@ -85,23 +88,6 @@ export class LifecycleManager implements ILifecycleManager {
 
     this.#collection.push({ items: services, name: "service" });
     this.#collection.push({ items: entrypoints, name: "entrypoint" });
-
-    this.#validateItems();
-  }
-
-  #validateItems() {
-    for (const x of this.#collection) {
-      const names = new Set();
-      for (const item of x.items) {
-        if (names.has(item.name)) {
-          this.#logger.warn(
-            { [x.name]: item.name },
-            `Duplicate ${x.name} name: ${item.name}`
-          );
-        }
-        names.add(item.name);
-      }
-    }
   }
 
   // TODO: it is not clear that among n services only some of them have "start", so starting 1/1 service(s) when you register 2 services is confusing
@@ -319,19 +305,29 @@ export class LifecycleManager implements ILifecycleManager {
 
 type NotIHealthcheck = { healthcheck?: never };
 
-export class LifecycleManagerBuilder<S extends AppRequiredServices> {
-  readonly #svcs: Item[] = [];
-  readonly #entrypoints: Item[] = [];
+export type LifecycleServices = Record<string, unknown>;
+export type LifecycleEntrypoints = Record<string, unknown>;
+
+export class LifecycleManagerBuilder<
+  D extends AppRequiredDeps = AppRequiredDeps,
+  H extends HealthcheckServices = HealthcheckServices,
+  S extends LifecycleServices = LifecycleServices,
+  E extends LifecycleEntrypoints = LifecycleEntrypoints,
+> {
+  readonly #logger: ILogger;
+  readonly #services = new IocContainer<S>();
+  readonly #entrypoints = new IocContainer<E>();
   readonly #config: Partial<LifecycleManagerBuilderConfig> | undefined;
-  readonly #healthchecks: HealthcheckManager;
+  readonly #healthchecks: HealthcheckManager<H>;
 
   constructor(
-    readonly services: S,
+    readonly deps: D,
     config?: Partial<LifecycleManagerBuilderConfig>
   ) {
+    this.#logger = deps.logger.child({ name: "@basica:app:lifecycle" });
     this.#config = config;
     this.#healthchecks = new HealthcheckManager(
-      services.logger,
+      deps.logger,
       this.#config?.healthcheckTimeoutMs
         ? {
             healthcheckTimeoutMs: this.#config?.healthcheckTimeoutMs,
@@ -341,58 +337,88 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
   }
 
   get healthchecks() {
-    return this.#healthchecks as IHealthcheckManager;
+    return this.#healthchecks;
+  }
+
+  get services() {
+    return this.#services.items;
+  }
+
+  get entrypoints() {
+    return this.#entrypoints.items;
   }
 
   /**
    * Register an healthcheck in the application lifecycle
    * @example
-   * builder.addHealthcheck("downstream-service", (services) => services.downstreamService)
+   * builder.addHealthcheck("downstream-service", (deps) => deps.downstreamService)
    */
-  addHealthcheck(name: string, fn: (services: S) => IHealthcheck) {
-    const svc = fn(this.services);
-    this.#healthchecks.addHealthcheck(name, svc);
-    return this;
+  addHealthcheck<K extends string, V extends IHealthcheck>(
+    name: K,
+    fn: (deps: D) => V
+  ) {
+    const svc = fn(this.deps);
+    const hcs = this.#healthchecks.addHealthcheck(name, svc).healthchecks;
+    return this as LifecycleManagerBuilder<D, typeof hcs, S, E>;
   }
 
   /**
    * Registers a service in the application lifecycle
    * @example
-   * builder.addService("db", (services) => services.db)
+   * builder.addService("db", (deps) => deps.db)
    */
-  addService(
-    name: string,
-    fn: (
-      services: S
-    ) => (IStartup | IShutdown | (IStartup & IShutdown)) &
-      (IHealthcheck | NotIHealthcheck)
-  ) {
-    const svc = fn(this.services);
-    this.#svcs.push({ name, svc });
-    if (svc.healthcheck) return this.addHealthcheck(name, () => svc);
-    return this;
+  addService<
+    K extends string,
+    V extends (IStartup | IShutdown | (IStartup & IShutdown)) &
+      (IHealthcheck | NotIHealthcheck),
+  >(name: K, fn: (deps: D) => V) {
+    if (name in this.services) {
+      this.#logger.warn(
+        "Duplicate service name, previous value will be overwritten",
+        { name }
+      );
+    }
+
+    const svc = fn(this.deps);
+    const svcs = this.#services.addSingleton(name, () => svc).items;
+
+    if (svc.healthcheck) this.addHealthcheck(name, () => svc as IHealthcheck);
+    return this as unknown as LifecycleManagerBuilder<
+      D,
+      V extends IHealthcheck ? H & { readonly [P in K]: V } : H,
+      typeof svcs,
+      E
+    >;
   }
 
   /**
    * Registers an entrypoint in the application lifecycle
    * @example
-   * builder.addEntrypoint("db", (services) => services.db)
+   * builder.addEntrypoint("db", (deps) => deps.db)
    */
-  addEntrypoint(
-    name: string,
-    fn: (
-      services: S,
-      healthchecks: IHealthcheckManager
-    ) => IEntrypoint & (IHealthcheck | NotIHealthcheck)
-  ) {
-    const entrypoint = fn(this.services, this.healthchecks);
-    this.#entrypoints.push({
-      name,
-      svc: entrypoint,
-    });
+  addEntrypoint<
+    K extends string,
+    V extends IEntrypoint & (IHealthcheck | NotIHealthcheck),
+  >(name: K, fn: (deps: D, healthchecks: IHealthcheckManager) => V) {
+    if (name in this.entrypoints) {
+      this.#logger.warn(
+        "Duplicate entrypoint name, previous value will be overwritten",
+        { name }
+      );
+    }
+
+    const entrypoint = fn(this.deps, this.#healthchecks);
+    const svcs = this.#entrypoints.addSingleton(name, () => entrypoint).items;
+
     if (entrypoint.healthcheck)
-      return this.addHealthcheck(name, () => entrypoint);
-    return this;
+      this.addHealthcheck(name, () => entrypoint as IHealthcheck);
+
+    return this as unknown as LifecycleManagerBuilder<
+      D,
+      V extends IHealthcheck ? H & { readonly [P in K]: V } : H,
+      S,
+      typeof svcs
+    >;
   }
 
   /**
@@ -406,12 +432,19 @@ export class LifecycleManagerBuilder<S extends AppRequiredServices> {
   }
 
   build() {
-    this.#healthchecks.buildInPlace();
+    const mapFn = ([k, v]: [Item["name"], Item["svc"]]) => ({
+      name: k,
+      svc: v,
+    });
 
     return new LifecycleManager(
-      this.services.logger,
-      this.#svcs,
-      this.#entrypoints,
+      this.deps.logger,
+      Object.entries(
+        this.#services.items as Record<string, IStartup | IShutdown>
+      ).map(mapFn),
+      Object.entries(
+        this.#entrypoints.items as Record<string, IEntrypoint>
+      ).map(mapFn),
       this.#config
     );
   }

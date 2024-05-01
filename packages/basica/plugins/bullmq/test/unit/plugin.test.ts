@@ -5,14 +5,14 @@ import { beforeEach, expect, test, vi } from "vitest";
 import { ClusterWrapper, RedisWrapper } from "@basica/ioredis";
 import { Job } from "bullmq";
 import { BullMqWorkerEntrypoint } from "src/lifecycle/entrypoint";
-import { hcManager, services } from "./utils";
+import { deps, hcManager } from "./utils";
 
 beforeEach(() => {
   vi.restoreAllMocks();
 });
 
 test("addFastifyEntrypoint", async () => {
-  const builder = new LifecycleManagerBuilder(services);
+  const builder = new LifecycleManagerBuilder(deps);
   vi.spyOn(builder, "addEntrypoint");
   vi.spyOn(builder, "addService");
 
@@ -22,7 +22,7 @@ test("addFastifyEntrypoint", async () => {
       timeout: 1000,
       maxRetriesPerRequest: null,
     },
-    services.logger,
+    deps.logger,
     "ioredis"
   );
 
@@ -91,7 +91,7 @@ test("addFastifyEntrypoint", async () => {
   for (const [name, fn] of vi.mocked(builder.addService).mock.calls) {
     expect(name).toBe("redis:bullmq:test");
     let cls: unknown = RedisWrapper;
-    const service = fn(services);
+    const service = fn(deps);
     if (!(service instanceof RedisWrapper)) {
       cls = ClusterWrapper;
     }
@@ -101,7 +101,7 @@ test("addFastifyEntrypoint", async () => {
   expect(builder.addEntrypoint).toHaveBeenCalledTimes(6);
   for (const [name, fn] of vi.mocked(builder.addEntrypoint).mock.calls) {
     expect(name).toBe("test");
-    expect(fn(services, hcManager)).toBeInstanceOf(BullMqWorkerEntrypoint);
+    expect(fn(deps, hcManager)).toBeInstanceOf(BullMqWorkerEntrypoint);
   }
 });
 

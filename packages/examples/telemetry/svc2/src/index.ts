@@ -1,5 +1,5 @@
-import { AppBuilder } from "@basica/core";
 import { configure, envProvider } from "@basica/config";
+import { AppBuilder } from "@basica/core";
 import { IocContainer } from "@basica/core/ioc";
 import { loggerConfigSchema, loggerFactory } from "@basica/core/logger";
 
@@ -25,11 +25,11 @@ const container = new IocContainer().addSingleton("logger", () =>
 );
 
 const app = new AppBuilder(container)
-  .configureLifecycle((builder, services) =>
+  .configureLifecycle((builder, deps) =>
     builder.with(fastifyLifecyclePlugin, (builder) =>
       builder.addFastifyEntrypoint("http", config.http, (builder) =>
         builder.configureApp((app) =>
-          app.useOpenapi().fastify.register(routes(services.logger))
+          app.useOpenapi().fastify.register(routes(deps.logger))
         )
       )
     )

@@ -1,5 +1,6 @@
 {
   "extends": "@basica/typescript-config/base.json",
+  "include": ["src", "test"],
   "compilerOptions": {
     "module": "Node16",
     "moduleResolution": "Node16",

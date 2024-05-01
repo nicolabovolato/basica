@@ -1,17 +1,17 @@
-import { AppRequiredServices, LifecycleManagerBuilder } from "@basica/core";
+import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 import { Plugin } from "@basica/core/utils";
 
 import { Cluster, Redis } from "ioredis";
 
 import { RedisWrapperConfig } from "../config";
+import { RedisWrapper } from "../redis";
 import { Wrapper } from "../wrapper";
 import { RedisSubscriberEntrypointBuilder } from "./builder";
-import { RedisWrapper } from "../redis";
 
-class RedisLifecyclePlugin<S extends AppRequiredServices> {
-  #lifecycle: LifecycleManagerBuilder<S>;
+class RedisLifecyclePlugin<D extends AppRequiredDeps> {
+  #lifecycle: LifecycleManagerBuilder<D>;
 
-  constructor(lifecycle: LifecycleManagerBuilder<S>) {
+  constructor(lifecycle: LifecycleManagerBuilder<D>) {
     this.#lifecycle = lifecycle;
   }
 
@@ -29,7 +29,7 @@ class RedisLifecyclePlugin<S extends AppRequiredServices> {
    *   })
    * )
    * @example
-   * builder.addRedisSubscriber("worker", services.redis, (builder) =>
+   * builder.addRedisSubscriber("worker", deps.redis, (builder) =>
    *   builder.subscribeTo("channel1", (...) => {
    *     // ...
    *   })
@@ -40,7 +40,7 @@ class RedisLifecyclePlugin<S extends AppRequiredServices> {
     config: RedisWrapperConfig,
     fn: (
       builder: RedisSubscriberEntrypointBuilder<T>,
-      services: S
+      deps: D
     ) => RedisSubscriberEntrypointBuilder<T>
   ): this;
   addRedisSubscriber<T extends Redis | Cluster>(
@@ -48,7 +48,7 @@ class RedisLifecyclePlugin<S extends AppRequiredServices> {
     redisWrapper: Wrapper<T>,
     fn: (
       builder: RedisSubscriberEntrypointBuilder<T>,
-      services: S
+      deps: D
     ) => RedisSubscriberEntrypointBuilder<T>
   ): this;
   addRedisSubscriber<T extends Redis | Cluster>(
@@ -56,7 +56,7 @@ class RedisLifecyclePlugin<S extends AppRequiredServices> {
     redisWrapperOrConfig: Wrapper<T> | RedisWrapperConfig,
     fn: (
       builder: RedisSubscriberEntrypointBuilder<T>,
-      services: S
+      deps: D
     ) => RedisSubscriberEntrypointBuilder<T>
   ) {
     const redisWrapper =
@@ -64,16 +64,16 @@ class RedisLifecyclePlugin<S extends AppRequiredServices> {
         ? redisWrapperOrConfig
         : (new RedisWrapper(
             redisWrapperOrConfig,
-            this.#lifecycle.services.logger,
+            this.#lifecycle.deps.logger,
             name
           ) as Wrapper<T>);
 
     const builder = new RedisSubscriberEntrypointBuilder(
       redisWrapper,
-      this.#lifecycle.services.logger,
+      this.#lifecycle.deps.logger,
       name
     );
-    const entrypoint = fn(builder, this.#lifecycle.services).build();
+    const entrypoint = fn(builder, this.#lifecycle.deps).build();
 
     this.#lifecycle.addEntrypoint(name, () => entrypoint);
     return this;
@@ -81,8 +81,8 @@ class RedisLifecyclePlugin<S extends AppRequiredServices> {
 }
 
 /** Redis lifecycle plugin */
-export const lifecyclePlugin = (<S extends AppRequiredServices>(
+export const lifecyclePlugin = (<S extends AppRequiredDeps>(
   base: LifecycleManagerBuilder<S>
 ) => new RedisLifecyclePlugin(base)) satisfies Plugin<
-  LifecycleManagerBuilder<AppRequiredServices>
+  LifecycleManagerBuilder<AppRequiredDeps>
 >;

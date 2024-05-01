@@ -14,26 +14,26 @@ export class Migrator extends KyselyMigrator implements IStartup {
    * @example
    * new Migrator(
    *   {
-   *     db: services.db,
+   *     db: deps.db,
    *     provider: new FileMigrationProvider({
    *       migrationFolder: path.join(__dirname, "./migrations"),
    *       path,
    *       fs,
    *     }),
    *   },
-   *   services.logger
+   *   deps.logger
    * )
    * @example
    * new Migrator(
    *   {
-   *     db: services.db,
+   *     db: deps.db,
    *     provider: new FileMigrationProvider({
    *       migrationFolder: path.join(__dirname, "./migrations"),
    *       path,
    *       fs,
    *     }),
    *   },
-   *   services.logger,
+   *   deps.logger,
    *   "migrations"
    * )
    */

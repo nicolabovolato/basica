@@ -192,7 +192,7 @@ First, we will slightly modify our service, it's going to return a simple string
                 status: "healthy"
             }
         }
-    }) satisfies IHealthcheck;
+    }) satisfies IHealthcheck & Record<string, unknown>;
     ```
 
   </TabItem>
