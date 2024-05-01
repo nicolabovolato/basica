@@ -1,5 +1,15 @@
 # @basica/bullmq
 
+## 0.0.4
+
+### Patch Changes
+
+- [#11](https://github.com/nicolabovolato/basica/pull/11) [`fc0c82e`](https://github.com/nicolabovolato/basica/commit/fc0c82ed38a8045cbb485241054a230a48a1f70e) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - better typing and testing support
+
+- Updated dependencies [[`fc0c82e`](https://github.com/nicolabovolato/basica/commit/fc0c82ed38a8045cbb485241054a230a48a1f70e)]:
+  - @basica/ioredis@0.0.6
+  - @basica/core@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes
