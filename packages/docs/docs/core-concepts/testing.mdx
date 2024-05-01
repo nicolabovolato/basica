@@ -100,6 +100,8 @@ test.each([
 
 ```
 
+## Testing With Basica
+
 But what if we want to test the wiring with Basica?
 We can easily do that by first moving the application boostrap in its own file.
 
@@ -204,7 +206,7 @@ test("sample called correctly", async () => {
 ```
 
 :::note
-Current limitation: App does not infer the type of healthchecks/services/entrypoints registered by Plugins. Manual casting is required.
+App does not infer the type of healthchecks/services/entrypoints registered by Plugins. Manual casting is required.
 
 ```ts title="app.ts"
 import { lifecyclePlugin } from "@basica/fastify"
