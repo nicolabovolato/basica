@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+User-agent: Googlebot-Image
+User-agent: baiduspider-image
+User-agent: msnbot-media
+User-agent: YandexImages
+Disallow: /img/
+
+Sitemap: https://basica.bovolato.dev/sitemap.xml
+Host: https://basica.bovolato.dev
