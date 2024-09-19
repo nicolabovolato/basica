@@ -16,4 +16,4 @@ jobs:
       - uses: ./.github/actions/base
       - run: pnpm build
       - run: pnpm lint
-      - run: pnpm run test --concurrency=2
+      - run: pnpm run test --concurrency=1
