@@ -10,7 +10,7 @@ export type FastifyRuntimeConfig = Required<
 /**
  * `ignoreTrailingSlash` is `true` by default
  *
- * `ajv.customOptions.removeAdditional` is `"all"` by default
+ * `ajv.customOptions.removeAdditional` is `"failing"` by default
  * @see {@link FastifyServerOptions}
  * */
 export type FastifyConfig = FastifyServerOptions &

@@ -21,7 +21,7 @@ export class FastifyEntrypoint implements IEntrypoint {
       }),
       ajv: {
         customOptions: {
-          removeAdditional: "all",
+          removeAdditional: "failing",
         },
       },
       ignoreTrailingSlash: true,
