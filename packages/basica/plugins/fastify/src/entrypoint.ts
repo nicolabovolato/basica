@@ -16,7 +16,9 @@ export class FastifyEntrypoint implements IEntrypoint {
     this.#runtimeConfig = { host, port };
 
     this.fastify = fastify({
-      logger: logger.child({ name: `@basica:entrypoint:fastify:${name}` }),
+      loggerInstance: logger.child({
+        name: `@basica:entrypoint:fastify:${name}`,
+      }),
       ajv: {
         customOptions: {
           removeAdditional: "all",
