@@ -1,5 +1,11 @@
 # @basica/fastify
 
+## 0.1.0
+
+### Minor Changes
+
+- [#14](https://github.com/nicolabovolato/basica/pull/14) [`baa072d`](https://github.com/nicolabovolato/basica/commit/baa072d792823a51f823ff0121e653ed66547281) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Bump to fastify v5
+
 ## 0.0.4
 
 ### Patch Changes
