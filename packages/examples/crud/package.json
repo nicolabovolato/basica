@@ -1,6 +1,6 @@
 {
   "name": "crud",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "author": "Nicola Bovolato",
   "license": "MIT",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@basica/config": "workspace:^0.0.3",
     "@basica/core": "workspace:^0.0.4",
-    "@basica/fastify": "workspace:^0.0.4",
+    "@basica/fastify": "workspace:^0.1.0",
     "@basica/kysely": "workspace:^0.0.4",
     "@basica/pg": "workspace:^0.0.4",
     "@fastify/type-provider-typebox": "^5.0.0",

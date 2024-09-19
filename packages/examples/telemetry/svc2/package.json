@@ -1,6 +1,6 @@
 {
   "name": "telemetry-svc2",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "author": "Nicola Bovolato",
   "license": "MIT",
@@ -16,7 +16,7 @@
   "dependencies": {
     "@basica/config": "workspace:^0.0.3",
     "@basica/core": "workspace:^0.0.4",
-    "@basica/fastify": "workspace:^0.0.4",
+    "@basica/fastify": "workspace:^0.1.0",
     "@basica/telemetry": "workspace:^0.0.2",
     "@opentelemetry/auto-instrumentations-node": "^0.43.0",
     "@opentelemetry/exporter-prometheus": "^0.49.1",
