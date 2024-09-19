@@ -1,8 +1,8 @@
-import { TodoService } from "./service";
 import {
   FastifyPluginAsyncTypebox,
   Type,
 } from "@fastify/type-provider-typebox";
+import { TodoService } from "./service";
 
 const todo = Type.Object({
   id: Type.String({ format: "uuid" }),

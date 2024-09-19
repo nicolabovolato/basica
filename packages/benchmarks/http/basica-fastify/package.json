@@ -16,7 +16,7 @@
   "dependencies": {
     "@basica/core": "workspace:^0.0.4",
     "@basica/fastify": "workspace:^0.0.4",
-    "fastify": "^4.26.2"
+    "fastify": "^5.0.0"
   },
   "devDependencies": {
     "@basica/eslint-config": "workspace:^0.0.0",

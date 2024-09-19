@@ -616,14 +616,14 @@ importers:
         specifier: workspace:^
         version: link:../../../basica/plugins/pg
       '@fastify/type-provider-typebox':
-        specifier: ^4.0.0
-        version: 4.0.0(@sinclair/typebox@0.32.20)
+        specifier: ^5.0.0
+        version: 5.0.0(@sinclair/typebox@0.32.20)
       '@sinclair/typebox':
         specifier: ^0.32.16
         version: 0.32.20
       fastify:
-        specifier: ^4.26.2
-        version: 4.26.2
+        specifier: ^5.0.0
+        version: 5.0.0
       kysely:
         specifier: ^0.27.2
         version: 0.27.3
@@ -662,11 +662,11 @@ importers:
   packages/benchmarks/crud/fastify:
     dependencies:
       '@fastify/type-provider-typebox':
-        specifier: ^4.0.0
-        version: 4.0.0(@sinclair/typebox@0.32.20)
+        specifier: ^5.0.0
+        version: 5.0.0(@sinclair/typebox@0.32.20)
       fastify:
-        specifier: ^4.26.2
-        version: 4.26.2
+        specifier: ^5.0.0
+        version: 5.0.0
       kysely:
         specifier: ^0.27.2
         version: 0.27.3
@@ -875,8 +875,8 @@ importers:
         specifier: workspace:^0.0.4
         version: link:../../../basica/plugins/fastify
       fastify:
-        specifier: ^4.26.2
-        version: 4.26.2
+        specifier: ^5.0.0
+        version: 5.0.0
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -906,8 +906,8 @@ importers:
   packages/benchmarks/http/fastify:
     dependencies:
       fastify:
-        specifier: ^4.26.2
-        version: 4.26.2
+        specifier: ^5.0.0
+        version: 5.0.0
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -1105,14 +1105,14 @@ importers:
         specifier: workspace:^0.0.4
         version: link:../../basica/plugins/pg
       '@fastify/type-provider-typebox':
-        specifier: ^4.0.0
-        version: 4.0.0(@sinclair/typebox@0.32.20)
+        specifier: ^5.0.0
+        version: 5.0.0(@sinclair/typebox@0.32.20)
       '@sinclair/typebox':
         specifier: ^0.32.16
         version: 0.32.20
       fastify:
-        specifier: ^4.26.2
-        version: 4.26.2
+        specifier: ^5.0.0
+        version: 5.0.0
       kysely:
         specifier: ^0.27.2
         version: 0.27.3
@@ -1187,8 +1187,8 @@ importers:
         specifier: ^0.32.16
         version: 0.32.20
       fastify:
-        specifier: ^4.26.2
-        version: 4.26.2
+        specifier: ^5.0.0
+        version: 5.0.0
       opentelemetry-instrumentation-fetch-node:
         specifier: ^1.1.2
         version: 1.1.2
@@ -1245,8 +1245,8 @@ importers:
         specifier: ^0.32.16
         version: 0.32.20
       fastify:
-        specifier: ^4.26.2
-        version: 4.26.2
+        specifier: ^5.0.0
+        version: 5.0.0
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -2740,10 +2740,10 @@ packages:
   '@fastify/swagger@9.0.0':
     resolution: {integrity: sha512-E7TQbBCbhvS2djGLxJ7t2OFbhc2F+KCsOZCNhh6xQIlJxq9H4ZR5KuLKG+vn6COVqkLxRVUOZ9qtbbzdf5Jfqw==}
 
-  '@fastify/type-provider-typebox@4.0.0':
-    resolution: {integrity: sha512-kTlN0saC/+xhcQPyBjb3YONQAMjiD/EHlCRjQjsr5E3NFjS5K8ZX5LGzXYDRjSa+sV4y8gTL5Q7FlObePv4iTA==}
+  '@fastify/type-provider-typebox@5.0.0':
+    resolution: {integrity: sha512-E6D31dfF0l7wLwUji0DIoHlaHzyUCTJV4K0FP+bdibuEj+YVh8QGhwH9MqYi+FoTZRTu+bXaDs+W9kdMImt+Bw==}
     peerDependencies:
-      '@sinclair/typebox': '>=0.26 <=0.32'
+      '@sinclair/typebox': '>=0.26 <=0.33'
 
   '@grpc/grpc-js@1.10.4':
     resolution: {integrity: sha512-MqBisuxTkYvPFnEiu+dag3xG/NBUDzSbAFAWlzfkGnQkjVZ6by3h4atbBc+Ikqup1z5BfB4BN18gKWR1YyppNw==}
@@ -12732,7 +12732,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@fastify/type-provider-typebox@4.0.0(@sinclair/typebox@0.32.20)':
+  '@fastify/type-provider-typebox@5.0.0(@sinclair/typebox@0.32.20)':
     dependencies:
       '@sinclair/typebox': 0.32.20
 
