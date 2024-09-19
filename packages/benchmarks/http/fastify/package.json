@@ -14,7 +14,7 @@
     "lint": "tsc --noEmit && eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "fastify": "^4.26.2"
+    "fastify": "^5.0.0"
   },
   "devDependencies": {
     "@basica/eslint-config": "workspace:^0.0.0",
