@@ -607,7 +607,7 @@ importers:
         specifier: workspace:^0.0.4
         version: link:../../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.4
+        specifier: workspace:^0.1.0
         version: link:../../../basica/plugins/fastify
       '@basica/kysely':
         specifier: workspace:^
@@ -872,7 +872,7 @@ importers:
         specifier: workspace:^0.0.4
         version: link:../../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.4
+        specifier: workspace:^0.1.0
         version: link:../../../basica/plugins/fastify
       fastify:
         specifier: ^5.0.0
@@ -1096,7 +1096,7 @@ importers:
         specifier: workspace:^0.0.4
         version: link:../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.4
+        specifier: workspace:^0.1.0
         version: link:../../basica/plugins/fastify
       '@basica/kysely':
         specifier: workspace:^0.0.4
@@ -1169,7 +1169,7 @@ importers:
         specifier: workspace:^0.0.4
         version: link:../../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.4
+        specifier: workspace:^0.1.0
         version: link:../../../basica/plugins/fastify
       '@basica/telemetry':
         specifier: workspace:^0.0.2
@@ -1227,7 +1227,7 @@ importers:
         specifier: workspace:^0.0.4
         version: link:../../../basica/core
       '@basica/fastify':
-        specifier: workspace:^0.0.4
+        specifier: workspace:^0.1.0
         version: link:../../../basica/plugins/fastify
       '@basica/telemetry':
         specifier: workspace:^0.0.2
