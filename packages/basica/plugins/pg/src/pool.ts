@@ -1,11 +1,11 @@
 import { IHealthcheck, IShutdown } from "@basica/core";
 import { ILogger } from "@basica/core/logger";
 
-import { Pool as PgPool } from "pg";
+import pg from "pg";
 import { PoolConfig, getPoolConfig } from "./config";
 
 /** Postgres Pool */
-export class Pool extends PgPool implements IShutdown, IHealthcheck {
+export class Pool extends pg.Pool implements IShutdown, IHealthcheck {
   readonly #logger: ILogger;
 
   /**
