@@ -1,5 +1,12 @@
 # crud
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`50a5e1f`](https://github.com/nicolabovolato/basica/commit/50a5e1f12f30799f0e65b823e381c0856593d947)]:
+  - @basica/pg@0.0.5
+
 ## 0.0.5
 
 ### Patch Changes
