@@ -1,5 +1,11 @@
 # @basica/pg
 
+## 0.0.5
+
+### Patch Changes
+
+- [#16](https://github.com/nicolabovolato/basica/pull/16) [`50a5e1f`](https://github.com/nicolabovolato/basica/commit/50a5e1f12f30799f0e65b823e381c0856593d947) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Fixes ESM incompatibility
+
 ## 0.0.4
 
 ### Patch Changes
