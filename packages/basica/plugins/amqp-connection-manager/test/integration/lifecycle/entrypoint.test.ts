@@ -1,13 +1,13 @@
-import { afterAll, beforeAll, expect, test, vi } from "vitest";
 import { randomUUID } from "node:crypto";
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
 
 import { GenericContainer, StartedTestContainer } from "testcontainers";
 
-import { getAMQPClient } from "../utils";
 import { loggerFactory } from "@basica/core/logger";
-import { AMQPQueueConsumerEntrypoint } from "src/lifecycle/entrypoint";
 import { Channel } from "amqplib";
 import { setTimeout } from "node:timers/promises";
+import { AMQPQueueConsumerEntrypoint } from "src/lifecycle/entrypoint";
+import { getAMQPClient } from "../utils";
 
 let rabbitmq: StartedTestContainer;
 const logger = loggerFactory({ level: "silent" });
@@ -17,12 +17,12 @@ beforeAll(async () => {
     .withExposedPorts(5672)
     .withHealthCheck({
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"],
-      interval: 1000,
+      interval: 500,
       timeout: 1000,
-      retries: 10,
+      retries: 100,
     })
     .start();
-}, 60000);
+}, 120000);
 
 afterAll(async () => {
   await rabbitmq.stop();

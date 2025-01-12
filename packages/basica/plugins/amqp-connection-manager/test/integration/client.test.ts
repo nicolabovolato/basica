@@ -12,12 +12,12 @@ beforeAll(async () => {
     .withExposedPorts(5672)
     .withHealthCheck({
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"],
-      interval: 1000,
+      interval: 500,
       timeout: 1000,
-      retries: 10,
+      retries: 100,
     })
     .start();
-}, 60000);
+}, 120000);
 
 afterAll(async () => {
   await rabbitmq.stop();
