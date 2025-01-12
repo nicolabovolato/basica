@@ -1,12 +1,12 @@
 import { IHealthcheck, IShutdown, IStartup } from "@basica/core";
 import { ILogger } from "@basica/core/logger";
 
-import { Client as PgClient } from "pg";
+import pg from "pg";
 import { ClientConfig, getClientConfig } from "./config";
 
 /** Postgres Client */
 export class Client
-  extends PgClient
+  extends pg.Client
   implements IStartup, IShutdown, IHealthcheck
 {
   readonly #logger: ILogger;

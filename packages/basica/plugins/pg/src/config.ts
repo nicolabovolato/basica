@@ -1,5 +1,8 @@
-import { Type, Static } from "@sinclair/typebox";
-import { ClientConfig as PGClientConfig, PoolConfig as PGPoolConfig } from "pg";
+import { Static, Type } from "@sinclair/typebox";
+import {
+  type ClientConfig as PGClientConfig,
+  type PoolConfig as PGPoolConfig,
+} from "pg";
 
 /** Postgres configuration schema */
 export const pgConfigSchema = Type.Intersect([
