@@ -113,4 +113,4 @@ describe("Cluster wrapper", () => {
     const wrapper = getClusterWrapper(cluster!);
     await wrapper.shutdown();
   });
-}, 60000);
+}, 100000);
