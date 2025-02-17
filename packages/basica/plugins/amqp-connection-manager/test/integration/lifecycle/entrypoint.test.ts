@@ -13,8 +13,9 @@ let rabbitmq: StartedTestContainer;
 const logger = loggerFactory({ level: "silent" });
 
 beforeAll(async () => {
-  rabbitmq = await new GenericContainer("rabbitmq:3-alpine")
+  rabbitmq = await new GenericContainer("rabbitmq:4-alpine")
     .withExposedPorts(5672)
+    .withUser("rabbitmq")
     .withHealthCheck({
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"],
       interval: 500,
