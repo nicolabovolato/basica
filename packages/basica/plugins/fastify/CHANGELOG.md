@@ -1,5 +1,11 @@
 # @basica/fastify
 
+## 0.1.1
+
+### Patch Changes
+
+- [`5e03067`](https://github.com/nicolabovolato/basica/commit/5e030679b028c9afeadd6d5275064cd79721b874) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - fix: useOpenapi
+
 ## 0.1.0
 
 ### Minor Changes
