@@ -45,7 +45,7 @@ importers:
         version: 20.11.30
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -91,7 +91,7 @@ importers:
         version: 20.11.30
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -140,7 +140,7 @@ importers:
         version: 0.10.5
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -183,7 +183,7 @@ importers:
         version: link:../../../shared/vitest-config
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -235,7 +235,7 @@ importers:
         version: 10.7.2
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -284,7 +284,7 @@ importers:
         version: link:../../../shared/vitest-config
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -333,7 +333,7 @@ importers:
         version: 10.7.2
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -382,7 +382,7 @@ importers:
         version: 10.8.2
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -431,7 +431,7 @@ importers:
         version: 7.6.9
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       better-sqlite3:
         specifier: ^9.4.3
         version: 9.4.3
@@ -480,7 +480,7 @@ importers:
         version: 8.11.4
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -538,7 +538,7 @@ importers:
         version: 20.11.30
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -718,7 +718,7 @@ importers:
         version: 10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7)
       '@nestjs/typeorm':
         specifier: ^10.0.2
-        version: 10.0.2(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(better-sqlite3@9.4.3)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@20.11.30)(typescript@5.4.3)))
+        version: 10.0.2(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(better-sqlite3@9.4.3)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@20.11.30)(typescript@5.4.3)))
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -797,10 +797,10 @@ importers:
         version: 10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7)
       '@nestjs/platform-fastify':
         specifier: ^10.3.5
-        version: 10.3.7(@fastify/static@6.12.0)(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7)
+        version: 10.3.7(@fastify/static@6.12.0)(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))
       '@nestjs/typeorm':
         specifier: ^10.0.2
-        version: 10.0.2(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(better-sqlite3@9.4.3)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@20.11.30)(typescript@5.4.3)))
+        version: 10.0.2(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(better-sqlite3@9.4.3)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@20.11.30)(typescript@5.4.3)))
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -999,7 +999,7 @@ importers:
         version: 10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/platform-fastify':
         specifier: ^10.3.5
-        version: 10.3.7(@fastify/static@6.12.0)(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7)
+        version: 10.3.7(@fastify/static@6.12.0)(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -1140,7 +1140,7 @@ importers:
         version: 8.11.4
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -1310,7 +1310,7 @@ importers:
     dependencies:
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.4.0(vitest@1.4.0)
+        version: 1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))
       '@vitest/ui':
         specifier: ^1.2.2
         version: 1.4.0(vitest@1.4.0)
@@ -13011,7 +13011,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nestjs/platform-fastify@10.3.7(@fastify/static@6.12.0)(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7)':
+  '@nestjs/platform-fastify@10.3.7(@fastify/static@6.12.0)(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))':
     dependencies:
       '@fastify/cors': 9.0.1
       '@fastify/formbody': 7.4.0
@@ -13049,7 +13049,7 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@nestjs/typeorm@10.0.2(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(better-sqlite3@9.4.3)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@20.11.30)(typescript@5.4.3)))':
+  '@nestjs/typeorm@10.0.2(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(better-sqlite3@9.4.3)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@20.11.30)(typescript@5.4.3)))':
     dependencies:
       '@nestjs/common': 10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 10.3.7(@nestjs/common@10.3.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -14547,7 +14547,7 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vitest/coverage-v8@1.4.0(vitest@1.4.0)':
+  '@vitest/coverage-v8@1.4.0(vitest@1.4.0(@types/node@20.11.30)(@vitest/ui@1.4.0)(terser@5.30.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
