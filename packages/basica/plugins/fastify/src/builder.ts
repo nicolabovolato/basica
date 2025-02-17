@@ -254,6 +254,7 @@ export class FastifyAppBuilder extends FastifyRouterBuilder {
               swaggerCfg?.openapi?.info.description ??
               process.env.npm_package_description,
           },
+          ...swaggerCfg?.openapi,
         },
       },
     });
