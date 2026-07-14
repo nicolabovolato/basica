@@ -2,7 +2,7 @@ import path from "node:path";
 
 import autocannon from "autocannon";
 import { randomUUID } from "crypto";
-import { $, ExecaReturnValue } from "execa";
+import { $, Result } from "execa";
 import hdr from "hdr-histogram-js";
 import { Logger } from "pino";
 import {
@@ -106,7 +106,7 @@ const startCollectingContainerUsage = (
   // .getContainer(container.getId())
   // .stats({ stream: false });
   const interval = setInterval(async () => {
-    let cmd: ExecaReturnValue<string>;
+    let cmd: Result;
     try {
       cmd =
         await $`docker stats --no-stream --format ${"{{json .}}"} ${container.getId()}`;
@@ -115,7 +115,7 @@ const startCollectingContainerUsage = (
       return;
     }
 
-    const stats = JSON.parse(cmd.stdout) as {
+    const stats = JSON.parse(cmd.stdout as string) as {
       MemPerc: string;
       CPUPerc: string;
     };
@@ -163,7 +163,7 @@ const getStartupTime = async (
   const timeout = setTimeout(() => ac.abort(), getStartupTimeTimeout);
 
   const cmd = $({
-    signal: ac.signal,
+    cancelSignal: ac.signal,
   })`docker logs ${container.getId()} --follow`;
 
   if (!cmd.stdout) {
