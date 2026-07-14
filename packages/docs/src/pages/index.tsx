@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import clsx from "clsx";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
@@ -43,8 +44,8 @@ function Card({
   children,
 }: {
   title: string;
-  children: string | JSX.Element;
-  icon: JSX.Element;
+  children: string | ReactNode;
+  icon: ReactNode;
 }) {
   return (
     <div className={clsx("card", styles.center, styles.gradientBg)}>
@@ -111,7 +112,7 @@ const app = new AppBuilder(container)
 app.run();
 `;
 
-export default function Home(): JSX.Element {
+export default function Home(): ReactNode {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
