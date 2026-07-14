@@ -40,12 +40,12 @@
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",
     "@basica/vitest-config": "workspace:^0.0.0",
-    "@types/better-sqlite3": "^7.6.9",
+    "@types/better-sqlite3": "^7.6.13",
     "@vitest/coverage-v8": "^1.2.2",
-    "better-sqlite3": "^9.4.3",
+    "better-sqlite3": "^12.11.1",
     "eslint": "^8.57.1",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.5",
+    "typescript": "^5.9.3",
     "vitest": "^1.2.2"
   }
 }
