@@ -10,13 +10,11 @@ let rabbitmq: StartedTestContainer;
 beforeAll(async () => {
   rabbitmq = await new GenericContainer("rabbitmq:4-alpine")
     .withExposedPorts(5672)
-    .withHealthCheck({
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"],
-      interval: 500,
-      timeout: 2000,
-      retries: 100,
-    })
-    .withWaitStrategy(Wait.forHealthCheck())
+    // Wait on the broker's own log rather than an in-container health
+    // command: log matching runs nothing inside the container, so it stays
+    // reliable even when many test containers contend for CPU. This line is
+    // printed after the AMQP listener is already accepting connections.
+    .withWaitStrategy(Wait.forLogMessage(/Server startup complete/))
     .start();
 }, 120000);
 
