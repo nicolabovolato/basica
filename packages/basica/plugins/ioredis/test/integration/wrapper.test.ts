@@ -8,12 +8,16 @@ import {
 } from "vitest";
 
 import { RedisContainer, StartedRedisContainer } from "@testcontainers/redis";
-import { StartedTestContainer } from "testcontainers";
 
-import { getClusterWrapper, getRedisWrapper, startRedisCluster } from "./utils";
+import {
+  getClusterWrapper,
+  getRedisWrapper,
+  startRedisCluster,
+  RedisClusterHandle,
+} from "./utils";
 
 let redis: StartedRedisContainer;
-let cluster: StartedTestContainer | undefined;
+let cluster: RedisClusterHandle | undefined;
 
 beforeAll(async () => {
   [redis, cluster] = await Promise.all([
@@ -24,7 +28,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await redis.executeCliCmd("flushall");
-  await cluster?.exec(["redis-cli", "flushall"]);
+  await cluster?.flushall();
 });
 
 afterAll(async () => {
