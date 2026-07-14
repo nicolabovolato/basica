@@ -6,10 +6,9 @@ const config = defineConfig({
   test: {
     coverage: {
       enabled: true,
-      all: true,
       provider: "v8",
       reporter: ["text", "json", "html"],
-      include: ["src"],
+      include: ["src/**"],
     },
   },
   plugins: [tsconfigPaths()],

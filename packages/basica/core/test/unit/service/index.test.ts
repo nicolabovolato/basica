@@ -10,7 +10,7 @@ const lifecycle = {
   stop: vi.fn(),
 } satisfies ILifecycleManager;
 
-let mockExit: MockInstance<Parameters<typeof process.exit>, never>;
+let mockExit: MockInstance<typeof process.exit>;
 
 beforeEach(() => {
   //vi.useFakeTimers(); // TODO: timers/promises and AbortSignal are not mocked https://github.com/vitest-dev/vitest/issues/3088

@@ -42,12 +42,12 @@
     "@basica/typescript-config": "workspace:^0.0.0",
     "@basica/vitest-config": "workspace:^0.0.0",
     "@types/amqplib": "^0.10.5",
-    "@vitest/coverage-v8": "^1.2.2",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.7.0",
     "testcontainers": "^12.0.4",
     "tsup": "^8.0.2",
     "typescript": "^5.9.3",
-    "vitest": "^1.2.2"
+    "vitest": "^4.1.10"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.8.0"
