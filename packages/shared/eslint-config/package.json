@@ -9,6 +9,6 @@
     "@typescript-eslint/parser": "^6.21.0",
     "eslint-config-prettier": "^9.1.2",
     "eslint-config-turbo": "^1.13.4",
-    "prettier": "^3.2.5"
+    "prettier": "^3.9.5"
   }
 }

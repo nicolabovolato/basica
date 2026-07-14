@@ -9,7 +9,7 @@
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
-    "turbo": "2.1.1"
+    "turbo": "2.10.5"
   },
   "packageManager": "pnpm@9.9.0",
   "engines": {
@@ -22,6 +22,6 @@
   },
   "dependencies": {
     "@changesets/changelog-github": "^0.5.2",
-    "@changesets/cli": "^2.27.12"
+    "@changesets/cli": "^2.31.0"
   }
 }
