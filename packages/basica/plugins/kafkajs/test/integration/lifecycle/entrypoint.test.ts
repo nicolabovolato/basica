@@ -10,7 +10,7 @@ import { getKafkaClient } from "../utils";
 let kafka: StartedKafkaContainer;
 
 beforeAll(async () => {
-  kafka = await new KafkaContainer("confluentinc/cp-kafka:7.6.1")
+  kafka = await new KafkaContainer("confluentinc/cp-kafka:8.0.0")
     .withKraft()
     .withExposedPorts(9092)
     .start();

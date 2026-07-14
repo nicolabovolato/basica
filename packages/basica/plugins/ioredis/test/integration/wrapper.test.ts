@@ -17,7 +17,7 @@ let cluster: StartedTestContainer | undefined;
 
 beforeAll(async () => {
   [redis, cluster] = await Promise.all([
-    new RedisContainer("redis:7-alpine").start(),
+    new RedisContainer("redis:8-alpine").start(),
     startRedisCluster(),
   ]);
 }, 60000);

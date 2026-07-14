@@ -16,7 +16,7 @@ let app: ReturnType<typeof getTestApp>;
 let todos: TodoService;
 
 beforeAll(async () => {
-  container = await new PostgreSqlContainer("postgres:16-alpine").start();
+  container = await new PostgreSqlContainer("postgres:17-alpine").start();
 
   app = getTestApp(container);
   await (app.services.migrations as Migrator).start();

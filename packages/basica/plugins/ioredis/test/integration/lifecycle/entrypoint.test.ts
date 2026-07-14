@@ -8,7 +8,7 @@ let redis: StartedRedisContainer;
 const logger = loggerFactory({ level: "silent" });
 
 beforeAll(async () => {
-  redis = await new RedisContainer("redis:7-alpine").start();
+  redis = await new RedisContainer("redis:8-alpine").start();
 }, 60000);
 
 beforeEach(async () => {
