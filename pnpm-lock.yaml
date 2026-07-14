@@ -118,10 +118,10 @@ importers:
         version: 0.32.20
       amqp-connection-manager:
         specifier: ^4.1.14
-        version: 4.1.14(amqplib@0.10.4)
+        version: 4.1.14(amqplib@0.10.9)
       amqplib:
-        specifier: ^0.10.4
-        version: 0.10.4
+        specifier: ^0.10.8
+        version: 0.10.9
     devDependencies:
       '@basica/core':
         specifier: workspace:^0.0.4
@@ -1325,10 +1325,6 @@ importers:
         version: 1.4.0(@types/node@24.13.3)(@vitest/ui@1.4.0)(terser@5.30.0)
 
 packages:
-
-  '@acuminous/bitsyntax@0.1.2':
-    resolution: {integrity: sha512-29lUK80d1muEQqiUsSo+3A0yP6CdspgC95EnKBMi22Xlwt79i/En4Vr67+cXhU+cZjbti3TgGGC5wy1stIywVQ==}
-    engines: {node: '>=0.8'}
 
   '@algolia/autocomplete-core@1.9.3':
     resolution: {integrity: sha512-009HdfugtGCdC4JdXUbVJClA0q0zh24yyePn+KUGk3rP7j8FEe/m5Yo/z65gn6nP/cM39PxpzqKrL7A6fP6PPw==}
@@ -4346,8 +4342,8 @@ packages:
     peerDependencies:
       amqplib: '*'
 
-  amqplib@0.10.4:
-    resolution: {integrity: sha512-DMZ4eCEjAVdX1II2TfIUpJhfKAuoCeDIo/YyETbfAqehHTXxxs7WOOd+N1Xxr4cKhx12y23zk8/os98FxlZHrw==}
+  amqplib@0.10.9:
+    resolution: {integrity: sha512-jwSftI4QjS3mizvnSnOrPGYiUnm1vI2OP1iXeOUz5pb74Ua0nbf6nPyyTzuiCLEE3fMpaJORXh2K/TQ08H5xGA==}
     engines: {node: '>=10'}
 
   ansi-align@3.0.1:
@@ -8836,9 +8832,6 @@ packages:
     resolution: {integrity: sha512-VIMnQi/Z4HT2Fxuwg5KrY174U1VdUIASQVWXXyqtNRtxSr9IYkn1rsI6Tb6HsrHCmB7gVpNwX6JxPTHcH6IoTA==}
     engines: {node: '>=6'}
 
-  readable-stream@1.1.14:
-    resolution: {integrity: sha512-+MeVjFf4L44XUkhM1eYbD8fyEsxcV81pqMSR5gblfcLCHfZvbrqy4/qYHE+/R5HoBUT11WV5O08Cr1n3YXkWVQ==}
-
   readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
 
@@ -9420,9 +9413,6 @@ packages:
   string-width@5.1.2:
     resolution: {integrity: sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA==}
     engines: {node: '>=12'}
-
-  string_decoder@0.10.31:
-    resolution: {integrity: sha512-ev2QzSzWPYmy9GuqfIVildA4OdcGLeFZQrq5ys6RtiuF+RQQiZWr8TZNyAcuVXyQRYfEO+MsoB/1BuQVhOJuoQ==}
 
   string_decoder@1.1.1:
     resolution: {integrity: sha512-n/ShnvDi6FHbbVfviro+WojiFzv+s8MPMHBczVePfUpDJLwoLT0ht1l4YwBCbi8pJAveEEdnkHyPyTP/mzRfwg==}
@@ -10418,14 +10408,6 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
-
-  '@acuminous/bitsyntax@0.1.2':
-    dependencies:
-      buffer-more-ints: 1.0.0
-      debug: 4.3.4
-      safe-buffer: 5.1.2
-    transitivePeerDependencies:
-      - supports-color
 
   '@algolia/autocomplete-core@1.9.3(@algolia/client-search@4.23.2)(algoliasearch@4.23.2)(search-insights@2.13.0)':
     dependencies:
@@ -12184,7 +12166,7 @@ snapshots:
 
   '@docusaurus/react-loadable@5.5.2(react@18.2.0)':
     dependencies:
-      '@types/react': 18.2.73
+      '@types/react': 19.2.17
       prop-types: 15.8.1
       react: 18.2.0
 
@@ -14812,19 +14794,15 @@ snapshots:
       '@algolia/requester-node-http': 4.23.2
       '@algolia/transporter': 4.23.2
 
-  amqp-connection-manager@4.1.14(amqplib@0.10.4):
+  amqp-connection-manager@4.1.14(amqplib@0.10.9):
     dependencies:
-      amqplib: 0.10.4
+      amqplib: 0.10.9
       promise-breaker: 6.0.0
 
-  amqplib@0.10.4:
+  amqplib@0.10.9:
     dependencies:
-      '@acuminous/bitsyntax': 0.1.2
       buffer-more-ints: 1.0.0
-      readable-stream: 1.1.14
       url-parse: 1.5.10
-    transitivePeerDependencies:
-      - supports-color
 
   ansi-align@3.0.1:
     dependencies:
@@ -20107,13 +20085,6 @@ snapshots:
       pify: 4.0.1
       strip-bom: 3.0.0
 
-  readable-stream@1.1.14:
-    dependencies:
-      core-util-is: 1.0.3
-      inherits: 2.0.4
-      isarray: 0.0.1
-      string_decoder: 0.10.31
-
   readable-stream@2.3.8:
     dependencies:
       core-util-is: 1.0.3
@@ -20789,8 +20760,6 @@ snapshots:
       eastasianwidth: 0.2.0
       emoji-regex: 9.2.2
       strip-ansi: 7.1.0
-
-  string_decoder@0.10.31: {}
 
   string_decoder@1.1.1:
     dependencies:
