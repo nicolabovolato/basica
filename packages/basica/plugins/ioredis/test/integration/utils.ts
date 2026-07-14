@@ -3,11 +3,7 @@ import { setTimeout } from "node:timers/promises";
 import { loggerFactory } from "@basica/core/logger";
 
 import { StartedRedisContainer } from "@testcontainers/redis";
-import {
-  GenericContainer,
-  StartedTestContainer,
-  Wait,
-} from "testcontainers";
+import { GenericContainer, Network, Wait } from "testcontainers";
 
 import { ClusterWrapper } from "src/cluster";
 import { RedisWrapper } from "src/redis";
@@ -24,36 +20,60 @@ export const getRedisWrapper = (
   );
 };
 
+const CLUSTER_MASTERS = 3;
+
 /**
- * Starts a single-node redis cluster using the multi-arch `redis` image.
+ * Starts a 3-master redis cluster using the multi-arch `redis` image.
  *
  * The previous grokzen/redis-cluster image is amd64-only and its nodes
- * segfault under emulation on arm64. Here a single node claims every slot;
- * it advertises its own (container) IP so the cluster reaches `ok` state,
- * and callers translate that address to the host with a natMap.
+ * segfault under emulation on arm64. Here the masters run on a shared
+ * network and each advertises its own (network-internal) address, so the
+ * cluster forms and CLUSTER SLOTS returns addresses that callers translate
+ * to the mapped host ports with a natMap (one entry per node).
  */
 export const startRedisCluster = async () => {
-  const container = await new GenericContainer("redis:8-alpine")
-    .withExposedPorts(6379)
-    .withCommand([
-      "redis-server",
-      "--cluster-enabled",
-      "yes",
-      "--cluster-node-timeout",
-      "5000",
-      "--appendonly",
-      "no",
-    ])
-    .withWaitStrategy(Wait.forLogMessage(/Ready to accept connections/))
-    .start();
+  const network = await new Network().start();
 
-  const ip = container.getIpAddress(container.getNetworkNames()[0]);
-  await container.exec(["redis-cli", "config", "set", "cluster-announce-ip", ip]);
-  await container.exec(["redis-cli", "cluster", "addslotsrange", "0", "16383"]);
+  const containers = await Promise.all(
+    Array.from({ length: CLUSTER_MASTERS }, () =>
+      new GenericContainer("redis:8-alpine")
+        .withNetwork(network)
+        .withExposedPorts(6379)
+        .withCommand([
+          "redis-server",
+          "--cluster-enabled",
+          "yes",
+          "--cluster-node-timeout",
+          "5000",
+          "--appendonly",
+          "no",
+        ])
+        .withWaitStrategy(Wait.forLogMessage(/Ready to accept connections/))
+        .start()
+    )
+  );
 
-  const deadline = Date.now() + 15000;
+  const ips = containers.map((c) => c.getIpAddress(network.getName()));
+
+  await Promise.all(
+    containers.map((c, i) =>
+      c.exec(["redis-cli", "config", "set", "cluster-announce-ip", ips[i]])
+    )
+  );
+
+  await containers[0].exec([
+    "redis-cli",
+    "--cluster",
+    "create",
+    ...ips.map((ip) => `${ip}:6379`),
+    "--cluster-replicas",
+    "0",
+    "--cluster-yes",
+  ]);
+
+  const deadline = Date.now() + 20000;
   for (;;) {
-    const { output } = await container.exec(["redis-cli", "cluster", "info"]);
+    const { output } = await containers[0].exec(["redis-cli", "cluster", "info"]);
     if (output.includes("cluster_state:ok")) break;
     if (Date.now() > deadline) {
       throw new Error("redis cluster did not reach a ready state in time");
@@ -61,22 +81,41 @@ export const startRedisCluster = async () => {
     await setTimeout(250);
   }
 
-  return container;
+  return {
+    // seed nodes; ioredis discovers the full topology from any of them
+    nodes: containers.map((c) => ({
+      host: c.getHost(),
+      port: c.getMappedPort(6379),
+    })),
+    // translate each node's advertised address to its mapped host port
+    natMap: Object.fromEntries(
+      containers.map((c, i) => [
+        `${ips[i]}:6379`,
+        { host: c.getHost(), port: c.getMappedPort(6379) },
+      ])
+    ),
+    flushall: async () => {
+      await Promise.all(
+        containers.map((c) => c.exec(["redis-cli", "flushall"]))
+      );
+    },
+    stop: async () => {
+      await Promise.all(containers.map((c) => c.stop()));
+      await network.stop();
+    },
+  };
 };
 
+export type RedisClusterHandle = Awaited<ReturnType<typeof startRedisCluster>>;
+
 export const getClusterWrapper = (
-  container: StartedTestContainer,
+  cluster: Pick<RedisClusterHandle, "nodes" | "natMap">,
   cfg?: ClusterWrapperConfig
 ) => {
-  const host = container.getHost();
-  const port = container.getMappedPort(6379);
-  const ip = container.getIpAddress(container.getNetworkNames()[0]);
-
   return new ClusterWrapper(
     {
-      nodes: [{ host, port }],
-      // The node advertises its container IP; map it back to the mapped host port.
-      natMap: { [`${ip}:6379`]: { host, port } },
+      nodes: cluster.nodes,
+      natMap: cluster.natMap,
       timeout: 3000,
       ...cfg,
     },
