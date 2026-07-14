@@ -1,7 +1,6 @@
 {
   "name": "@basica/eslint-config",
   "private": true,
-  "type": "module",
   "exports": {
     "./base": "./base.js"
   },
