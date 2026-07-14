@@ -41,7 +41,9 @@ const getKafkaLoggerFn =
 
 /** Kafka Client */
 export class Kafka extends KafkaClient {
+  // eslint-disable-next-line no-unused-private-class-members
   #logger: ILogger;
+  // eslint-disable-next-line no-unused-private-class-members
   #healthy = false;
 
   constructor(config: KafkaConfig, logger: ILogger, name?: string) {
@@ -54,7 +56,7 @@ export class Kafka extends KafkaClient {
             })
           : logger.child({
               name: `@basica:service:kafka:kafkajs`,
-            })
+            }),
       ),
     });
 
