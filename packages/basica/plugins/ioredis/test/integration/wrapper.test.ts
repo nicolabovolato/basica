@@ -8,9 +8,9 @@ import {
 } from "vitest";
 
 import { RedisContainer, StartedRedisContainer } from "@testcontainers/redis";
-import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { StartedTestContainer } from "testcontainers";
 
-import { getClusterWrapper, getRedisWrapper } from "./utils";
+import { getClusterWrapper, getRedisWrapper, startRedisCluster } from "./utils";
 
 let redis: StartedRedisContainer;
 let cluster: StartedTestContainer | undefined;
@@ -18,48 +18,17 @@ let cluster: StartedTestContainer | undefined;
 beforeAll(async () => {
   [redis, cluster] = await Promise.all([
     new RedisContainer("redis:7-alpine").start(),
-    new GenericContainer("grokzen/redis-cluster:6.2.10")
-      .withEnvironment({
-        IP: "0.0.0.0",
-        INITIAL_PORT: "30000",
-      })
-      .withExposedPorts(
-        {
-          container: 30000,
-          host: 30000,
-        },
-        {
-          container: 30001,
-          host: 30001,
-        },
-        {
-          container: 30002,
-          host: 30002,
-        },
-        {
-          container: 30003,
-          host: 30003,
-        },
-        {
-          container: 30004,
-          host: 30004,
-        },
-        {
-          container: 30005,
-          host: 30005,
-        }
-      )
-      .start(),
+    startRedisCluster(),
   ]);
 }, 60000);
 
 beforeEach(async () => {
   await redis.executeCliCmd("flushall");
-  await cluster?.exec(["redis-cli", "-p", "7000", "flushall"]);
+  await cluster?.exec(["redis-cli", "flushall"]);
 });
 
 afterAll(async () => {
-  await redis.stop();
+  await redis?.stop();
   await cluster?.stop();
 });
 
