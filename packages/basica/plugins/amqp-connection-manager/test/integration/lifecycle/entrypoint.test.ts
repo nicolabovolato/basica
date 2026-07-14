@@ -15,10 +15,6 @@ const logger = loggerFactory({ level: "silent" });
 beforeAll(async () => {
   rabbitmq = await new GenericContainer("rabbitmq:4-alpine")
     .withExposedPorts(5672)
-    // Wait on the broker's own log rather than an in-container health
-    // command: log matching runs nothing inside the container, so it stays
-    // reliable even when many test containers contend for CPU. This line is
-    // printed after the AMQP listener is already accepting connections.
     .withWaitStrategy(Wait.forLogMessage(/Server startup complete/))
     .start();
 }, 120000);
