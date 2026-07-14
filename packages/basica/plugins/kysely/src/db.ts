@@ -7,6 +7,7 @@ export class Kysely<T>
   extends KyselyDatabase<T>
   implements IShutdown, IHealthcheck
 {
+  // eslint-disable-next-line no-unused-private-class-members
   readonly #logger: ILogger;
 
   /**
@@ -49,7 +50,7 @@ export class Kysely<T>
         } else if (e.level === "query") {
           logger.debug(
             { query: e.query, queryDurationMillis: e.queryDurationMillis },
-            "Kysely query"
+            "Kysely query",
           );
         }
       },

@@ -52,9 +52,11 @@ export class Migrator extends KyselyMigrator implements IStartup {
     const { error, results } = await super.migrateToLatest();
     results?.forEach((result) => {
       const msg = `migration ${result.migrationName} (${result.direction}) status ${result.status}`;
-      result.status == "Error"
-        ? this.#logger.error(result, msg)
-        : this.#logger.info(result, msg);
+      if (result.status == "Error") {
+        this.#logger.error(result, msg);
+      } else {
+        this.#logger.info(result, msg);
+      }
     });
     if (error) {
       this.#logger.error(error, "Failed to apply migrations");
