@@ -8,7 +8,7 @@ import { getTestApp } from "../utils";
 let container: StartedPostgreSqlContainer;
 
 beforeAll(async () => {
-  container = await new PostgreSqlContainer("postgres:16-alpine").start();
+  container = await new PostgreSqlContainer("postgres:17-alpine").start();
 }, 60000);
 
 afterAll(async () => {

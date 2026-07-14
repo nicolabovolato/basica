@@ -33,7 +33,7 @@ export const getRedisWrapper = (
  * and callers translate that address to the host with a natMap.
  */
 export const startRedisCluster = async () => {
-  const container = await new GenericContainer("redis:7-alpine")
+  const container = await new GenericContainer("redis:8-alpine")
     .withExposedPorts(6379)
     .withCommand([
       "redis-server",
