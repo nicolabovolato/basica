@@ -9,7 +9,7 @@ import { deps, hcManager } from "./utils";
 const name = "fastify";
 
 beforeEach(() => {
-  vi.restoreAllMocks();
+  vi.clearAllMocks();
 });
 
 test.each([
