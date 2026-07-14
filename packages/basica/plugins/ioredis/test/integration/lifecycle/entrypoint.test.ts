@@ -16,7 +16,7 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await redis.stop();
+  await redis?.stop();
 });
 
 test("channel", async () => {
