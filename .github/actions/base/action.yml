@@ -4,7 +4,7 @@ inputs:
   node-version:
     description: "node version"
     required: true
-    default: 20
+    default: 24
 runs:
   using: composite
   steps:

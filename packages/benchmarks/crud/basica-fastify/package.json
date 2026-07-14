@@ -5,7 +5,7 @@
   "author": "Nicola Bovolato",
   "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "start": "node dist/src/index.js",
