@@ -43,9 +43,9 @@
     "@types/better-sqlite3": "^7.6.9",
     "@vitest/coverage-v8": "^1.2.2",
     "better-sqlite3": "^9.4.3",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.1",
     "tsup": "^8.0.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.4.5",
     "vitest": "^1.2.2"
   }
 }

@@ -15,7 +15,7 @@
     "@pnpm/find-workspace-dir": "^6.0.3",
     "autocannon": "^7.15.0",
     "execa": "^8.0.1",
-    "hdr-histogram-js": "^3.0.0",
+    "hdr-histogram-js": "^3.0.1",
     "pino": "^8.18.0",
     "testcontainers": "^10.7.2"
   },
@@ -24,9 +24,9 @@
     "@basica/typescript-config": "workspace:^0.0.0",
     "@types/autocannon": "^7.12.5",
     "@types/node": "^20.11.17",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.1",
     "pino-pretty": "^10.3.1",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "tsx": "^4.7.3",
+    "typescript": "^5.4.5"
   }
 }
