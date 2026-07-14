@@ -33,7 +33,7 @@
     "@basica/core": "workspace:^0.0.4",
     "@sinclair/typebox": "^0.32.16",
     "amqp-connection-manager": "^4.1.14",
-    "amqplib": "^0.10.4"
+    "amqplib": "^0.10.8"
   },
   "devDependencies": {
     "@basica/core": "workspace:^0.0.4",

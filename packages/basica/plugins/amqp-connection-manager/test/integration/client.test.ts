@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { GenericContainer, StartedTestContainer, Wait } from "testcontainers";
 
 import { getAMQPClient } from "./utils";
 
@@ -10,18 +10,18 @@ let rabbitmq: StartedTestContainer;
 beforeAll(async () => {
   rabbitmq = await new GenericContainer("rabbitmq:4-alpine")
     .withExposedPorts(5672)
-    .withUser("rabbitmq")
     .withHealthCheck({
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"],
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"],
       interval: 500,
-      timeout: 1000,
+      timeout: 2000,
       retries: 100,
     })
+    .withWaitStrategy(Wait.forHealthCheck())
     .start();
 }, 120000);
 
 afterAll(async () => {
-  await rabbitmq.stop();
+  await rabbitmq?.stop();
 }, 10000);
 
 describe("AMQPClient", () => {
