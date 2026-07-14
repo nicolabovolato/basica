@@ -23,7 +23,7 @@
     "@basica/fastify": "workspace:^0.1.0",
     "@basica/kysely": "workspace:^0.0.4",
     "@basica/pg": "workspace:^0.0.5",
-    "@fastify/type-provider-typebox": "^5.0.0",
+    "@fastify/type-provider-typebox": "^5.0.1",
     "@sinclair/typebox": "^0.32.16",
     "fastify": "^5.0.0",
     "kysely": "^0.27.2",
@@ -37,11 +37,11 @@
     "@types/node": "^20.11.17",
     "@types/pg": "^8.11.0",
     "@vitest/coverage-v8": "^1.2.2",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.1",
     "pino-pretty": "^10.3.1",
     "tsup": "^8.0.2",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3",
+    "tsx": "^4.7.3",
+    "typescript": "^5.4.5",
     "vitest": "^1.2.2"
   }
 }

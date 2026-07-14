@@ -31,9 +31,9 @@
   },
   "peerDependencies": {
     "@basica/core": "workspace:^0.0.4",
+    "@sinclair/typebox": "^0.32.16",
     "amqp-connection-manager": "^4.1.14",
-    "amqplib": "^0.10.4",
-    "@sinclair/typebox": "^0.32.16"
+    "amqplib": "^0.10.4"
   },
   "devDependencies": {
     "@basica/core": "workspace:^0.0.4",
@@ -43,10 +43,10 @@
     "@basica/vitest-config": "workspace:^0.0.0",
     "@types/amqplib": "^0.10.5",
     "@vitest/coverage-v8": "^1.2.2",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.1",
     "testcontainers": "^10.7.2",
     "tsup": "^8.0.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.4.5",
     "vitest": "^1.2.2"
   },
   "dependencies": {
