@@ -44,11 +44,11 @@
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",
     "@basica/vitest-config": "workspace:^0.0.0",
-    "@types/node": "^20.11.17",
+    "@types/node": "^24.13.3",
     "@vitest/coverage-v8": "^1.2.2",
     "eslint": "^8.57.1",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.5",
+    "typescript": "^5.9.3",
     "vitest": "^1.2.2"
   }
 }
