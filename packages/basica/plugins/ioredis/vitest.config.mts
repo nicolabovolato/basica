@@ -6,9 +6,6 @@ export default mergeConfig(
   defineConfig({
     test: {
       pool: "forks",
-      // Integration tests each spin up their own container; running the
-      // files in parallel contends for Docker resources and flakes the
-      // container startup. Start them one at a time.
       fileParallelism: false,
     },
   })
