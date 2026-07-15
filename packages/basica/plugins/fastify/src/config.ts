@@ -1,7 +1,7 @@
 import { SwaggerOptions } from "@fastify/swagger";
 import { FastifySwaggerUiOptions } from "@fastify/swagger-ui";
-import { Static, Type } from "@sinclair/typebox";
 import { FastifyListenOptions, FastifyServerOptions } from "fastify";
+import { z } from "zod";
 
 export type FastifyRuntimeConfig = Required<
   Pick<FastifyListenOptions, "port" | "host">
@@ -14,54 +14,49 @@ export type FastifyRuntimeConfig = Required<
  * @see {@link FastifyServerOptions}
  * */
 export type FastifyConfig = FastifyServerOptions &
-  Static<typeof fastifyConfigSchema>;
+  z.infer<typeof fastifyConfigSchema>;
 
 /** Fastify configuration schema */
-export const fastifyConfigSchema = Type.Object({
+export const fastifyConfigSchema = z.object({
   /** @default "0.0.0.0" */
-  host: Type.Optional(Type.String()),
+  host: z.string().optional(),
   /** @default 8080 */
-  port: Type.Optional(Type.Number()),
+  port: z.number().optional(),
 });
 
 export type MapHealthchecksConfig = Partial<
-  Static<typeof mapHealthchecksConfigSchema>
+  z.infer<typeof mapHealthchecksConfigSchema>
 >;
 
 /** Fastify healthcheck configuration schema */
-export const mapHealthchecksConfigSchema = Type.Object({
+export const mapHealthchecksConfigSchema = z.object({
   /** @default "/health" */
-  path: Type.Optional(Type.String()),
+  path: z.string().optional(),
   /** @default 200 */
-  healthyStatusCode: Type.Optional(Type.Number({ minimum: 200, maximum: 299 })),
+  healthyStatusCode: z.number().min(200).max(299).optional(),
   /** @default 500 */
-  unhealthyStatusCode: Type.Optional(
-    Type.Number({
-      minimum: 400,
-      maximum: 599,
-    })
-  ),
+  unhealthyStatusCode: z.number().min(400).max(599).optional(),
 });
 
 export type SwaggerConfig = {
   /** @see {@link SwaggerOptions} */
-  swagger?: SwaggerOptions & Static<typeof swaggerConfigSchema>;
+  swagger?: SwaggerOptions & z.infer<typeof swaggerConfigSchema>;
   /** @see {@link FastifySwaggerUiOptions} */
   swaggerUi?: FastifySwaggerUiOptions;
 };
 
 /** Fastify swagger configuration schema */
-export const swaggerConfigSchema = Type.Object({
-  openapi: Type.Optional(
-    Type.Object({
-      info: Type.Object({
+export const swaggerConfigSchema = z.object({
+  openapi: z
+    .object({
+      info: z.object({
         /** @default process.env.npm_package_name */
-        title: Type.String(),
+        title: z.string(),
         /** @default process.env.npm_package_version */
-        version: Type.String(),
+        version: z.string(),
         /** @default process.env.npm_package_description */
-        description: Type.Optional(Type.String()),
+        description: z.string().optional(),
       }),
     })
-  ),
+    .optional(),
 });

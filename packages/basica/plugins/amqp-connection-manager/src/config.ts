@@ -1,11 +1,9 @@
-import { Static, Type } from "@sinclair/typebox";
+import { z } from "zod";
 
-export const AMQPClientConfigSchema = Type.Intersect([
-  Type.Object({
-    urls: Type.Union([Type.String(), Type.Array(Type.String())]),
-    /** The same value will be used on service startup and as publishTimeout on every created channel */
-    heartbeatIntervalInSeconds: Type.Number(),
-  }),
-]);
+export const AMQPClientConfigSchema = z.object({
+  urls: z.union([z.string(), z.array(z.string())]),
+  /** The same value will be used on service startup and as publishTimeout on every created channel */
+  heartbeatIntervalInSeconds: z.number(),
+});
 
-export type AMQPClientConfig = Static<typeof AMQPClientConfigSchema>;
+export type AMQPClientConfig = z.infer<typeof AMQPClientConfigSchema>;

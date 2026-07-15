@@ -1,55 +1,50 @@
-import { Type, Static } from "@sinclair/typebox";
 import { ClusterOptions, RedisOptions } from "ioredis";
+import { z } from "zod";
 
-const timeoutConfigSchema = Type.Union([
-  Type.Object({
-    connectTimeout: Type.Number(),
-    commandTimeout: Type.Number(),
+const timeoutConfigSchema = z.union([
+  z.object({
+    connectTimeout: z.number(),
+    commandTimeout: z.number(),
   }),
-  Type.Object({
+  z.object({
     /** connectTimeout and commandTimeout */
-    timeout: Type.Number(),
+    timeout: z.number(),
   }),
 ]);
 
 /** Redis wrapper configuration schema */
-export const redisWrapperConfigSchema = Type.Intersect([
-  Type.Union([
-    Type.Object({
+export const redisWrapperConfigSchema = z.intersection(
+  z.union([
+    z.object({
       /** @example "redis://user:pass@127.0.0.1:6379/2" */
-      url: Type.String(),
+      url: z.string(),
     }),
-    Type.Object({
-      host: Type.String(),
-      port: Type.Number(),
-      db: Type.Optional(Type.String()),
-      username: Type.Optional(Type.String()),
-      password: Type.Optional(Type.String()),
+    z.object({
+      host: z.string(),
+      port: z.number(),
+      db: z.string().optional(),
+      username: z.string().optional(),
+      password: z.string().optional(),
     }),
   ]),
   timeoutConfigSchema,
-]);
+);
 
 /** Redis cluster wrapper configuration schema */
-export const clusterWrapperConfigSchema = Type.Intersect([
-  Type.Object({
-    nodes: Type.Array(
-      Type.Object({ host: Type.String(), port: Type.Number() }),
-      {
-        minItems: 1,
-      }
-    ),
+export const clusterWrapperConfigSchema = z.intersection(
+  z.object({
+    nodes: z.array(z.object({ host: z.string(), port: z.number() })).min(1),
   }),
   timeoutConfigSchema,
-]);
+);
 
 /** @see {@link RedisOptions} */
 export type RedisWrapperConfig = RedisOptions &
-  Static<typeof redisWrapperConfigSchema>;
+  z.infer<typeof redisWrapperConfigSchema>;
 
 /** @see {@link ClusterOptions} */
 export type ClusterWrapperConfig = ClusterOptions &
-  Static<typeof clusterWrapperConfigSchema>;
+  z.infer<typeof clusterWrapperConfigSchema>;
 
 export const getRedisConfig = (options: RedisWrapperConfig) => {
   const { url, timeout, ...cfg } = options as RedisWrapperConfig & {

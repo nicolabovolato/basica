@@ -68,7 +68,8 @@
     "@opentelemetry/api": "^1.8.0",
     "@sinclair/typebox": "^0.32.16",
     "close-with-grace": "^1.2.0",
-    "pino": "^8.18.0"
+    "pino": "^8.18.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@basica/eslint-config": "workspace:^0.0.0",

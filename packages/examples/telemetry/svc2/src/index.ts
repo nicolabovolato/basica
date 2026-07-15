@@ -8,20 +8,20 @@ import {
   lifecyclePlugin as fastifyLifecyclePlugin,
 } from "@basica/fastify";
 
-import { Type } from "@sinclair/typebox";
+import { z } from "zod";
 
 import { routes } from "./routes";
 
 const config = configure(
   envProvider(),
-  Type.Object({
+  z.object({
     logger: loggerConfigSchema,
     http: fastifyConfigSchema,
-  })
+  }),
 );
 
 const container = new IocContainer().addSingleton("logger", () =>
-  loggerFactory(config.logger)
+  loggerFactory(config.logger),
 );
 
 const app = new AppBuilder(container)
@@ -29,10 +29,10 @@ const app = new AppBuilder(container)
     builder.with(fastifyLifecyclePlugin, (builder) =>
       builder.addFastifyEntrypoint("http", config.http, (builder) =>
         builder.configureApp((app) =>
-          app.useOpenapi().fastify.register(routes(deps.logger))
-        )
-      )
-    )
+          app.useOpenapi().fastify.register(routes(deps.logger)),
+        ),
+      ),
+    ),
   )
   .build();
 

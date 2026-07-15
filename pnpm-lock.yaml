@@ -82,6 +82,9 @@ importers:
       pino:
         specifier: ^8.18.0
         version: 8.19.0
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -119,15 +122,15 @@ importers:
       '@opentelemetry/api':
         specifier: ^1.8.0
         version: 1.8.0
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       amqp-connection-manager:
         specifier: ^4.1.14
         version: 4.1.14(amqplib@0.10.9)
       amqplib:
         specifier: ^0.10.8
         version: 0.10.9
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/core':
         specifier: workspace:^0.0.5
@@ -278,6 +281,9 @@ importers:
       fastify:
         specifier: ^5.0.0
         version: 5.0.0
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -315,12 +321,12 @@ importers:
       '@opentelemetry/api':
         specifier: ^1.8.0
         version: 1.8.0
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       ioredis:
         specifier: ^5.3.2
         version: 5.3.2
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/core':
         specifier: workspace:^0.0.5
@@ -364,12 +370,12 @@ importers:
       '@opentelemetry/api':
         specifier: ^1.8.0
         version: 1.8.0
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       kafkajs:
         specifier: ^2.2.4
         version: 2.2.4
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/core':
         specifier: workspace:^0.0.5
@@ -456,12 +462,12 @@ importers:
 
   packages/basica/plugins/pg:
     dependencies:
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       pg:
         specifier: ^8.11.3
         version: 8.11.3
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/core':
         specifier: workspace:^0.0.5
@@ -624,9 +630,6 @@ importers:
       '@fastify/type-provider-typebox':
         specifier: ^5.0.1
         version: 5.0.1(@sinclair/typebox@0.32.20)
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       fastify:
         specifier: ^5.0.0
         version: 5.0.0
@@ -636,6 +639,9 @@ importers:
       pg:
         specifier: ^8.22.0
         version: 8.22.0
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -1095,9 +1101,6 @@ importers:
       '@fastify/type-provider-typebox':
         specifier: ^5.0.1
         version: 5.0.1(@sinclair/typebox@0.32.20)
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       fastify:
         specifier: ^5.0.0
         version: 5.0.0
@@ -1107,6 +1110,9 @@ importers:
       pg:
         specifier: ^8.22.0
         version: 8.22.0
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -1171,15 +1177,15 @@ importers:
       '@opentelemetry/exporter-trace-otlp-grpc':
         specifier: ^0.49.1
         version: 0.49.1(@opentelemetry/api@1.8.0)
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       fastify:
         specifier: ^5.0.0
         version: 5.0.0
       opentelemetry-instrumentation-fetch-node:
         specifier: ^1.2.3
         version: 1.2.3(@opentelemetry/api@1.8.0)
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -1229,12 +1235,12 @@ importers:
       '@opentelemetry/exporter-trace-otlp-grpc':
         specifier: ^0.49.1
         version: 0.49.1(@opentelemetry/api@1.8.0)
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       fastify:
         specifier: ^5.0.0
         version: 5.0.0
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0

@@ -15,7 +15,7 @@ import { Pool } from "pg";
 
 import { lifecyclePlugin as fastifyLifecyclePlugin } from "@basica/fastify";
 
-import { Type } from "@sinclair/typebox";
+import { z } from "zod";
 
 import { Database } from "./db";
 import { routes } from "./routes";
@@ -23,9 +23,9 @@ import { ConflictError, NotFoundError, TodoService } from "./service";
 
 const config = configure(
   envProvider(),
-  Type.Object({
+  z.object({
     db: pgConfigSchema,
-  })
+  }),
 );
 
 const container = new IocContainer()
@@ -39,8 +39,8 @@ const container = new IocContainer()
             pool: new Pool(config.db),
           }),
         },
-        deps.logger
-      )
+        deps.logger,
+      ),
   )
   .addSingleton("todos", (deps) => new TodoService(deps.db));
 
@@ -52,8 +52,8 @@ const app = new AppBuilder(container)
         builder.addKyselyMigrations(
           "migrations",
           deps.db,
-          __dirname + "/../migrations"
-        )
+          __dirname + "/../migrations",
+        ),
       )
       .with(fastifyLifecyclePlugin, (builder) =>
         builder.addFastifyEntrypoint("http", (builder) =>
@@ -64,13 +64,13 @@ const app = new AppBuilder(container)
                 .mapErrors((builder) =>
                   builder
                     .mapError(NotFoundError, 404)
-                    .mapError(ConflictError, 409)
+                    .mapError(ConflictError, 409),
                 )
-                .fastify.register(routes(deps.todos))
+                .fastify.register(routes(deps.todos)),
             )
-            .mapHealthchecks()
-        )
-      )
+            .mapHealthchecks(),
+        ),
+      ),
   )
   .build();
 
