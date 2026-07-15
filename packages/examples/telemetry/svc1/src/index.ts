@@ -21,7 +21,7 @@ const config = configure(
     svc2: z.object({
       url: z.string(),
     }),
-  }),
+  })
 );
 
 const container = new IocContainer()
@@ -33,10 +33,10 @@ const app = new AppBuilder(container)
     builder.with(fastifyLifecyclePlugin, (builder) =>
       builder.addFastifyEntrypoint("http", config.http, (builder) =>
         builder.configureApp((app) =>
-          app.useOpenapi().fastify.register(routes(deps.svc2)),
-        ),
-      ),
-    ),
+          app.useOpenapi().fastify.register(routes(deps.svc2))
+        )
+      )
+    )
   )
   .build();
 

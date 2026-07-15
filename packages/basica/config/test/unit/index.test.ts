@@ -23,7 +23,7 @@ test("validates and returns the parsed config", () => {
     union: z.union([z.object({ a: z.number() }), z.object({ b: z.number() })]),
     intersect: z.intersection(
       z.object({ a: z.number() }),
-      z.object({ b: z.number() }),
+      z.object({ b: z.number() })
     ),
   });
 

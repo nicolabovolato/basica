@@ -20,7 +20,7 @@ export const pgConfigSchema = z.intersection(
   ]),
   z.object({
     connectionTimeoutMillis: z.number(),
-  }),
+  })
 );
 
 export type ClientConfig = PGClientConfig & z.infer<typeof pgConfigSchema>;

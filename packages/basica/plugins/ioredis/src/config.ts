@@ -27,7 +27,7 @@ export const redisWrapperConfigSchema = z.intersection(
       password: z.string().optional(),
     }),
   ]),
-  timeoutConfigSchema,
+  timeoutConfigSchema
 );
 
 /** Redis cluster wrapper configuration schema */
@@ -35,7 +35,7 @@ export const clusterWrapperConfigSchema = z.intersection(
   z.object({
     nodes: z.array(z.object({ host: z.string(), port: z.number() })).min(1),
   }),
-  timeoutConfigSchema,
+  timeoutConfigSchema
 );
 
 /** @see {@link RedisOptions} */

@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const toObj = (schema: z.ZodType) =>
   schemaToObj(
-    schema["~standard"].jsonSchema.input({ target: "draft-07" }) as JSONSchema7,
+    schema["~standard"].jsonSchema.input({ target: "draft-07" }) as JSONSchema7
   );
 
 test.each([
@@ -137,10 +137,7 @@ test.each([
     z.object({
       value: z.intersection(
         z.object({ y: z.string() }),
-        z.intersection(
-          z.object({ x: z.string() }),
-          z.object({ z: z.string() }),
-        ),
+        z.intersection(z.object({ x: z.string() }), z.object({ z: z.string() }))
       ),
     }),
     {
@@ -155,7 +152,7 @@ test.each([
     z.object({
       value: z.intersection(
         z.union([z.object({ y: z.string() }), z.object({ x: z.string() })]),
-        z.object({ z: z.string() }),
+        z.object({ z: z.string() })
       ),
     }),
     {
@@ -183,7 +180,7 @@ test.each([
         ]),
         z.object({
           connectionTimeoutMillis: z.number(),
-        }),
+        })
       ),
     }),
     {
@@ -222,13 +219,13 @@ test.each([
   z.object({
     value: z.intersection(
       z.array(z.string()),
-      z.record(z.string(), z.unknown()),
+      z.record(z.string(), z.unknown())
     ),
   }),
   z.object({
     value: z.intersection(
       z.object({ x: z.string() }),
-      z.object({ x: z.array(z.string()) }),
+      z.object({ x: z.array(z.string()) })
     ),
   }),
   z.object({
@@ -236,7 +233,7 @@ test.each([
       z.union([z.object({ x: z.string() })]),
       z.union([
         z.object({ y: z.string(), x: z.record(z.string(), z.unknown()) }),
-      ]),
+      ])
     ),
   }),
 ])("fails with untransformable standard schema %#", (schema) => {
