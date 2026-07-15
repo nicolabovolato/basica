@@ -1,21 +1,27 @@
-import { Type } from "@sinclair/typebox";
+import { JSONSchema7 } from "json-schema";
 import { schemaToObj } from "src/utils";
 import { expect, test } from "vitest";
+import { z } from "zod";
+
+const toObj = (schema: z.ZodType) =>
+  schemaToObj(
+    schema["~standard"].jsonSchema.input({ target: "draft-07" }) as JSONSchema7,
+  );
 
 test.each([
   [
-    Type.Object({
-      test: Type.Number(),
-      nested: Type.Object({
-        test1: Type.Array(Type.String()),
-        test2: Type.Record(Type.String(), Type.Unknown()),
-        nested: Type.Object({
-          test: Type.Date(),
+    z.object({
+      test: z.number(),
+      nested: z.object({
+        test1: z.array(z.string()),
+        test2: z.record(z.string(), z.unknown()),
+        nested: z.object({
+          test: z.unknown(),
         }),
       }),
     }),
     {
-      test: "primitive",
+      test: "number",
       nested: {
         test1: "json",
         test2: "json",
@@ -26,265 +32,213 @@ test.each([
     },
   ],
   [
-    Type.Object({
-      value: Type.String(),
+    z.object({
+      value: z.string(),
     }),
     {
-      value: "primitive",
+      value: "string",
     },
   ],
   [
-    Type.Object({
-      value: Type.Union([Type.String(), Type.Number()]),
+    z.object({
+      port: z.number(),
+      big: z.int(),
+      enabled: z.boolean(),
     }),
     {
-      value: "primitive",
+      port: "number",
+      big: "integer",
+      enabled: "boolean",
     },
   ],
   [
-    Type.Object({
-      value: Type.Union([
-        Type.String(),
-        Type.Number(),
-        Type.Object({ x: Type.String() }),
-      ]),
+    z.object({
+      value: z.union([z.string(), z.number()]),
     }),
     {
-      value: [
-        "primitive",
-        {
-          x: "primitive",
-        },
-      ],
+      value: "string",
     },
   ],
   [
-    Type.Object({
-      union1: Type.Union([
-        Type.Record(Type.String(), Type.Unknown()),
-        Type.String(),
+    z.object({
+      value: z.union([z.string(), z.number(), z.object({ x: z.string() })]),
+    }),
+    {
+      value: ["string", { x: "string" }],
+    },
+  ],
+  [
+    z.object({
+      value: z.union([z.literal("fatal"), z.literal("error")]),
+    }),
+    {
+      value: "json",
+    },
+  ],
+  [
+    z.object({
+      union1: z.union([z.record(z.string(), z.unknown()), z.string()]),
+      union2: z.union([z.string(), z.array(z.string())]),
+      union3: z.union([z.string(), z.object({ value: z.string() })]),
+      union4: z.union([
+        z.record(z.string(), z.unknown()),
+        z.object({ value: z.string() }),
       ]),
-      union2: Type.Union([Type.String(), Type.Array(Type.String())]),
-      union3: Type.Union([
-        Type.String(),
-        Type.Object({ value: Type.String() }),
+      union5: z.union([z.array(z.string()), z.object({ value: z.string() })]),
+      union6: z.union([
+        z.array(z.string()),
+        z.object({ value: z.array(z.string()) }),
       ]),
-      union4: Type.Union([
-        Type.Record(Type.String(), Type.Unknown()),
-        Type.Object({ value: Type.String() }),
+      union7: z.union([z.array(z.string()), z.record(z.string(), z.unknown())]),
+      union8: z.union([
+        z.object({ x: z.string() }),
+        z.object({ y: z.string() }),
       ]),
-      union5: Type.Union([
-        Type.Array(Type.String()),
-        Type.Object({ value: Type.String() }),
-      ]),
-      union6: Type.Union([
-        Type.Array(Type.String()),
-        Type.Object({ value: Type.Array(Type.String()) }),
-      ]),
-      union7: Type.Union([
-        Type.Array(Type.String()),
-        Type.Record(Type.String(), Type.Unknown()),
-      ]),
-      union8: Type.Union([
-        Type.Object({ x: Type.String() }),
-        Type.Object({ y: Type.String() }),
-      ]),
-      union9: Type.Union([
-        Type.Object({ x: Type.String() }),
-        Type.Object({ x: Type.String(), y: Type.String() }),
+      union9: z.union([
+        z.object({ x: z.string() }),
+        z.object({ x: z.string(), y: z.string() }),
       ]),
     }),
     {
       union1: "json",
       union2: "json",
-      union3: ["primitive", { value: "primitive" }],
-      union4: ["json", { value: "primitive" }],
-      union5: ["json", { value: "primitive" }],
+      union3: ["string", { value: "string" }],
+      union4: ["json", { value: "string" }],
+      union5: ["json", { value: "string" }],
       union6: ["json", { value: "json" }],
       union7: "json",
       union8: {
-        x: "primitive",
-        y: "primitive",
+        x: "string",
+        y: "string",
       },
       union9: {
-        x: "primitive",
-        y: "primitive",
+        x: "string",
+        y: "string",
       },
     },
   ],
   [
-    Type.Object({
-      value: Type.Union([
-        Type.Object({ y: Type.String() }),
-        Type.Object({ x: Type.String() }),
-        Type.Object({ z: Type.String() }),
+    z.object({
+      value: z.union([
+        z.object({ y: z.string() }),
+        z.object({ x: z.string() }),
+        z.object({ z: z.string() }),
       ]),
     }),
     {
       value: {
-        x: "primitive",
-        y: "primitive",
-        z: "primitive",
+        x: "string",
+        y: "string",
+        z: "string",
       },
     },
   ],
   [
-    Type.Object({
-      value: Type.Intersect([
-        Type.Object({ y: Type.String() }),
-        Type.Object({ x: Type.String() }),
-        Type.Object({ z: Type.String() }),
-      ]),
-    }),
-    {
-      value: {
-        x: "primitive",
-        y: "primitive",
-        z: "primitive",
-      },
-    },
-  ],
-  [
-    Type.Object({
-      value: Type.Intersect([
-        Type.Union([
-          Type.Object({ y: Type.String() }),
-          Type.Object({ x: Type.String() }),
-        ]),
-        Type.Object({ z: Type.String() }),
-      ]),
-    }),
-    {
-      value: {
-        x: "primitive",
-        y: "primitive",
-        z: "primitive",
-      },
-    },
-  ],
-  [
-    Type.Object({
-      x: Type.Intersect([
-        Type.Union([
-          Type.Object({
-            connectionString: Type.String(),
-          }),
-          Type.Object({
-            host: Type.String(),
-            port: Type.Number(),
-            database: Type.Optional(Type.String()),
-            username: Type.Optional(Type.String()),
-            password: Type.Optional(Type.String()),
-          }),
-        ]),
-        Type.Object({
-          connectionTimeoutMillis: Type.Number(),
-        }),
-      ]),
-    }),
-    {
-      x: {
-        connectionString: "primitive",
-        host: "primitive",
-        port: "primitive",
-        database: "primitive",
-        username: "primitive",
-        password: "primitive",
-        connectionTimeoutMillis: "primitive",
-      },
-    },
-  ],
-  [
-    Type.Object({
-      x: Type.Intersect([
-        Type.Union([
-          Type.Object({
-            url: Type.String(),
-          }),
-          Type.Object({
-            host: Type.String(),
-            port: Type.Number(),
-            db: Type.Optional(Type.String()),
-            username: Type.Optional(Type.String()),
-            password: Type.Optional(Type.String()),
-          }),
-        ]),
-        Type.Union([
-          Type.Object({
-            connectTimeout: Type.Number(),
-            commandTimeout: Type.Number(),
-          }),
-          Type.Object({
-            timeout: Type.Number(),
-          }),
-        ]),
-      ]),
-    }),
-    {
-      x: {
-        url: "primitive",
-        host: "primitive",
-        port: "primitive",
-        db: "primitive",
-        username: "primitive",
-        password: "primitive",
-        timeout: "primitive",
-        connectTimeout: "primitive",
-        commandTimeout: "primitive",
-      },
-    },
-  ],
-  [
-    Type.Object({
-      nodes: Type.Array(
-        Type.Object({ host: Type.String(), port: Type.Number() }),
-        {
-          minItems: 1,
-        }
+    z.object({
+      value: z.intersection(
+        z.object({ y: z.string() }),
+        z.intersection(
+          z.object({ x: z.string() }),
+          z.object({ z: z.string() }),
+        ),
       ),
-      timeout: Type.Number(),
+    }),
+    {
+      value: {
+        x: "string",
+        y: "string",
+        z: "string",
+      },
+    },
+  ],
+  [
+    z.object({
+      value: z.intersection(
+        z.union([z.object({ y: z.string() }), z.object({ x: z.string() })]),
+        z.object({ z: z.string() }),
+      ),
+    }),
+    {
+      value: {
+        x: "string",
+        y: "string",
+        z: "string",
+      },
+    },
+  ],
+  [
+    z.object({
+      x: z.intersection(
+        z.union([
+          z.object({
+            connectionString: z.string(),
+          }),
+          z.object({
+            host: z.string(),
+            port: z.number(),
+            database: z.string().optional(),
+            username: z.string().optional(),
+            password: z.string().optional(),
+          }),
+        ]),
+        z.object({
+          connectionTimeoutMillis: z.number(),
+        }),
+      ),
+    }),
+    {
+      x: {
+        connectionString: "string",
+        host: "string",
+        port: "number",
+        database: "string",
+        username: "string",
+        password: "string",
+        connectionTimeoutMillis: "number",
+      },
+    },
+  ],
+  [
+    z.object({
+      nodes: z.array(z.object({ host: z.string(), port: z.number() })),
+      timeout: z.number(),
     }),
     {
       nodes: "json",
-      timeout: "primitive",
+      timeout: "number",
     },
   ],
-])("transforms Typebox schema %#", async (schema, expected) => {
-  const result = schemaToObj(schema);
-
-  expect(result).toEqual(expected);
+])("transforms standard schema %#", (schema, expected) => {
+  expect(toObj(schema)).toEqual(expected);
 });
 
 test.each([
-  Type.Object({
-    value: Type.Intersect([Type.String(), Type.Number()]),
+  z.object({
+    value: z.intersection(z.string(), z.number()),
   }),
-  Type.Object({
-    value: Type.Intersect([Type.Array(Type.String()), Type.Number()]),
+  z.object({
+    value: z.intersection(z.array(z.string()), z.number()),
   }),
-  Type.Object({
-    value: Type.Intersect([
-      Type.Array(Type.String()),
-      Type.Record(Type.String(), Type.Unknown()),
-    ]),
+  z.object({
+    value: z.intersection(
+      z.array(z.string()),
+      z.record(z.string(), z.unknown()),
+    ),
   }),
-  Type.Object({
-    value: Type.Intersect([
-      Type.Object({ x: Type.String() }),
-      Type.Object({ x: Type.Array(Type.String()) }),
-    ]),
+  z.object({
+    value: z.intersection(
+      z.object({ x: z.string() }),
+      z.object({ x: z.array(z.string()) }),
+    ),
   }),
-  Type.Object({
-    value: Type.Intersect([
-      Type.Union([Type.Object({ x: Type.String() })]),
-      Type.Union([
-        Type.Object({
-          y: Type.String(),
-          x: Type.Record(Type.String(), Type.Unknown()),
-        }),
+  z.object({
+    value: z.intersection(
+      z.union([z.object({ x: z.string() })]),
+      z.union([
+        z.object({ y: z.string(), x: z.record(z.string(), z.unknown()) }),
       ]),
-    ]),
+    ),
   }),
-])("fails with untransformable Typebox schema %#", async (schema) => {
-  expect(() => schemaToObj(schema)).toThrow();
+])("fails with untransformable standard schema %#", (schema) => {
+  expect(() => toObj(schema)).toThrow();
 });
