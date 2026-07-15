@@ -1,25 +1,12 @@
 import { loggerFactory } from "@basica/core/logger";
 
-import { KafkaContainer, StartedKafkaContainer } from "@testcontainers/kafka";
 import { setTimeout } from "node:timers/promises";
 
 import { KafkaConsumerEntrypoint } from "src/lifecycle/entrypoint";
-import { afterAll, beforeAll, expect, test, vi } from "vitest";
+import { expect, inject, test, vi } from "vitest";
 import { getKafkaClient } from "../utils";
 
-let kafka: StartedKafkaContainer;
-
-beforeAll(async () => {
-  kafka = await new KafkaContainer("confluentinc/cp-kafka:8.0.0")
-    .withKraft()
-    .withExposedPorts(9092)
-    .start();
-}, 60000);
-
-afterAll(async () => {
-  await kafka.stop();
-}, 10000);
-
+const broker = inject("kafkaBroker");
 const logger = loggerFactory({ level: "silent" });
 
 test("topic", async () => {
@@ -31,7 +18,7 @@ test("topic", async () => {
 
   const topic = "test";
 
-  const client = getKafkaClient(kafka);
+  const client = getKafkaClient(broker);
   const admin = client.admin();
   const publisher = client.producer();
 
@@ -71,16 +58,16 @@ test("topic", async () => {
   expect(JSON.parse(handler.mock.calls[0][0].message.value.toString())).toEqual(
     {
       name: "test1",
-    }
+    },
   );
   expect(JSON.parse(handler.mock.calls[1][0].message.value.toString())).toEqual(
     {
       name: "test2",
-    }
+    },
   );
   expect(JSON.parse(handler.mock.calls[2][0].message.value.toString())).toEqual(
     {
       name: "test2",
-    }
+    },
   );
 }, 30000);
