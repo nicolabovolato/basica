@@ -30,8 +30,6 @@
     "build": "tsup-node",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test:unit": "vitest run --dir test/unit",
-    "test:integration": "vitest run --dir test/integration",
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
