@@ -139,8 +139,8 @@ importers:
         specifier: workspace:^0.0.0
         version: link:../../../shared/vitest-config
       '@types/amqplib':
-        specifier: ^0.10.5
-        version: 0.10.5
+        specifier: ^0.10.8
+        version: 0.10.8
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(vitest@4.1.10)
@@ -5277,8 +5277,8 @@ packages:
   '@types/acorn@4.0.6':
     resolution: {integrity: sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ==}
 
-  '@types/amqplib@0.10.5':
-    resolution: {integrity: sha512-/cSykxROY7BWwDoi4Y4/jLAuZTshZxd8Ey1QYa/VaXriMotBDoou7V/twJiOSHzU6t1Kp1AHAUXGCgqq+6DNeg==}
+  '@types/amqplib@0.10.8':
+    resolution: {integrity: sha512-vtDp8Pk1wsE/AuQ8/Rgtm6KUZYqcnTgNvEHwzCkX8rL7AGsC6zqAfKAAJhUZXFhM/Pp++tbnUHiam/8vVpPztA==}
 
   '@types/autocannon@7.12.7':
     resolution: {integrity: sha512-Pd4nPf7wRpacULa6D/EC9x3CwzFQXwA0z5WFuik/fvJjW44V3WzBTM3jtt8nSBoflUNgswPiMCtgrr1bwnAcMg==}
@@ -17187,7 +17187,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.9
 
-  '@types/amqplib@0.10.5':
+  '@types/amqplib@0.10.8':
     dependencies:
       '@types/node': 24.13.3
 
