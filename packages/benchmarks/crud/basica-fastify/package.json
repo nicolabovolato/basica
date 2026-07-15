@@ -1,6 +1,6 @@
 {
   "name": "bench-crud-basica-fastify",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": true,
   "author": "Nicola Bovolato",
   "license": "MIT",
@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@basica/config": "workspace:^",
-    "@basica/core": "workspace:^0.0.4",
-    "@basica/fastify": "workspace:^0.1.0",
+    "@basica/core": "workspace:^0.0.5",
+    "@basica/fastify": "workspace:^0.1.2",
     "@basica/kysely": "workspace:^",
     "@basica/pg": "workspace:^",
     "@fastify/type-provider-typebox": "^5.0.1",

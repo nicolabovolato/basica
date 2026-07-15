@@ -1,6 +1,6 @@
 {
   "name": "@basica/amqp-connection-manager",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicolabovolato/basica.git",
@@ -35,13 +35,13 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.4",
+    "@basica/core": "workspace:^0.0.5",
     "@sinclair/typebox": "^0.32.16",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.8"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.4",
+    "@basica/core": "workspace:^0.0.5",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",

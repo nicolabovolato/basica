@@ -1,5 +1,15 @@
 # @basica/bullmq
 
+## 0.0.5
+
+### Patch Changes
+
+- [#19](https://github.com/nicolabovolato/basica/pull/19) [`730dc6b`](https://github.com/nicolabovolato/basica/commit/730dc6b4937882566a7842050dc4758ed884e24c) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Require Node.js 24 as the minimum supported version and update dependencies to their latest compatible releases.
+
+- Updated dependencies [[`730dc6b`](https://github.com/nicolabovolato/basica/commit/730dc6b4937882566a7842050dc4758ed884e24c)]:
+  - @basica/core@0.0.5
+  - @basica/ioredis@0.0.7
+
 ## 0.0.4
 
 ### Patch Changes

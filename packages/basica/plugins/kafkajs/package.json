@@ -1,6 +1,6 @@
 {
   "name": "@basica/kafkajs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicolabovolato/basica.git",
@@ -35,12 +35,12 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.4",
+    "@basica/core": "workspace:^0.0.5",
     "@sinclair/typebox": "^0.32.16",
     "kafkajs": "^2.2.4"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.4",
+    "@basica/core": "workspace:^0.0.5",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",

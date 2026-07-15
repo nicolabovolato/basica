@@ -1,5 +1,12 @@
 # @basica/bentocache
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`730dc6b`](https://github.com/nicolabovolato/basica/commit/730dc6b4937882566a7842050dc4758ed884e24c)]:
+  - @basica/core@0.0.5
+
 ## 0.0.4
 
 ### Patch Changes

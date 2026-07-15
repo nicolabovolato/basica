@@ -1,5 +1,16 @@
 # @basica/amqp-connection-manager
 
+## 0.0.4
+
+### Patch Changes
+
+- [#19](https://github.com/nicolabovolato/basica/pull/19) [`730dc6b`](https://github.com/nicolabovolato/basica/commit/730dc6b4937882566a7842050dc4758ed884e24c) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Bump `amqplib` to `^0.10.8` so the default `frameMax` (131072) satisfies RabbitMQ 4's minimum, fixing connection failures against RabbitMQ 4.
+
+- [#19](https://github.com/nicolabovolato/basica/pull/19) [`730dc6b`](https://github.com/nicolabovolato/basica/commit/730dc6b4937882566a7842050dc4758ed884e24c) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Require Node.js 24 as the minimum supported version and update dependencies to their latest compatible releases.
+
+- Updated dependencies [[`730dc6b`](https://github.com/nicolabovolato/basica/commit/730dc6b4937882566a7842050dc4758ed884e24c)]:
+  - @basica/core@0.0.5
+
 ## 0.0.3
 
 ### Patch Changes
