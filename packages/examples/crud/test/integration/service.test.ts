@@ -1,24 +1,27 @@
-import { Migrator } from "@basica/kysely";
-import {
-  PostgreSqlContainer,
-  StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
 import { randomUUID } from "node:crypto";
 import { setTimeout } from "node:timers/promises";
-import { afterAll, afterEach, beforeAll, expect, test, vi } from "vitest";
+
+import { Migrator } from "@basica/kysely";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  expect,
+  inject,
+  test,
+  vi,
+} from "vitest";
 
 import { Todo } from "../../src/db";
 import { ConflictError, NotFoundError, TodoService } from "../../src/service";
 import { getTestApp } from "../utils";
 
-let container: StartedPostgreSqlContainer;
+const pgUrl = inject("pgUrl");
 let app: ReturnType<typeof getTestApp>;
 let todos: TodoService;
 
 beforeAll(async () => {
-  container = await new PostgreSqlContainer("postgres:17-alpine").start();
-
-  app = getTestApp(container);
+  app = getTestApp(pgUrl);
   await (app.services.migrations as Migrator).start();
   todos = app.deps.todos;
 }, 60000);
@@ -30,7 +33,6 @@ afterEach(async () => {
 
 afterAll(async () => {
   await app.deps.db.shutdown();
-  await container.stop();
 });
 
 test("create/get", async () => {

@@ -1,22 +1,11 @@
-import {
-  PostgreSqlContainer,
-  StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
-import { afterAll, beforeAll, expect, test } from "vitest";
+import { expect, inject, test } from "vitest";
+
 import { getTestApp } from "../utils";
 
-let container: StartedPostgreSqlContainer;
-
-beforeAll(async () => {
-  container = await new PostgreSqlContainer("postgres:17-alpine").start();
-}, 60000);
-
-afterAll(async () => {
-  await container.stop();
-});
+const pgUrl = inject("pgUrl");
 
 test("start/stop", async () => {
-  const app = getTestApp(container);
+  const app = getTestApp(pgUrl);
 
   const startResult = await app.lifecycle.start();
   const stopResult = await app.lifecycle.stop();
