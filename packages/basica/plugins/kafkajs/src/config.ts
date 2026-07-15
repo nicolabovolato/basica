@@ -1,26 +1,26 @@
-import { Static, Type } from "@sinclair/typebox";
 import { KafkaConfig as KafkaClientConfig } from "kafkajs";
+import { z } from "zod";
 
-export const kafkaConfigSchema = Type.Intersect([
-  Type.Object({
-    brokers: Type.Union([Type.String(), Type.Array(Type.String())]),
+export const kafkaConfigSchema = z.intersection(
+  z.object({
+    brokers: z.union([z.string(), z.array(z.string())]),
   }),
-  Type.Union([
-    Type.Object({
-      connectionTimeout: Type.Number(),
-      authenticationTimeout: Type.Number(),
-      requestTimeout: Type.Number(),
-      // retry: Type.Object({
-      //   maxRetryTime: Type.Number(),
+  z.union([
+    z.object({
+      connectionTimeout: z.number(),
+      authenticationTimeout: z.number(),
+      requestTimeout: z.number(),
+      // retry: z.object({
+      //   maxRetryTime: z.number(),
       // }),
     }),
-    Type.Object({
-      timeout: Type.Number(),
+    z.object({
+      timeout: z.number(),
     }),
   ]),
-]);
+);
 
-export type KafkaConfig = KafkaClientConfig & Static<typeof kafkaConfigSchema>;
+export type KafkaConfig = KafkaClientConfig & z.infer<typeof kafkaConfigSchema>;
 
 export const getKafkaConfig = (config: KafkaConfig) => {
   const { timeout, ...cfg } = config as KafkaConfig & {

@@ -34,7 +34,6 @@
   },
   "peerDependencies": {
     "@basica/core": "workspace:^0.0.5",
-    "@sinclair/typebox": "^0.32.16",
     "pg": "^8.11.3"
   },
   "devDependencies": {
@@ -50,5 +49,8 @@
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
   }
 }

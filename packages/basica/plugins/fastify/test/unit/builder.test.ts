@@ -3,6 +3,7 @@ import { Static } from "@sinclair/typebox";
 import { FastifyEntrypointBuilder } from "src/builder";
 import { mapHealthchecksConfigSchema } from "src/config";
 import { beforeEach, expect, test, vi } from "vitest";
+import { z } from "zod";
 
 import { deps, hcManager } from "./utils";
 
@@ -47,7 +48,7 @@ test.each([
     () => true,
   ],
 ] as [
-  Partial<Static<typeof mapHealthchecksConfigSchema>> | undefined,
+  Partial<z.infer<typeof mapHealthchecksConfigSchema>> | undefined,
   Record<string, Static<typeof healthcheckResultSchema>>,
   { status: "healthy" | "unhealthy" } & Record<string, unknown>,
   ((name: string) => boolean) | undefined,
@@ -64,8 +65,8 @@ test.each([
 
   expect(result.statusCode).toEqual(
     shouldBeHealthy
-      ? config?.healthyStatusCode ?? 200
-      : config?.unhealthyStatusCode ?? 500
+      ? (config?.healthyStatusCode ?? 200)
+      : (config?.unhealthyStatusCode ?? 500),
   );
 
   expect(result.json()).toEqual(expected);
@@ -128,11 +129,11 @@ test.each([
         .mapErrors((e) =>
           e
             .mapError(CustomError1, 599)
-            .mapError(CustomError2, (e) => (e.type == "A" ? 598 : 597))
+            .mapError(CustomError2, (e) => (e.type == "A" ? 598 : 597)),
         )
         .fastify.get("/", () => {
           throw err;
-        })
+        }),
     )
     .build();
 
@@ -160,12 +161,12 @@ test("mapRoutes", async () => {
         .mapRoutes("/test", (app) =>
           app.fastify
             .get("/", () => "test root")
-            .get("/test", () => "test test")
+            .get("/test", () => "test test"),
         )
         .mapRoutes("/test2", (app) =>
-          app.fastify.get("/test", () => "test2 test")
+          app.fastify.get("/test", () => "test2 test"),
         )
-        .mapRoutes("/", (app) => app.fastify.get("/", () => "root"))
+        .mapRoutes("/", (app) => app.fastify.get("/", () => "root")),
     )
     .build();
 

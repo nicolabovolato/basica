@@ -1,4 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
+import { z } from "zod";
 
 import { SpanStatusCode } from "@opentelemetry/api";
 
@@ -28,15 +29,15 @@ export interface IHealthcheck {
 }
 
 /** healthcheck manager configuration */
-export const healthcheckManagerConfigSchema = Type.Object({
+export const healthcheckManagerConfigSchema = z.object({
   /**
    * timeout before application healthcheck is aborted
    * @default 5000
    */
-  healthcheckTimeoutMs: Type.Number({ minimum: 0 }),
+  healthcheckTimeoutMs: z.number().min(0),
 });
 
-export type HealthcheckManagerConfig = Static<
+export type HealthcheckManagerConfig = z.infer<
   typeof healthcheckManagerConfigSchema
 >;
 
@@ -51,13 +52,13 @@ export interface IHealthcheckManager {
    * healthcheckManager.healthcheck((x) => x == "db") // only healthchecks with name db will be run
    */
   healthcheck(
-    filter?: (name: string) => boolean
+    filter?: (name: string) => boolean,
   ): Promise<Record<string, HealthcheckResult>>;
 }
 
-export class HealthcheckManager<H extends HealthcheckServices>
-  implements IHealthcheckManager
-{
+export class HealthcheckManager<
+  H extends HealthcheckServices,
+> implements IHealthcheckManager {
   readonly #builderItems = new IocContainer<H>();
 
   readonly #config: HealthcheckManagerConfig;
@@ -76,7 +77,7 @@ export class HealthcheckManager<H extends HealthcheckServices>
     if (name in this.healthchecks) {
       this.#logger.warn(
         "Duplicate healthcheck name, previous value will be overwritten",
-        { name }
+        { name },
       );
     }
 
@@ -85,13 +86,13 @@ export class HealthcheckManager<H extends HealthcheckServices>
   }
 
   async healthcheck(
-    filter?: (name: string) => boolean
+    filter?: (name: string) => boolean,
   ): Promise<Record<string, HealthcheckResult>> {
     return tracer.startActiveSpan(`healthcheck`, async (span) => {
       const ac = new AbortController();
       const acTimeout = setTimeout(
         () => ac.abort(),
-        this.#config.healthcheckTimeoutMs
+        this.#config.healthcheckTimeoutMs,
       );
 
       const healthchecks = Array.from(
@@ -99,7 +100,7 @@ export class HealthcheckManager<H extends HealthcheckServices>
         ([key, value]) => ({
           name: key,
           value: value as IHealthcheck,
-        })
+        }),
       ).filter((x) => (filter ? filter(x.name) : true));
 
       const result = await Promise.allSettled(
@@ -108,7 +109,7 @@ export class HealthcheckManager<H extends HealthcheckServices>
             try {
               return await abortable(
                 ac.signal,
-                async () => await h.value.healthcheck(ac.signal)
+                async () => await h.value.healthcheck(ac.signal),
               );
             } catch (err) {
               span.recordException(err as Error);
@@ -117,8 +118,8 @@ export class HealthcheckManager<H extends HealthcheckServices>
             } finally {
               span.end();
             }
-          })
-        )
+          }),
+        ),
       );
 
       clearTimeout(acTimeout);
@@ -145,7 +146,7 @@ export class HealthcheckManager<H extends HealthcheckServices>
             r[e.name] = e.value;
             return r;
           },
-          {} as Record<string, HealthcheckResult>
+          {} as Record<string, HealthcheckResult>,
         );
 
       span.end();

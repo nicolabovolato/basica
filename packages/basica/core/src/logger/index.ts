@@ -1,33 +1,25 @@
-import { Static, Type } from "@sinclair/typebox";
 import pino, { BaseLogger, DestinationStream, LoggerOptions } from "pino";
+import { z } from "zod";
 
 /** Logger configuration schema */
-export const loggerConfigSchema = Type.Object({
+export const loggerConfigSchema = z.object({
   /** @default "info" */
-  level: Type.Optional(
-    Type.Union([
-      Type.Literal("fatal"),
-      Type.Literal("error"),
-      Type.Literal("warn"),
-      Type.Literal("info"),
-      Type.Literal("debug"),
-      Type.Literal("trace"),
-      Type.Literal("silent"),
-    ])
-  ),
+  level: z
+    .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
+    .optional(),
   /** Additional log fields */
-  fields: Type.Optional(
-    Type.Object({
+  fields: z
+    .object({
       /** @default process.env.npm_package_name */
-      name: Type.Optional(Type.String()),
+      name: z.string().optional(),
       /** @default process.env.npm_package_version */
-      version: Type.Optional(Type.String()),
+      version: z.string().optional(),
     })
-  ),
+    .optional(),
 });
 
 export type LoggerConfig = LoggerOptions &
-  Partial<Static<typeof loggerConfigSchema>>;
+  Partial<z.infer<typeof loggerConfigSchema>>;
 
 /** Basica logger interface */
 export type ILogger = BaseLogger &
@@ -36,13 +28,7 @@ export type ILogger = BaseLogger &
   }>;
 
 export type Level =
-  | "fatal"
-  | "error"
-  | "warn"
-  | "info"
-  | "debug"
-  | "trace"
-  | "silent";
+  "fatal" | "error" | "warn" | "info" | "debug" | "trace" | "silent";
 
 // TODO: worker thread transport?
 /**
@@ -51,13 +37,13 @@ export type Level =
  */
 export const loggerFactory = (
   config?: LoggerConfig,
-  stream?: DestinationStream
+  stream?: DestinationStream,
 ) => {
   const { fields, ...pinoConfig } = config ?? {};
 
   return pino(
     { ...pinoConfig, level: pinoConfig.level ?? "info" },
-    stream
+    stream,
   ).child({
     app: {
       name: fields?.name ?? process.env.npm_package_name,

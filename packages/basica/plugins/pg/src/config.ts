@@ -1,30 +1,30 @@
-import { Static, Type } from "@sinclair/typebox";
 import {
   type ClientConfig as PGClientConfig,
   type PoolConfig as PGPoolConfig,
 } from "pg";
+import { z } from "zod";
 
 /** Postgres configuration schema */
-export const pgConfigSchema = Type.Intersect([
-  Type.Union([
-    Type.Object({
-      connectionString: Type.String(),
+export const pgConfigSchema = z.intersection(
+  z.union([
+    z.object({
+      connectionString: z.string(),
     }),
-    Type.Object({
-      host: Type.String(),
-      port: Type.Number(),
-      database: Type.Optional(Type.String()),
-      username: Type.Optional(Type.String()),
-      password: Type.Optional(Type.String()),
+    z.object({
+      host: z.string(),
+      port: z.number(),
+      database: z.string().optional(),
+      username: z.string().optional(),
+      password: z.string().optional(),
     }),
   ]),
-  Type.Object({
-    connectionTimeoutMillis: Type.Number(),
+  z.object({
+    connectionTimeoutMillis: z.number(),
   }),
-]);
+);
 
-export type ClientConfig = PGClientConfig & Static<typeof pgConfigSchema>;
-export type PoolConfig = PGPoolConfig & Static<typeof pgConfigSchema>;
+export type ClientConfig = PGClientConfig & z.infer<typeof pgConfigSchema>;
+export type PoolConfig = PGPoolConfig & z.infer<typeof pgConfigSchema>;
 
 export const getClientConfig = (config: ClientConfig) => {
   return config as PGClientConfig;

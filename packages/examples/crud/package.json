@@ -24,10 +24,10 @@
     "@basica/kysely": "workspace:^0.0.5",
     "@basica/pg": "workspace:^0.0.6",
     "@fastify/type-provider-typebox": "^5.0.1",
-    "@sinclair/typebox": "^0.32.16",
     "fastify": "^5.0.0",
     "kysely": "^0.27.2",
-    "pg": "^8.22.0"
+    "pg": "^8.22.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@basica/eslint-config": "workspace:^0.0.0",
