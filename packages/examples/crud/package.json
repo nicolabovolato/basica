@@ -13,8 +13,8 @@
     "build": "tsup-node src/index.ts migrations/*.ts",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test:unit": "vitest run --dir test/unit",
-    "test:integration": "vitest run --dir test/integration",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
     "lint": "tsc --noEmit && eslint \"{src,test,migrations}/**/*.ts\""
   },
   "dependencies": {

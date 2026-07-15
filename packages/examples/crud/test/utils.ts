@@ -1,16 +1,13 @@
 import { ConfigProvider } from "@basica/config";
-import { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 
 import { Config, getApp } from "../src/app";
 
-const provider = (container?: StartedPostgreSqlContainer) =>
+const provider = (url?: string) =>
   ({
     get: () =>
       ({
         db: {
-          connectionString: container
-            ? container.getConnectionUri()
-            : "postgres://localhost:5432",
+          connectionString: url ?? "postgres://localhost:5432",
           connectionTimeoutMillis: 1000,
         },
         logger: {
@@ -19,5 +16,4 @@ const provider = (container?: StartedPostgreSqlContainer) =>
       }) satisfies Config,
   }) satisfies ConfigProvider;
 
-export const getTestApp = (container?: StartedPostgreSqlContainer) =>
-  getApp(provider(container));
+export const getTestApp = (url?: string) => getApp(provider(url));
