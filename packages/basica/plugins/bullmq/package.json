@@ -1,6 +1,11 @@
 {
   "name": "@basica/bullmq",
   "version": "0.0.4",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolabovolato/basica.git",
+    "directory": "packages/basica/plugins/bullmq"
+  },
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [

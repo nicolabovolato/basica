@@ -1,6 +1,11 @@
 {
   "name": "@basica/ioredis",
   "version": "0.0.6",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolabovolato/basica.git",
+    "directory": "packages/basica/plugins/ioredis"
+  },
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [

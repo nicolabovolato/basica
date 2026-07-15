@@ -1,6 +1,11 @@
 {
   "name": "@basica/fastify",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolabovolato/basica.git",
+    "directory": "packages/basica/plugins/fastify"
+  },
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
