@@ -1,77 +1,36 @@
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  test,
-} from "vitest";
-
-import {
-  PostgreSqlContainer,
-  StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
+import { Client } from "pg";
+import { afterEach, beforeEach, describe, expect, inject, test } from "vitest";
 
 import { getClientInstance, getPoolInstance } from "./utils";
 
-let container: StartedPostgreSqlContainer;
+const pgUrl = inject("pgUrl");
 
-beforeAll(async () => {
-  container = await new PostgreSqlContainer("postgres:17-alpine").start();
-}, 60000);
+const runSql = async (sql: string) => {
+  const client = new Client(pgUrl);
+  await client.connect();
+  await client.query(sql);
+  await client.end();
+};
 
 beforeEach(async () => {
-  await container.exec(
-    [
-      "psql",
-      "-U",
-      container.getUsername(),
-      "-d",
-      container.getDatabase(),
-      "-c",
-      "CREATE TABLE users(id SERIAL PRIMARY KEY, name TEXT); INSERT INTO users(name) VALUES ('Alice'), ('Bob');",
-    ],
-    {
-      env: {
-        PGPASSWORD: container.getPassword(),
-      },
-    }
+  await runSql(
+    "CREATE TABLE users(id SERIAL PRIMARY KEY, name TEXT); INSERT INTO users(name) VALUES ('Alice'), ('Bob');",
   );
 });
 
 afterEach(async () => {
-  await container.exec(
-    [
-      "psql",
-      "-U",
-      container.getUsername(),
-      "-d",
-      container.getDatabase(),
-      "-c",
-      "DROP TABLE users;",
-    ],
-    {
-      env: {
-        PGPASSWORD: container.getPassword(),
-      },
-    }
-  );
-});
-
-afterAll(async () => {
-  await container.stop();
+  await runSql("DROP TABLE users;");
 });
 
 describe("client", () => {
   test("start", async () => {
-    const pg = getClientInstance(container);
+    const pg = getClientInstance(pgUrl);
 
     await pg.start();
   });
 
   test("healthcheck", async () => {
-    const pg = getClientInstance(container);
+    const pg = getClientInstance(pgUrl);
     await pg.start();
 
     const result = await pg.healthcheck();
@@ -79,7 +38,7 @@ describe("client", () => {
   });
 
   test("query", async () => {
-    const pg = getClientInstance(container);
+    const pg = getClientInstance(pgUrl);
     await pg.start();
 
     const result = await pg.query(`SELECT * FROM users`);
@@ -90,7 +49,7 @@ describe("client", () => {
   });
 
   test("shutdown", async () => {
-    const pg = getClientInstance(container);
+    const pg = getClientInstance(pgUrl);
     await pg.start();
 
     await pg.shutdown();
@@ -100,14 +59,14 @@ describe("client", () => {
 
 describe("pool", () => {
   test("healthcheck", async () => {
-    const pg = getPoolInstance(container);
+    const pg = getPoolInstance(pgUrl);
 
     const result = await pg.healthcheck();
     expect(result).toEqual({ status: "healthy" });
   });
 
   test("query", async () => {
-    const pg = getPoolInstance(container);
+    const pg = getPoolInstance(pgUrl);
     const result = await pg.query(`SELECT * FROM users`);
     expect(result.rows).toEqual([
       { id: 1, name: "Alice" },
@@ -116,7 +75,7 @@ describe("pool", () => {
   });
 
   test("shutdown", async () => {
-    const pg = getPoolInstance(container);
+    const pg = getPoolInstance(pgUrl);
 
     await pg.shutdown();
     await expect(pg.query(`SELECT * FROM users`)).rejects.toThrowError();

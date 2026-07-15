@@ -1,30 +1,28 @@
 import { loggerFactory } from "@basica/core/logger";
 
-import { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
-
 import { Client } from "src/client";
 import { Pool } from "src/pool";
 
 const logger = loggerFactory({ level: "silent" });
 
-export const getClientInstance = (container: StartedPostgreSqlContainer) => {
+export const getClientInstance = (url: string) => {
   return new Client(
     {
-      connectionString: container.getConnectionUri(),
+      connectionString: url,
       connectionTimeoutMillis: 1000,
     },
     logger,
-    "test"
+    "test",
   );
 };
 
-export const getPoolInstance = (container: StartedPostgreSqlContainer) => {
+export const getPoolInstance = (url: string) => {
   return new Pool(
     {
-      connectionString: container.getConnectionUri(),
+      connectionString: url,
       connectionTimeoutMillis: 1000,
     },
     logger,
-    "test"
+    "test",
   );
 };
