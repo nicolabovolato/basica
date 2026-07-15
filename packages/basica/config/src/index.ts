@@ -1,43 +1,39 @@
-import { Static, TObject } from "@sinclair/typebox";
-import { Value } from "@sinclair/typebox/value";
+import { StandardSchemaV1 } from "@standard-schema/spec";
 
-import { ConfigProvider, schemaToObj } from "./utils";
+import { ConfigProvider } from "./utils";
 
 /**
- * Validates configuration from the given a provider and schema
+ * Validates configuration from the given provider and schema
  * @param provider configuration provider {@link ConfigProvider}
- * @param schema typebox {@link TObject}
+ * @param schema any {@link https://standardschema.dev | Standard Schema}. The provider dictates any extra requirements: {@link envProvider} and other flat sources additionally need a {@link https://standardschema.dev/json-schema | JSON Schema} (e.g. Zod v4), while shaped providers accept any Standard Schema.
  * @returns validated config object
  * @throws validation error
  */
-export const configure = <T extends TObject>(
-  provider: ConfigProvider,
-  schema: T
+export const configure = <S, T extends StandardSchemaV1 & S>(
+  provider: ConfigProvider<S>,
+  schema: T,
 ) => {
-  const objSchema = schemaToObj(schema);
-  const config = provider.get(objSchema);
+  const config = provider.get(schema);
 
-  const result = safeParse(schema, config);
+  const result = schema["~standard"].validate(config);
+  if (result instanceof Promise) {
+    throw new Error("Asynchronous validation is not supported");
+  }
 
-  if (!result.success) {
-    const msg = [...result.errors]
-      .map((e) => e.path + ": " + e.message)
+  if (result.issues) {
+    const msg = result.issues
+      .map((issue) => formatPath(issue.path) + ": " + issue.message)
       .join("\n");
     throw new Error(msg);
   }
 
-  return result.value as Static<typeof schema>;
+  return result.value as StandardSchemaV1.InferOutput<T>;
 };
 
-const safeParse = <T extends TObject>(T: T, value: unknown) => {
-  const coerced = Value.Clean(T, Value.Default(T, Value.Convert(T, value)));
-
-  try {
-    return { value: Value.Decode(T, coerced), success: true } as const;
-  } catch (e) {
-    return { errors: Value.Errors(T, coerced), success: false } as const;
-  }
-};
+const formatPath = (path: StandardSchemaV1.Issue["path"]) =>
+  (path ?? [])
+    .map((segment) => (typeof segment === "object" ? segment.key : segment))
+    .join(".");
 
 export { envProvider } from "./env";
 export { ConfigProvider } from "./utils";

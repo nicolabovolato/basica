@@ -35,7 +35,7 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.32.16",
+    "@standard-schema/spec": "^1.1.0",
     "dotenv": "^16.4.7"
   },
   "devDependencies": {
@@ -43,11 +43,13 @@
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",
     "@basica/vitest-config": "workspace:^0.0.0",
+    "@types/json-schema": "^7.0.15",
     "@types/node": "^24.13.3",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.7.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "zod": "^4.4.3"
   }
 }

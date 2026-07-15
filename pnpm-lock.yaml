@@ -24,9 +24,9 @@ importers:
 
   packages/basica/config:
     dependencies:
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
+      '@standard-schema/spec':
+        specifier: ^1.1.0
+        version: 1.1.0
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -43,6 +43,9 @@ importers:
       '@basica/vitest-config':
         specifier: workspace:^0.0.0
         version: link:../../shared/vitest-config
+      '@types/json-schema':
+        specifier: ^7.0.15
+        version: 7.0.15
       '@types/node':
         specifier: 24.13.3
         version: 24.13.3
@@ -61,6 +64,9 @@ importers:
       vitest:
         specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.8.0)(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(@vitest/ui@4.1.10)(vite@6.4.3(@types/node@24.13.3)(jiti@1.21.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/basica/core:
     dependencies:
@@ -11667,6 +11673,9 @@ packages:
   zip-stream@6.0.1:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
+
+  zod@4.4.3:
+    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -24607,5 +24616,7 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.7.0
+
+  zod@4.4.3: {}
 
   zwitch@2.0.4: {}
