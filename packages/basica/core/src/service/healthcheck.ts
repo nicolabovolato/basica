@@ -1,4 +1,3 @@
-import { Static, Type } from "@sinclair/typebox";
 import { z } from "zod";
 
 import { SpanStatusCode } from "@opentelemetry/api";
@@ -9,20 +8,18 @@ import { abortable } from "src/utils";
 import { tracer } from "src/utils/tracer";
 
 /** Healthcheck result schema */
-export const healthcheckResultSchema = Type.Union([
-  Type.Object({
-    status: Type.Literal("healthy"),
-  }),
-  Type.Object({
-    status: Type.Literal("unhealthy"),
+export const healthcheckResultSchema = z.discriminatedUnion("status", [
+  z.object({ status: z.literal("healthy") }),
+  z.object({
+    status: z.literal("unhealthy"),
     /** User-facing error description */
-    description: Type.Optional(Type.String()),
+    description: z.string().optional(),
     /** Thrown error */
-    error: Type.Optional(Type.Unknown()),
+    error: z.unknown().optional(),
   }),
 ]);
 
-export type HealthcheckResult = Static<typeof healthcheckResultSchema>;
+export type HealthcheckResult = z.infer<typeof healthcheckResultSchema>;
 
 export interface IHealthcheck {
   healthcheck(signal: AbortSignal): Promise<HealthcheckResult>;

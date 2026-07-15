@@ -1,5 +1,4 @@
-import { healthcheckResultSchema } from "@basica/core";
-import { Static } from "@sinclair/typebox";
+import { HealthcheckResult } from "@basica/core";
 import { FastifyEntrypointBuilder } from "src/builder";
 import { mapHealthchecksConfigSchema } from "src/config";
 import { beforeEach, expect, test, vi } from "vitest";
@@ -49,7 +48,7 @@ test.each([
   ],
 ] as [
   Partial<z.infer<typeof mapHealthchecksConfigSchema>> | undefined,
-  Record<string, Static<typeof healthcheckResultSchema>>,
+  Record<string, HealthcheckResult>,
   { status: "healthy" | "unhealthy" } & Record<string, unknown>,
   ((name: string) => boolean) | undefined,
 ][])("healthchecks", async (config, healthcheckResult, expected, filterFn) => {
