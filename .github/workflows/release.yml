@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      id-token: write # required for npm provenance
     steps:
       - uses: actions/checkout@v7
         with:
@@ -26,6 +27,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"
   docs:
     runs-on: ubuntu-latest
     permissions:

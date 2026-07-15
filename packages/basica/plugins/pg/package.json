@@ -1,6 +1,11 @@
 {
   "name": "@basica/pg",
   "version": "0.0.5",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolabovolato/basica.git",
+    "directory": "packages/basica/plugins/pg"
+  },
   "author": "Nicola Bovolato",
   "license": "MIT",
   "files": [
