@@ -18,7 +18,6 @@ export default mergeConfig(
           test: {
             name: "integration",
             include: ["test/integration/**/*.test.ts"],
-            // both files share the one postgres container, so run serially
             fileParallelism: false,
             globalSetup: ["./test/integration/setup.ts"],
           },

@@ -72,7 +72,6 @@ test("channel", async () => {
 
   await entrypoint.shutdown(new AbortController().signal);
 
-  // fn4 is unsubscribed after shutdown, so it never fires
   await publisher.publish("fn4", "test4");
   await setTimeout(200);
   expect(fn4).not.toHaveBeenCalled();
@@ -105,11 +104,9 @@ test("pattern", async () => {
 
   await entrypoint.shutdown(new AbortController().signal);
 
-  // published after shutdown, so it must not reach either handler
   await publisher.publish("channel:first:0", "test4");
   await setTimeout(200);
 
-  // the pattern subscription matches all three channels, in publish order
   expect(fn).toHaveBeenNthCalledWith(
     1,
     "test1",
@@ -132,7 +129,6 @@ test("pattern", async () => {
     wrapper.ioredis,
   );
 
-  // the exact-channel subscription only matches the first
   expect(fnChannel).toHaveBeenCalledExactlyOnceWith(
     "test1",
     expect.any(String),

@@ -36,7 +36,6 @@ export const flushRedis = async (url: string) => {
   redis.disconnect();
 };
 
-/** Flushes each cluster master directly (masters own all slots). */
 export const flushCluster = async (
   cluster: Pick<ClusterWrapperConfig, "nodes">,
 ) => {

@@ -18,7 +18,6 @@ export default mergeConfig(
           test: {
             name: "integration",
             include: ["test/integration/**/*.test.ts"],
-            // one shared redis container for all integration files
             globalSetup: ["./test/integration/setup.ts"],
           },
         },
