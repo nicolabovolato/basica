@@ -1,5 +1,13 @@
 # bench-http-basica-fastify
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`730dc6b`](https://github.com/nicolabovolato/basica/commit/730dc6b4937882566a7842050dc4758ed884e24c)]:
+  - @basica/core@0.0.5
+  - @basica/fastify@0.1.2
+
 ## 0.0.5
 
 ### Patch Changes
