@@ -1,7 +1,7 @@
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 ENV PNPM_HOME=/root/.local/share/pnpm
 ENV PATH=$PATH:$PNPM_HOME
-RUN npm i -g pnpm@8.x.x
+RUN npm i -g pnpm@10.x.x
 RUN apk add --no-cache libc6-compat
 RUN pnpm i -g turbo
 
