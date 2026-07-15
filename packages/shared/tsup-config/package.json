@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "peerDependencies": {
-    "tsup": "^8.0.2"
+    "tsup": "^8.5.1"
   }
 }
