@@ -1,17 +1,14 @@
 import { loggerFactory } from "@basica/core/logger";
 
-import { StartedTestContainer } from "testcontainers";
-
 import { AMQPClient } from "src/client";
-import { AMQPClientConfig } from "src/config";
 
-export const getAMQPClient = (container: StartedTestContainer) => {
+export const getAMQPClient = (url: string) => {
   return new AMQPClient(
     {
-      urls: `amqp://${container.getHost()}:${container.getMappedPort(5672)}`,
+      urls: url,
       heartbeatIntervalInSeconds: 2,
     },
     loggerFactory({ level: "silent" }),
-    "test"
+    "test",
   );
 };

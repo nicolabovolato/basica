@@ -1,26 +1,14 @@
 import { randomUUID } from "node:crypto";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { GenericContainer, StartedTestContainer, Wait } from "testcontainers";
+import { describe, expect, inject, test } from "vitest";
 
 import { getAMQPClient } from "./utils";
 
-let rabbitmq: StartedTestContainer;
-
-beforeAll(async () => {
-  rabbitmq = await new GenericContainer("rabbitmq:4-alpine")
-    .withExposedPorts(5672)
-    .withWaitStrategy(Wait.forLogMessage(/Server startup complete/))
-    .start();
-}, 120000);
-
-afterAll(async () => {
-  await rabbitmq?.stop();
-}, 10000);
+const amqpUrl = inject("amqpUrl");
 
 describe("AMQPClient", () => {
   test("healthcheck", async () => {
-    const client = getAMQPClient(rabbitmq);
+    const client = getAMQPClient(amqpUrl);
     expect(await client.healthcheck()).toEqual({
       status: "unhealthy",
       description: "Client is not connected",
@@ -30,12 +18,12 @@ describe("AMQPClient", () => {
   });
 
   test("start", async () => {
-    const client = getAMQPClient(rabbitmq);
+    const client = getAMQPClient(amqpUrl);
     await client.start();
   });
 
   test("createChannel/assertQueue/sendToQueue", async () => {
-    const client = getAMQPClient(rabbitmq);
+    const client = getAMQPClient(amqpUrl);
     const queue = randomUUID();
 
     const channel = client.createChannel();
@@ -44,7 +32,7 @@ describe("AMQPClient", () => {
   });
 
   test("shutdown", async () => {
-    const client = getAMQPClient(rabbitmq);
+    const client = getAMQPClient(amqpUrl);
     await client.shutdown();
   });
 });
