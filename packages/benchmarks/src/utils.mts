@@ -166,6 +166,11 @@ const getStartupTime = async (
     cancelSignal: ac.signal,
   })`docker logs ${container.getId()} --follow`;
 
+  // We terminate this command (kill/cancel) as soon as the startup line is
+  // read; execa 9 rejects the terminated promise, so swallow that expected
+  // rejection rather than let it crash the process as an unhandled rejection.
+  void cmd.catch(() => {});
+
   if (!cmd.stdout) {
     throw new Error("startup time cmd.stdout is undefined");
   }
