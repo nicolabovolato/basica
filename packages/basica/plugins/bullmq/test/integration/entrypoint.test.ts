@@ -1,9 +1,8 @@
 import { setTimeout } from "node:timers/promises";
 
-import { RedisContainer, StartedRedisContainer } from "@testcontainers/redis";
 import { Queue, Worker } from "bullmq";
 import { Redis } from "ioredis";
-import { afterAll, beforeAll, beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, inject, test, vi } from "vitest";
 
 import { loggerFactory } from "@basica/core/logger";
 import { RedisWrapper } from "@basica/ioredis";
@@ -11,18 +10,12 @@ import { RedisWrapper } from "@basica/ioredis";
 import { BullMqWorkerEntrypoint } from "src/lifecycle/entrypoint";
 
 const logger = loggerFactory({ level: "silent" });
-let redis: StartedRedisContainer;
-
-beforeAll(async () => {
-  redis = await new RedisContainer("redis:8-alpine").start();
-}, 60000);
+const redisUrl = inject("redisUrl");
 
 beforeEach(async () => {
-  await redis.executeCliCmd("flushall");
-});
-
-afterAll(async () => {
-  await redis.stop();
+  const redis = new Redis(redisUrl);
+  await redis.flushall();
+  await redis.quit();
 });
 
 test.each(["ioredis", "wrapper"])(
@@ -33,24 +26,24 @@ test.each(["ioredis", "wrapper"])(
     if (redisType == "wrapper") {
       workerConnection = new RedisWrapper(
         {
-          url: redis.getConnectionUrl(),
+          url: redisUrl,
           timeout: 5000,
           maxRetriesPerRequest: null,
         },
-        logger
+        logger,
       ).ioredis;
       queueConnection = new RedisWrapper(
         {
-          url: redis.getConnectionUrl(),
+          url: redisUrl,
           timeout: 5000,
         },
-        logger
+        logger,
       ).ioredis;
     } else {
-      workerConnection = new Redis(redis.getConnectionUrl(), {
+      workerConnection = new Redis(redisUrl, {
         maxRetriesPerRequest: null,
       });
-      queueConnection = new Redis(redis.getConnectionUrl());
+      queueConnection = new Redis(redisUrl);
       workerConnection.on("error", () => {});
       queueConnection.on("error", () => {});
     }
@@ -72,7 +65,7 @@ test.each(["ioredis", "wrapper"])(
       handler,
       {
         connection: workerConnection,
-      }
+      },
     );
 
     const queue = new Queue(queueName, { connection: queueConnection });
@@ -85,7 +78,7 @@ test.each(["ioredis", "wrapper"])(
       {},
       {
         attempts: 2,
-      }
+      },
     );
 
     await setTimeout(1000);
@@ -98,20 +91,20 @@ test.each(["ioredis", "wrapper"])(
       1,
       expect.objectContaining({ name: "test1" }),
       expect.any(String),
-      expect.any(Worker)
+      expect.any(Worker),
     );
     expect(handler).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({ name: "test2" }),
       expect.any(String),
-      expect.any(Worker)
+      expect.any(Worker),
     );
     expect(handler).toHaveBeenNthCalledWith(
       3,
       expect.objectContaining({ name: "test2" }),
       expect.any(String),
-      expect.any(Worker)
+      expect.any(Worker),
     );
   },
-  60000
+  60000,
 );
