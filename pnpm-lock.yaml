@@ -628,8 +628,8 @@ importers:
         specifier: ^0.27.2
         version: 0.27.3
       pg:
-        specifier: ^8.11.3
-        version: 8.11.3
+        specifier: ^8.22.0
+        version: 8.22.0
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -671,8 +671,8 @@ importers:
         specifier: ^0.27.2
         version: 0.27.3
       pg:
-        specifier: ^8.11.3
-        version: 8.11.3
+        specifier: ^8.22.0
+        version: 8.22.0
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -718,7 +718,7 @@ importers:
         version: 11.1.28(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)
       '@nestjs/typeorm':
         specifier: ^11.0.3
-        version: 11.0.3(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3)))
+        version: 11.0.3(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.22.0)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3)))
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -729,8 +729,8 @@ importers:
         specifier: ^18.2.3
         version: 18.2.3
       pg:
-        specifier: ^8.11.3
-        version: 8.11.3
+        specifier: ^8.22.0
+        version: 8.22.0
       pg-protocol:
         specifier: ^1.6.0
         version: 1.6.0
@@ -742,7 +742,7 @@ importers:
         version: 7.8.2
       typeorm:
         specifier: ^1.1.0
-        version: 1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3))
+        version: 1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.22.0)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3))
     devDependencies:
       '@nestjs/cli':
         specifier: ^11.0.24
@@ -794,7 +794,7 @@ importers:
         version: 11.1.28(@fastify/static@8.0.0)(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)
       '@nestjs/typeorm':
         specifier: ^11.0.3
-        version: 11.0.3(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3)))
+        version: 11.0.3(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.22.0)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3)))
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -808,8 +808,8 @@ importers:
         specifier: ^18.2.3
         version: 18.2.3
       pg:
-        specifier: ^8.11.3
-        version: 8.11.3
+        specifier: ^8.22.0
+        version: 8.22.0
       pg-protocol:
         specifier: ^1.6.0
         version: 1.6.0
@@ -821,7 +821,7 @@ importers:
         version: 7.8.2
       typeorm:
         specifier: ^1.1.0
-        version: 1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3))
+        version: 1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.22.0)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3))
     devDependencies:
       '@nestjs/cli':
         specifier: ^11.0.24
@@ -1099,8 +1099,8 @@ importers:
         specifier: ^0.27.2
         version: 0.27.3
       pg:
-        specifier: ^8.11.3
-        version: 8.11.3
+        specifier: ^8.22.0
+        version: 8.22.0
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
@@ -9332,6 +9332,12 @@ packages:
   pg-cloudflare@1.1.1:
     resolution: {integrity: sha512-xWPagP/4B6BgFO+EKz3JONXv3YDgvkbVrGw2mTo3D6tVDQRh1e7cqVGvyR3BE+eQgAvx1XhW/iEASj4/jCWl3Q==}
 
+  pg-cloudflare@1.4.0:
+    resolution: {integrity: sha512-Vo7z/6rrQYxpNRylp4Tlob2elzbh+N/MOQbxFVWCxS7oEx6jF53GTJFxK2WWpKuBRkmiin4Mt+xofFDjx09R0A==}
+
+  pg-connection-string@2.14.0:
+    resolution: {integrity: sha512-XwWDGcLRGCXAR8F/AM5bG7Q+A3Wm2s6QeEjlOKZLlH3UYcguiqCWKyWXVag5TLTIjR7oOJUY8kcADaZgWPyLeg==}
+
   pg-connection-string@2.6.2:
     resolution: {integrity: sha512-ch6OwaeaPYcova4kKZ15sbJ2hKb/VP48ZD2gE7i1J+L4MspCtBMAx8nMgz7bksc7IojCIIWuEhHibSMFH8m8oA==}
 
@@ -9339,10 +9345,18 @@ packages:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
     engines: {node: '>=4.0.0'}
 
+  pg-pool@3.14.0:
+    resolution: {integrity: sha512-gKtPkFdQPU3DksooVLi9LsjZxrsBUZIpa+7aVx+LV5pNh0KzP4Zleud2po+ConrxbuXGBJ6Hfer6hdgpIBpBaw==}
+    peerDependencies:
+      pg: '>=8.0'
+
   pg-pool@3.6.1:
     resolution: {integrity: sha512-jizsIzhkIitxCGfPRzJn1ZdcosIt3pz9Sh3V01fm1vZnbnCMgmGl5wvGGdNN2EL9Rmb0EcFoCkixH4Pu+sP9Og==}
     peerDependencies:
       pg: '>=8.0'
+
+  pg-protocol@1.15.0:
+    resolution: {integrity: sha512-cq9sECI5s0+uPUXjbz8ioyPJni6RzsRib0US67i5IoTZKw8fNeYlVE7u8F4dG7vEJJtc5wdD1K189lCCUwqWTQ==}
 
   pg-protocol@1.6.0:
     resolution: {integrity: sha512-M+PDm637OY5WM307051+bsDia5Xej6d9IR4GwJse1qA1DIhiKlksvrneZOYQq42OM+spubpcNYEo2FcKQrDk+Q==}
@@ -9354,6 +9368,15 @@ packages:
   pg@8.11.3:
     resolution: {integrity: sha512-+9iuvG8QfaaUrrph+kpF24cXkH1YOOUeArRNYIxq1viYHZagBxrTno7cecY1Fa44tJeZvaoG+Djpkc3JwehN5g==}
     engines: {node: '>= 8.0.0'}
+    peerDependencies:
+      pg-native: '>=3.0.1'
+    peerDependenciesMeta:
+      pg-native:
+        optional: true
+
+  pg@8.22.0:
+    resolution: {integrity: sha512-8wih1vVIBMxoUM2oB4soJsD9tDnDpLv4OXBJ+EJzFsvycD+lfyIreC2gGHq78f8jbLLt+bvlPTFdFZfJkOuzAA==}
+    engines: {node: '>= 16.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
     peerDependenciesMeta:
@@ -15962,13 +15985,13 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@nestjs/typeorm@11.0.3(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3)))':
+  '@nestjs/typeorm@11.0.3(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.22.0)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3)))':
     dependencies:
       '@nestjs/common': 11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.28(@nestjs/common@11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.28)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
-      typeorm: 1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3))
+      typeorm: 1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.22.0)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3))
 
   '@noble/hashes@1.4.0': {}
 
@@ -21942,13 +21965,24 @@ snapshots:
   pg-cloudflare@1.1.1:
     optional: true
 
+  pg-cloudflare@1.4.0:
+    optional: true
+
+  pg-connection-string@2.14.0: {}
+
   pg-connection-string@2.6.2: {}
 
   pg-int8@1.0.1: {}
 
+  pg-pool@3.14.0(pg@8.22.0):
+    dependencies:
+      pg: 8.22.0
+
   pg-pool@3.6.1(pg@8.11.3):
     dependencies:
       pg: 8.11.3
+
+  pg-protocol@1.15.0: {}
 
   pg-protocol@1.6.0: {}
 
@@ -21971,6 +22005,16 @@ snapshots:
       pgpass: 1.0.5
     optionalDependencies:
       pg-cloudflare: 1.1.1
+
+  pg@8.22.0:
+    dependencies:
+      pg-connection-string: 2.14.0
+      pg-pool: 3.14.0(pg@8.22.0)
+      pg-protocol: 1.15.0
+      pg-types: 2.2.0
+      pgpass: 1.0.5
+    optionalDependencies:
+      pg-cloudflare: 1.4.0
 
   pgpass@1.0.5:
     dependencies:
@@ -23925,7 +23969,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.11.3)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3)):
+  typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.3.2)(pg@8.22.0)(ts-node@10.9.2(@types/node@24.13.3)(typescript@6.0.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 4.3.1
@@ -23940,7 +23984,7 @@ snapshots:
     optionalDependencies:
       better-sqlite3: 12.11.1
       ioredis: 5.3.2
-      pg: 8.11.3
+      pg: 8.22.0
       ts-node: 10.9.2(@types/node@24.13.3)(typescript@6.0.3)
     transitivePeerDependencies:
       - babel-plugin-macros
