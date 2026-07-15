@@ -732,8 +732,8 @@ importers:
         specifier: ^8.22.0
         version: 8.22.0
       pg-protocol:
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^1.15.0
+        version: 1.15.0
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -811,8 +811,8 @@ importers:
         specifier: ^8.22.0
         version: 8.22.0
       pg-protocol:
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^1.15.0
+        version: 1.15.0
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -17422,7 +17422,7 @@ snapshots:
   '@types/pg@8.6.1':
     dependencies:
       '@types/node': 24.13.3
-      pg-protocol: 1.6.0
+      pg-protocol: 1.15.0
       pg-types: 2.2.0
 
   '@types/pluralize@0.0.33': {}
