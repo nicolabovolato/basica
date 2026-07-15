@@ -5,8 +5,24 @@ export default mergeConfig(
   shared,
   defineConfig({
     test: {
-      pool: "forks",
-      fileParallelism: false,
+      projects: [
+        {
+          extends: true,
+          test: {
+            name: "unit",
+            include: ["test/unit/**/*.test.ts"],
+          },
+        },
+        {
+          extends: true,
+          test: {
+            name: "integration",
+            include: ["test/integration/**/*.test.ts"],
+            // one shared rabbitmq container for all integration files
+            globalSetup: ["./test/integration/setup.ts"],
+          },
+        },
+      ],
     },
-  })
+  }),
 );

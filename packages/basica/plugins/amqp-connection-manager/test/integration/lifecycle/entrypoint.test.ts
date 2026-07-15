@@ -1,27 +1,17 @@
 import { randomUUID } from "node:crypto";
-import { afterAll, beforeAll, expect, test, vi } from "vitest";
+import { setTimeout } from "node:timers/promises";
 
-import { GenericContainer, StartedTestContainer, Wait } from "testcontainers";
+import { Channel } from "amqplib";
+import { expect, inject, test, vi } from "vitest";
 
 import { loggerFactory } from "@basica/core/logger";
-import { Channel } from "amqplib";
-import { setTimeout } from "node:timers/promises";
+
 import { AMQPQueueConsumerEntrypoint } from "src/lifecycle/entrypoint";
+
 import { getAMQPClient } from "../utils";
 
-let rabbitmq: StartedTestContainer;
+const amqpUrl = inject("amqpUrl");
 const logger = loggerFactory({ level: "silent" });
-
-beforeAll(async () => {
-  rabbitmq = await new GenericContainer("rabbitmq:4-alpine")
-    .withExposedPorts(5672)
-    .withWaitStrategy(Wait.forLogMessage(/Server startup complete/))
-    .start();
-}, 120000);
-
-afterAll(async () => {
-  await rabbitmq?.stop();
-}, 10000);
 
 test("queue", async () => {
   const handler = vi
@@ -32,7 +22,7 @@ test("queue", async () => {
 
   const queueName = randomUUID();
 
-  const client = getAMQPClient(rabbitmq);
+  const client = getAMQPClient(amqpUrl);
   const publisher = client.createChannel({
     setup: async (channel: Channel) => {
       await channel.assertQueue(queueName, { durable: true });
@@ -76,7 +66,7 @@ test("exchange", async () => {
   const queueName = randomUUID();
   const exchangeName = randomUUID();
 
-  const client = getAMQPClient(rabbitmq);
+  const client = getAMQPClient(amqpUrl);
   const publisher = client.createChannel({
     setup: async (channel: Channel) => {
       await channel.assertQueue(queueName, { durable: true });
