@@ -1,12 +1,25 @@
+import { config as dotenv } from "dotenv";
 import { envProvider, readEnv } from "src/env";
 import { ConfigSchema } from "src/utils";
 import { afterEach, expect, test, vi } from "vitest";
 import { z } from "zod";
 
+vi.mock("dotenv", () => ({ config: vi.fn() }));
+
 const opts = { interpolator: "_", casing: "upper" } as const;
 
 afterEach(() => {
   vi.unstubAllEnvs();
+});
+
+test("loads dotenv by default, skips it when dotenv is false", () => {
+  vi.mocked(dotenv).mockClear();
+  envProvider();
+  expect(dotenv).toHaveBeenCalledOnce();
+
+  vi.mocked(dotenv).mockClear();
+  envProvider({ dotenv: false });
+  expect(dotenv).not.toHaveBeenCalled();
 });
 
 test("reads env", () => {

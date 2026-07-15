@@ -6,11 +6,11 @@ import { ConfigProvider, ConfigSchema, Leaf, schemaToObj } from "./utils";
 /** {@link envProvider} configuration */
 export type Config = {
   /**
-   * Dotenv config options
+   * Dotenv config options, or `false` to skip loading the dotenv module entirely.
    * @see {@link DotenvConfigOptions}
    * @default undefined
    */
-  dotenv?: DotenvConfigOptions;
+  dotenv?: DotenvConfigOptions | false;
   /**
    * environment variable interpolator
    * @default "_"
@@ -44,7 +44,7 @@ export const envProvider = (config?: Config) => {
     casing = "upper",
   } = config ?? {};
 
-  dotenv(dotenvConfig);
+  if (dotenvConfig !== false) dotenv(dotenvConfig);
 
   const get = (schema: StandardJSONSchemaV1) =>
     readEnv(
