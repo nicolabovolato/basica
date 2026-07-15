@@ -15,19 +15,18 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      id-token: write # required for npm provenance
+      id-token: write # required for npm trusted publishing (OIDC) + provenance
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: ./.github/actions/base
+      - run: npm install -g npm@latest # trusted publishing needs npm >= 11.5.1
       - uses: changesets/action@v1
         with:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
   docs:
     runs-on: ubuntu-latest
     permissions:
