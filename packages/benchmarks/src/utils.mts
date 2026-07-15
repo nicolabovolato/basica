@@ -156,37 +156,28 @@ const getStartupTime = async (
   container: StartedTestContainer,
   logger: Logger
 ) => {
-  // StartedTestContainer.logs() does not work (exits the program with no error)
-  // Using for await of (also with Readable.toWeb()) exits the program with no error
+  const stream = await container.logs();
+  const timeout = setTimeout(
+    () => stream.destroy(new Error("timed out waiting for the startup time log")),
+    getStartupTimeTimeout
+  );
 
-  const ac = new AbortController();
-  const timeout = setTimeout(() => ac.abort(), getStartupTimeTimeout);
+  try {
+    for await (const chunk of stream) {
+      for (const line of chunk.toString("utf-8").split("\n")) {
+        const match = line.match(startupTimeLogRegex);
+        if (!match) continue;
 
-  const cmd = $({
-    cancelSignal: ac.signal,
-  })`docker logs ${container.getId()} --follow`;
-
-  // We terminate this command (kill/cancel) as soon as the startup line is
-  // read; execa 9 rejects the terminated promise, so swallow that expected
-  // rejection rather than let it crash the process as an unhandled rejection.
-  void cmd.catch(() => {});
-
-  if (!cmd.stdout) {
-    throw new Error("startup time cmd.stdout is undefined");
-  }
-
-  for await (const chunk of cmd.stdout) {
-    const lines = chunk.toString("utf-8");
-    for (const line of lines.split("\n")) {
-      const match = line.match(startupTimeLogRegex);
-      if (match) {
-        clearTimeout(timeout);
-        cmd.kill("SIGTERM");
         const time = Number(match[1]);
         logger.info("Got startup time: %dms", time);
         return time;
       }
     }
+
+    throw new Error("log stream ended before the startup time was seen");
+  } finally {
+    clearTimeout(timeout);
+    stream.destroy();
   }
 };
 
