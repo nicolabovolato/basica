@@ -21,7 +21,7 @@
     "class-validator": "^0.15.1",
     "fastify": "^5.0.0",
     "joi": "^18.2.3",
-    "pg": "^8.11.3",
+    "pg": "^8.22.0",
     "pg-protocol": "^1.6.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.2",
