@@ -6,6 +6,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "changeset": "changeset",
+    "changeset:version": "changeset version && pnpm install --lockfile-only",
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
