@@ -171,9 +171,6 @@ importers:
 
   packages/basica/plugins/bentocache:
     dependencies:
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       bentocache:
         specifier: ^1.0.0-beta.7
         version: 1.0.0-beta.7(ioredis@5.3.2)(tslib@2.8.1)
@@ -217,9 +214,6 @@ importers:
       '@opentelemetry/api':
         specifier: ^1.8.0
         version: 1.8.0
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       bullmq:
         specifier: ^5.5.1
         version: 5.5.1
@@ -416,9 +410,6 @@ importers:
 
   packages/basica/plugins/kysely:
     dependencies:
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
       kysely:
         specifier: ^0.27.2
         version: 0.27.3
@@ -529,9 +520,6 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: ^1.22.0
         version: 1.22.0
-      '@sinclair/typebox':
-        specifier: ^0.32.16
-        version: 0.32.20
     devDependencies:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0

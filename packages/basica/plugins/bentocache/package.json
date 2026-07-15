@@ -32,7 +32,6 @@
   },
   "peerDependencies": {
     "@basica/core": "workspace:^0.0.5",
-    "@sinclair/typebox": "^0.32.16",
     "bentocache": "^1.0.0-beta.7"
   },
   "devDependencies": {
