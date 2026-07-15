@@ -39,3 +39,5 @@ yarn-error.log*
 
 
 .vscode
+# TypeScript incremental build info
+*.tsbuildinfo
