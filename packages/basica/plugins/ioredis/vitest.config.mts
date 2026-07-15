@@ -5,8 +5,26 @@ export default mergeConfig(
   shared,
   defineConfig({
     test: {
-      pool: "forks",
-      fileParallelism: false,
+      projects: [
+        {
+          extends: true,
+          test: {
+            name: "unit",
+            include: ["test/unit/**/*.test.ts"],
+          },
+        },
+        {
+          extends: true,
+          test: {
+            name: "integration",
+            include: ["test/integration/**/*.test.ts"],
+            // shared single redis + cluster in globalSetup; both files use the
+            // single redis, so run them serially to avoid cross-file state
+            fileParallelism: false,
+            globalSetup: ["./test/integration/setup.ts"],
+          },
+        },
+      ],
     },
-  })
+  }),
 );

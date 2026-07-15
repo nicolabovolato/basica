@@ -1,55 +1,33 @@
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  test,
-} from "vitest";
-
-import { RedisContainer, StartedRedisContainer } from "@testcontainers/redis";
+import { beforeEach, describe, expect, inject, test } from "vitest";
 
 import {
+  flushCluster,
+  flushRedis,
   getClusterWrapper,
   getRedisWrapper,
-  startRedisCluster,
-  RedisClusterHandle,
 } from "./utils";
 
-let redis: StartedRedisContainer;
-let cluster: RedisClusterHandle | undefined;
-
-beforeAll(async () => {
-  [redis, cluster] = await Promise.all([
-    new RedisContainer("redis:8-alpine").start(),
-    startRedisCluster(),
-  ]);
-}, 60000);
+const redisUrl = inject("redisUrl");
+const cluster = inject("redisCluster");
 
 beforeEach(async () => {
-  await redis.executeCliCmd("flushall");
-  await cluster?.flushall();
-});
-
-afterAll(async () => {
-  await redis?.stop();
-  await cluster?.stop();
+  await Promise.all([flushRedis(redisUrl), flushCluster(cluster)]);
 });
 
 describe("Redis wrapper", () => {
   test("healthcheck", async () => {
-    const wrapper = getRedisWrapper(redis);
+    const wrapper = getRedisWrapper(redisUrl);
     const result = await wrapper.healthcheck();
     expect(result).toEqual({ status: "healthy" });
   });
 
   test("start", async () => {
-    const wrapper = getRedisWrapper(redis);
+    const wrapper = getRedisWrapper(redisUrl);
     await wrapper.start();
   });
 
   test("get/set/get", async () => {
-    const { ioredis } = getRedisWrapper(redis);
+    const { ioredis } = getRedisWrapper(redisUrl);
 
     await expect(ioredis.get("key")).resolves.toEqual(null);
     await ioredis.set("key", "value");
@@ -57,25 +35,25 @@ describe("Redis wrapper", () => {
   });
 
   test("shutdown", async () => {
-    const wrapper = getRedisWrapper(redis);
+    const wrapper = getRedisWrapper(redisUrl);
     await wrapper.shutdown();
   });
 });
 
 describe("Cluster wrapper", () => {
   test("healthcheck", async () => {
-    const wrapper = getClusterWrapper(cluster!);
+    const wrapper = getClusterWrapper(cluster);
     const result = await wrapper.healthcheck();
     expect(result).toEqual({ status: "healthy" });
   });
 
   test("start", async () => {
-    const wrapper = getClusterWrapper(cluster!);
+    const wrapper = getClusterWrapper(cluster);
     await wrapper.start();
   });
 
   test("get/set/get", async () => {
-    const { ioredis } = getClusterWrapper(cluster!);
+    const { ioredis } = getClusterWrapper(cluster);
 
     await expect(ioredis.get("key")).resolves.toEqual(null);
     await ioredis.set("key", "value");
@@ -83,7 +61,7 @@ describe("Cluster wrapper", () => {
   });
 
   test("shutdown", async () => {
-    const wrapper = getClusterWrapper(cluster!);
+    const wrapper = getClusterWrapper(cluster);
     await wrapper.shutdown();
   });
 }, 100000);
