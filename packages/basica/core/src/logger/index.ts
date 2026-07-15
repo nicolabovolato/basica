@@ -37,13 +37,13 @@ export type Level =
  */
 export const loggerFactory = (
   config?: LoggerConfig,
-  stream?: DestinationStream,
+  stream?: DestinationStream
 ) => {
   const { fields, ...pinoConfig } = config ?? {};
 
   return pino(
     { ...pinoConfig, level: pinoConfig.level ?? "info" },
-    stream,
+    stream
   ).child({
     app: {
       name: fields?.name ?? process.env.npm_package_name,

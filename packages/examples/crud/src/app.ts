@@ -40,8 +40,8 @@ export const getApp = (provider: ConfigProvider = envProvider()) => {
               pool: new Pool(config.db),
             }),
           },
-          deps.logger,
-        ),
+          deps.logger
+        )
     )
     .addSingleton("todos", (deps) => new TodoService(deps.db));
 
@@ -53,8 +53,8 @@ export const getApp = (provider: ConfigProvider = envProvider()) => {
           builder.addKyselyMigrations(
             "migrations",
             deps.db,
-            __dirname + "/../migrations",
-          ),
+            __dirname + "/../migrations"
+          )
         )
         .with(fastifyLifecyclePlugin, (builder) =>
           builder.addFastifyEntrypoint("http", (builder) =>
@@ -65,13 +65,13 @@ export const getApp = (provider: ConfigProvider = envProvider()) => {
                   .mapErrors((builder) =>
                     builder
                       .mapError(NotFoundError, 404)
-                      .mapError(ConflictError, 409),
+                      .mapError(ConflictError, 409)
                   )
-                  .fastify.register(routes(deps.todos)),
+                  .fastify.register(routes(deps.todos))
               )
-              .mapHealthchecks(),
-          ),
-        ),
+              .mapHealthchecks()
+          )
+        )
     )
     .build();
 };

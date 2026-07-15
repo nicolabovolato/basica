@@ -51,9 +51,9 @@ export const envProvider = (config?: Config) => {
       schemaToObj(
         schema["~standard"].jsonSchema.input({
           target: "draft-07",
-        }) as JSONSchema7,
+        }) as JSONSchema7
       ),
-      { interpolator, casing },
+      { interpolator, casing }
     );
 
   return {
@@ -64,7 +64,7 @@ export const envProvider = (config?: Config) => {
 export const readEnv = (
   schema: ConfigSchema,
   options: ReadOptions,
-  prefixes: string[] = [],
+  prefixes: string[] = []
 ) => {
   const { interpolator, casing } = options;
   const parsed: Record<string, unknown> = {};

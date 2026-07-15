@@ -17,7 +17,7 @@ export const kafkaConfigSchema = z.intersection(
     z.object({
       timeout: z.number(),
     }),
-  ]),
+  ])
 );
 
 export type KafkaConfig = KafkaClientConfig & z.infer<typeof kafkaConfigSchema>;

@@ -49,7 +49,7 @@ export interface IHealthcheckManager {
    * healthcheckManager.healthcheck((x) => x == "db") // only healthchecks with name db will be run
    */
   healthcheck(
-    filter?: (name: string) => boolean,
+    filter?: (name: string) => boolean
   ): Promise<Record<string, HealthcheckResult>>;
 }
 
@@ -74,7 +74,7 @@ export class HealthcheckManager<
     if (name in this.healthchecks) {
       this.#logger.warn(
         "Duplicate healthcheck name, previous value will be overwritten",
-        { name },
+        { name }
       );
     }
 
@@ -83,13 +83,13 @@ export class HealthcheckManager<
   }
 
   async healthcheck(
-    filter?: (name: string) => boolean,
+    filter?: (name: string) => boolean
   ): Promise<Record<string, HealthcheckResult>> {
     return tracer.startActiveSpan(`healthcheck`, async (span) => {
       const ac = new AbortController();
       const acTimeout = setTimeout(
         () => ac.abort(),
-        this.#config.healthcheckTimeoutMs,
+        this.#config.healthcheckTimeoutMs
       );
 
       const healthchecks = Array.from(
@@ -97,7 +97,7 @@ export class HealthcheckManager<
         ([key, value]) => ({
           name: key,
           value: value as IHealthcheck,
-        }),
+        })
       ).filter((x) => (filter ? filter(x.name) : true));
 
       const result = await Promise.allSettled(
@@ -106,7 +106,7 @@ export class HealthcheckManager<
             try {
               return await abortable(
                 ac.signal,
-                async () => await h.value.healthcheck(ac.signal),
+                async () => await h.value.healthcheck(ac.signal)
               );
             } catch (err) {
               span.recordException(err as Error);
@@ -115,8 +115,8 @@ export class HealthcheckManager<
             } finally {
               span.end();
             }
-          }),
-        ),
+          })
+        )
       );
 
       clearTimeout(acTimeout);
@@ -143,7 +143,7 @@ export class HealthcheckManager<
             r[e.name] = e.value;
             return r;
           },
-          {} as Record<string, HealthcheckResult>,
+          {} as Record<string, HealthcheckResult>
         );
 
       span.end();

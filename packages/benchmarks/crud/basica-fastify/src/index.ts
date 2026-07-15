@@ -25,7 +25,7 @@ const config = configure(
   envProvider(),
   z.object({
     db: pgConfigSchema,
-  }),
+  })
 );
 
 const container = new IocContainer()
@@ -39,8 +39,8 @@ const container = new IocContainer()
             pool: new Pool(config.db),
           }),
         },
-        deps.logger,
-      ),
+        deps.logger
+      )
   )
   .addSingleton("todos", (deps) => new TodoService(deps.db));
 
@@ -52,8 +52,8 @@ const app = new AppBuilder(container)
         builder.addKyselyMigrations(
           "migrations",
           deps.db,
-          __dirname + "/../migrations",
-        ),
+          __dirname + "/../migrations"
+        )
       )
       .with(fastifyLifecyclePlugin, (builder) =>
         builder.addFastifyEntrypoint("http", (builder) =>
@@ -64,13 +64,13 @@ const app = new AppBuilder(container)
                 .mapErrors((builder) =>
                   builder
                     .mapError(NotFoundError, 404)
-                    .mapError(ConflictError, 409),
+                    .mapError(ConflictError, 409)
                 )
-                .fastify.register(routes(deps.todos)),
+                .fastify.register(routes(deps.todos))
             )
-            .mapHealthchecks(),
-        ),
-      ),
+            .mapHealthchecks()
+        )
+      )
   )
   .build();
 

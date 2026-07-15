@@ -21,7 +21,7 @@ const config = configure(
         port: z.number().default(9464),
       })
       .prefault({}),
-  }),
+  })
 );
 
 const telemetry = new TelemetryBuilder()

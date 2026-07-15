@@ -11,7 +11,7 @@ import { ConfigProvider } from "./utils";
  */
 export const configure = <S, T extends StandardSchemaV1 & S>(
   provider: ConfigProvider<S>,
-  schema: T,
+  schema: T
 ) => {
   const config = provider.get(schema);
 
