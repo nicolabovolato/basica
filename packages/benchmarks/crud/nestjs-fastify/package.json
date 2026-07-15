@@ -19,7 +19,7 @@
     "@nestjs/typeorm": "^11.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
-    "fastify": "^4.26.2",
+    "fastify": "^5.0.0",
     "joi": "^18.2.3",
     "pg": "^8.11.3",
     "pg-protocol": "^1.6.0",

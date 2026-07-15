@@ -1,11 +1,5 @@
-import { Transform } from "class-transformer";
-import {
-  IsUUID,
-  IsNotEmpty,
-  MinLength,
-  ValidateIf,
-  IsDateString,
-} from "class-validator";
+import { Expose, Transform } from "class-transformer";
+import { IsNotEmpty, MinLength, ValidateIf } from "class-validator";
 
 export class CreateTodoDto {
   @MinLength(1)
@@ -22,14 +16,23 @@ export class UpdateTodoDto extends CreateTodoDto {
 }
 
 export class TodoResponseDto {
-  @IsUUID()
+  @Expose()
   id: string;
 
-  @Transform(({ value }) => value.toISOString())
-  @IsDateString()
-  updated_at: string;
+  @Expose()
+  title: string;
 
-  @Transform(({ value }) => value.toISOString())
-  @IsDateString()
+  @Expose()
+  description: string | null;
+
+  @Expose()
+  completed: boolean;
+
+  @Expose()
+  @Transform(({ value }) => (value instanceof Date ? value.toISOString() : value))
   created_at: string;
+
+  @Expose()
+  @Transform(({ value }) => (value instanceof Date ? value.toISOString() : value))
+  updated_at: string;
 }
