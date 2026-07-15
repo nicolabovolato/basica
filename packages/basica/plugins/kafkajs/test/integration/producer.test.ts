@@ -29,17 +29,17 @@ describe.each([
     expect(await client.healthcheck()).toEqual({ status: "healthy" });
     await client.shutdown();
     expect(await client.healthcheck()).toEqual({ status: "unhealthy" });
-  });
+  }, 20000);
 
   test("start", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const client = getKafkaClient(kafka)[fn](config as any);
     await client.start();
-  });
+  }, 20000);
 
   test("shutdown", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const client = getKafkaClient(kafka)[fn](config as any);
     await client.shutdown();
-  });
+  }, 20000);
 });
