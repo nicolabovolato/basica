@@ -21,7 +21,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/base
-      - run: npm install -g npm@latest # trusted publishing needs npm >= 11.5.1
       - uses: changesets/action@v1
         with:
           publish: pnpm release
