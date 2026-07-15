@@ -1,20 +1,8 @@
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, inject, test } from "vitest";
 
-import { KafkaContainer, StartedKafkaContainer } from "@testcontainers/kafka";
 import { getKafkaClient } from "./utils";
 
-let kafka: StartedKafkaContainer;
-
-beforeAll(async () => {
-  kafka = await new KafkaContainer("confluentinc/cp-kafka:8.0.0")
-    .withKraft()
-    .withExposedPorts(9093)
-    .start();
-}, 60000);
-
-afterAll(async () => {
-  await kafka.stop();
-}, 10000);
+const broker = inject("kafkaBroker");
 
 describe.each([
   ["producer", undefined],
@@ -23,7 +11,7 @@ describe.each([
 ] as const)("Kafka (%s)", (fn, config) => {
   test("healthcheck", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const client = getKafkaClient(kafka)[fn](config as any);
+    const client = getKafkaClient(broker)[fn](config as any);
     expect(await client.healthcheck()).toEqual({ status: "unhealthy" });
     await client.start();
     expect(await client.healthcheck()).toEqual({ status: "healthy" });
@@ -33,13 +21,13 @@ describe.each([
 
   test("start", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const client = getKafkaClient(kafka)[fn](config as any);
+    const client = getKafkaClient(broker)[fn](config as any);
     await client.start();
   }, 20000);
 
   test("shutdown", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const client = getKafkaClient(kafka)[fn](config as any);
+    const client = getKafkaClient(broker)[fn](config as any);
     await client.shutdown();
   }, 20000);
 });
