@@ -8,7 +8,7 @@ export type FastifyRuntimeConfig = Required<
 >;
 
 /**
- * `ignoreTrailingSlash` is `true` by default
+ * `routerOptions.ignoreTrailingSlash` is `true` by default
  *
  * `ajv.customOptions.removeAdditional` is `"failing"` by default
  * @see {@link FastifyServerOptions}

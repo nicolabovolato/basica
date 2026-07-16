@@ -19,7 +19,7 @@ export class FastifyEntrypointBuilder<D extends AppRequiredDeps> {
     deps: D,
     healthchecks: IHealthcheckManager,
     name: string,
-    config?: FastifyConfig
+    config?: FastifyConfig,
   ) {
     this.#deps = deps;
     this.#entrypoint = new FastifyEntrypoint(config ?? {}, deps.logger, name);
@@ -35,7 +35,7 @@ export class FastifyEntrypointBuilder<D extends AppRequiredDeps> {
    */
   configureApp(fn: (app: FastifyAppBuilder, deps: D) => void) {
     new FastifyAppBuilder(this.#entrypoint.fastify).mapRoutes("", (app) =>
-      fn(new FastifyAppBuilder(app.fastify), this.#deps)
+      fn(new FastifyAppBuilder(app.fastify), this.#deps),
     );
 
     return this;
@@ -53,7 +53,7 @@ export class FastifyEntrypointBuilder<D extends AppRequiredDeps> {
    */
   mapHealthchecks(
     config?: MapHealthchecksConfig,
-    filter?: (name: string) => boolean
+    filter?: (name: string) => boolean,
   ) {
     const { path, healthyStatusCode, unhealthyStatusCode } = {
       path: "/health",
@@ -73,9 +73,9 @@ export class FastifyEntrypointBuilder<D extends AppRequiredDeps> {
             name: z.string(),
             status,
             description: z.string().optional(),
-          })
+          }),
         ),
-      })
+      }),
     );
 
     this.#entrypoint.fastify.get(
@@ -98,7 +98,7 @@ export class FastifyEntrypointBuilder<D extends AppRequiredDeps> {
 
         const unhealthy = resultArray.reduce(
           (acc, r) => acc || r.status == "unhealthy",
-          false
+          false,
         );
 
         return res
@@ -107,7 +107,7 @@ export class FastifyEntrypointBuilder<D extends AppRequiredDeps> {
             status: unhealthy ? "unhealthy" : "healthy",
             healthchecks: resultArray,
           });
-      }
+      },
     );
 
     return this;
@@ -134,13 +134,13 @@ export class FastifyErrorMapperBuilder {
    */
   mapError<T extends Error>(
     error: Constructor<T>,
-    statusCodeOrFn: ((e: T) => number) | number
+    statusCodeOrFn: ((e: T) => number) | number,
   ) {
     this.#errors.set(
       error,
       typeof statusCodeOrFn == "number"
         ? () => statusCodeOrFn
-        : (statusCodeOrFn as (e: Error) => number)
+        : (statusCodeOrFn as (e: Error) => number),
     );
     return this;
   }
@@ -164,24 +164,22 @@ export class FastifyRouterBuilder {
    * )
    */
   mapErrors(
-    fn: (builder: FastifyErrorMapperBuilder) => FastifyErrorMapperBuilder
+    fn: (builder: FastifyErrorMapperBuilder) => FastifyErrorMapperBuilder,
   ) {
     const map = fn(new FastifyErrorMapperBuilder()).build();
 
-    this.fastify.setErrorHandler(async (error, req, res) => {
-      const err = error as Error;
+    this.fastify.setErrorHandler(async (err, req, res) => {
+      if (!(err instanceof Error)) throw err;
+
       const statusCodeFn = map.get(err.constructor as Constructor<Error>);
+      if (!statusCodeFn) throw err;
 
-      if (statusCodeFn) {
-        const statusCode = statusCodeFn(err);
-        return res.status(statusCode).send({
-          statusCode,
-          error: err.name,
-          message: err.message,
-        });
-      }
-
-      throw err;
+      const statusCode = statusCodeFn(err);
+      return res.status(statusCode).send({
+        statusCode,
+        error: err.name,
+        message: err.message,
+      });
     });
 
     return this;
@@ -208,7 +206,7 @@ export class FastifyRouterBuilder {
         fn(new FastifyRouterBuilder(fastify));
         next();
       },
-      { prefix }
+      { prefix },
     );
 
     return this;

@@ -65,7 +65,7 @@ test.each([
   expect(result.statusCode).toEqual(
     shouldBeHealthy
       ? (config?.healthyStatusCode ?? 200)
-      : (config?.unhealthyStatusCode ?? 500)
+      : (config?.unhealthyStatusCode ?? 500),
   );
 
   expect(result.json()).toEqual(expected);
@@ -128,11 +128,11 @@ test.each([
         .mapErrors((e) =>
           e
             .mapError(CustomError1, 599)
-            .mapError(CustomError2, (e) => (e.type == "A" ? 598 : 597))
+            .mapError(CustomError2, (e) => (e.type == "A" ? 598 : 597)),
         )
         .fastify.get("/", () => {
           throw err;
-        })
+        }),
     )
     .build();
 
@@ -142,6 +142,34 @@ test.each([
 
   expect(result.json()).toEqual(body);
 });
+
+test.each([
+  ["sync", false],
+  ["async", true],
+])(
+  "mapErrors - non-Error thrown values bubble up to the root handler (%s)",
+  async (_name, isAsync) => {
+    const entrypoint = new FastifyEntrypointBuilder(deps, hcManager, name)
+      .configureApp((app) =>
+        app
+          .mapErrors((e) => e.mapError(CustomError1, 599))
+          .fastify.get("/", () => {
+            if (isAsync) return Promise.reject("not an Error");
+            throw "not an Error";
+          }),
+      )
+      .build();
+
+    const result = await entrypoint.fastify.inject("/");
+
+    expect(result.statusCode).toEqual(500);
+    expect(result.json()).toEqual({
+      statusCode: 500,
+      error: "Internal server error",
+      message: "Internal server error",
+    });
+  },
+);
 
 test("useOpenapi", async () => {
   const entrypoint = new FastifyEntrypointBuilder(deps, hcManager, name)
@@ -160,12 +188,12 @@ test("mapRoutes", async () => {
         .mapRoutes("/test", (app) =>
           app.fastify
             .get("/", () => "test root")
-            .get("/test", () => "test test")
+            .get("/test", () => "test test"),
         )
         .mapRoutes("/test2", (app) =>
-          app.fastify.get("/test", () => "test2 test")
+          app.fastify.get("/test", () => "test2 test"),
         )
-        .mapRoutes("/", (app) => app.fastify.get("/", () => "root"))
+        .mapRoutes("/", (app) => app.fastify.get("/", () => "root")),
     )
     .build();
 
