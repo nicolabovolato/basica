@@ -33,20 +33,20 @@ export const createSample = (logger: ILogger, config: Config) => ({
 ```
 
 ```ts title="index.ts"
-import { loggerFactory } from "@basica/core/logger"
+import { loggerFactory, loggerConfigSchema } from "@basica/core/logger"
 import { IocContainer } from "@basica/core/ioc"
 import { configure, envProvider } from "@basica/config"
 
-import { Type } from "@sinclair/typebox"
+import { z } from "zod"
 
 import { createSample } from "./sample"
 
 const config = configure(
     envProvider(),
-    Type.Object({
+    z.object({
         logger: loggerConfigSchema,
-        sample: Type.Object({
-            msg: Type.String()
+        sample: z.object({
+            msg: z.string()
         })
     })
 )
@@ -111,18 +111,18 @@ import { IocContainer } from "@basica/core/ioc"
 import { AppBuilder } from "@basica/core"
 import { configure, envProvider, ConfigProvider } from "@basica/config"
 
-import { Static, Type } from "@sinclair/typebox"
+import { z } from "zod"
 
 import { createSample } from "./sample"
 
-const configSchema = Type.Object({
+const configSchema = z.object({
     logger: loggerConfigSchema,
-    sample: Type.Object({
-        msg: Type.String()
+    sample: z.object({
+        msg: z.string()
     })
 })
 
-export type Config = Static<typeof configSchema>
+export type Config = z.infer<typeof configSchema>
 
 export const getApp = (provider: ConfigProvider = envProvider()) => {
     const config = configure(provider, configSchema);
@@ -140,8 +140,6 @@ export const getApp = (provider: ConfigProvider = envProvider()) => {
 ```
 
 ```ts title="index.ts"
-import { Type } from "@sinclair/typebox"
-
 import { getApp } from "./app"
 
 const app = getApp()
