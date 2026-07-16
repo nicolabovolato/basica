@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@standard-schema/spec": "^1.1.0",
-    "dotenv": "^16.4.7"
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "@basica/eslint-config": "workspace:^0.0.0",
