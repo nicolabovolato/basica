@@ -19,7 +19,7 @@
     "@basica/fastify": "workspace:^0.1.2",
     "@basica/kysely": "workspace:^",
     "@basica/pg": "workspace:^",
-    "@fastify/type-provider-typebox": "^5.0.1",
+    "@fastify/type-provider-typebox": "^6.1.0",
     "fastify": "^5.10.0",
     "kysely": "^0.29.3",
     "pg": "^8.22.0",
