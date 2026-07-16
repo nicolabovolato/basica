@@ -50,7 +50,7 @@ export class Kysely<T>
         } else if (e.level === "query") {
           logger.debug(
             { query: e.query, queryDurationMillis: e.queryDurationMillis },
-            "Kysely query",
+            "Kysely query"
           );
         }
       },

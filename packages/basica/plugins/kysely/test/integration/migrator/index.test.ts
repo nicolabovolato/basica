@@ -2,7 +2,8 @@ import { loggerFactory } from "@basica/core/logger";
 import { expect, test } from "vitest";
 import { getKyselyInstance } from "../utils";
 import { Migrator } from "src/migrator";
-import { FileMigrationProvider, Kysely, sql } from "kysely";
+import { Kysely, sql } from "kysely";
+import { FileMigrationProvider } from "kysely/migration";
 
 import fs from "fs/promises";
 import path from "path";

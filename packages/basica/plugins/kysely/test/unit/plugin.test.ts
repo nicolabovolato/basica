@@ -1,6 +1,7 @@
 import { LifecycleManagerBuilder } from "@basica/core";
 import Sqlite from "better-sqlite3";
-import { FileMigrationProvider, SqliteDialect } from "kysely";
+import { SqliteDialect } from "kysely";
+import { FileMigrationProvider } from "kysely/migration";
 import { lifecyclePlugin } from "src/plugin";
 import { beforeEach, expect, test, vi } from "vitest";
 

@@ -3,12 +3,12 @@ import { Plugin } from "@basica/core/utils";
 
 import { Migrator } from "./migrator";
 
+import { Kysely } from "kysely";
 import {
   FileMigrationProvider,
-  Kysely,
   MigrationProvider,
   MigratorProps,
-} from "kysely";
+} from "kysely/migration";
 
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -77,16 +77,19 @@ class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
    *   )
    * )
    */
-  addKyselyMigrations<Db>(
+  addKyselyMigrations(
     name: string,
-    db: Kysely<Db>,
+    // migrations are schema-agnostic; kysely types Migrator's db as Kysely<any>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    db: Kysely<any>,
     provider: string | MigrationProvider,
     options?: Omit<MigratorProps, "provider" | "db">
   ): this;
   addKyselyMigrations(name: string, migrator: Migrator): this;
-  addKyselyMigrations<Db>(
+  addKyselyMigrations(
     name: string,
-    dbOrMigrator: Kysely<Db> | Migrator,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dbOrMigrator: Kysely<any> | Migrator,
     provider: string | MigrationProvider = "",
     options: Omit<MigratorProps, "provider" | "db"> = {}
   ) {
