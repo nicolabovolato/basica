@@ -24,16 +24,24 @@ export class FastifyEntrypoint implements IEntrypoint {
           removeAdditional: "failing",
         },
       },
-      ignoreTrailingSlash: true,
+      routerOptions: { ignoreTrailingSlash: true },
       ...config,
     });
 
     this.fastify.setErrorHandler(async (error, req, res) => {
-      const err = error as Error & { statusCode?: number };
-      if (err.statusCode) throw err; // Leave to the root error handler if the error is a fastify error
+      // Is this error @fastify/error? Leave to the root error handler, best effort check
+      if (
+        error instanceof Error &&
+        "statusCode" in error &&
+        typeof error.statusCode == "number" &&
+        error.statusCode >= 400 &&
+        error.statusCode <= 599
+      ) {
+        throw error;
+      }
 
       res.status(500);
-      res.log.error({ err, req, res }, err.message);
+      res.log.error({ err: error, req, res }, "Unhandled error");
       res.send({
         statusCode: 500,
         error: "Internal server error",
