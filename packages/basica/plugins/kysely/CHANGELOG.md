@@ -1,5 +1,16 @@
 # @basica/kysely
 
+## 0.0.6
+
+### Patch Changes
+
+- [#25](https://github.com/nicolabovolato/basica/pull/25) [`fbf1af8`](https://github.com/nicolabovolato/basica/commit/fbf1af8b2f08f96f3355d6838ad837c525de26c2) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Bump the `kysely` peer dependency to 0.29. Migration exports now come from the `kysely/migration` subpath, and `addKyselyMigrations`'s `db` parameter is typed `Kysely<any>` (matching kysely's `Migrator`), so it works with any schema.
+
+- [#22](https://github.com/nicolabovolato/basica/pull/22) [`2d2ea5f`](https://github.com/nicolabovolato/basica/commit/2d2ea5f12d7ba22530f634f16ac5dff08cc9fa9e) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Remove the unused `@sinclair/typebox` dependency.
+
+- Updated dependencies [[`2d2ea5f`](https://github.com/nicolabovolato/basica/commit/2d2ea5f12d7ba22530f634f16ac5dff08cc9fa9e), [`8d09987`](https://github.com/nicolabovolato/basica/commit/8d09987f6590e7743fc6fc916b8a21f8723469f5), [`2ba076c`](https://github.com/nicolabovolato/basica/commit/2ba076cd5077f40281c2c8d69e091fd40fe94ea6)]:
+  - @basica/core@0.0.6
+
 ## 0.0.5
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@basica/kysely",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicolabovolato/basica.git",
@@ -35,11 +35,11 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.5",
+    "@basica/core": "workspace:^0.0.6",
     "kysely": "^0.29.3"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.5",
+    "@basica/core": "workspace:^0.0.6",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",

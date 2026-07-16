@@ -1,5 +1,13 @@
 # @basica/telemetry
 
+## 0.0.4
+
+### Patch Changes
+
+- [#22](https://github.com/nicolabovolato/basica/pull/22) [`2d2ea5f`](https://github.com/nicolabovolato/basica/commit/2d2ea5f12d7ba22530f634f16ac5dff08cc9fa9e) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Remove the unused `@sinclair/typebox` dependency.
+
+- [#25](https://github.com/nicolabovolato/basica/pull/25) [`8d09987`](https://github.com/nicolabovolato/basica/commit/8d09987f6590e7743fc6fc916b8a21f8723469f5) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Migrate to OpenTelemetry v2. `@basica/telemetry`'s `TelemetryBuilder` now uses the v2 resource API (`resourceFromAttributes`) and `@opentelemetry/api` is bumped to 1.9.
+
 ## 0.0.3
 
 ### Patch Changes
