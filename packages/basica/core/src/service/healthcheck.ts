@@ -73,8 +73,8 @@ export class HealthcheckManager<
   addHealthcheck<K extends string, V extends IHealthcheck>(name: K, value: V) {
     if (name in this.healthchecks) {
       this.#logger.warn(
-        "Duplicate healthcheck name, previous value will be overwritten",
-        { name }
+        { name },
+        "Duplicate healthcheck name, previous value will be overwritten"
       );
     }
 

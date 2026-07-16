@@ -374,8 +374,8 @@ export class LifecycleManagerBuilder<
   >(name: K, fn: (deps: D) => V) {
     if (name in this.services) {
       this.#logger.warn(
-        "Duplicate service name, previous value will be overwritten",
-        { name }
+        { name },
+        "Duplicate service name, previous value will be overwritten"
       );
     }
 
@@ -402,8 +402,8 @@ export class LifecycleManagerBuilder<
   >(name: K, fn: (deps: D, healthchecks: IHealthcheckManager) => V) {
     if (name in this.entrypoints) {
       this.#logger.warn(
-        "Duplicate entrypoint name, previous value will be overwritten",
-        { name }
+        { name },
+        "Duplicate entrypoint name, previous value will be overwritten"
       );
     }
 
