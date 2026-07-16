@@ -15,8 +15,8 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0
       '@changesets/cli':
-        specifier: ^2.31.0
-        version: 2.31.0(@types/node@24.13.3)
+        specifier: ^2.31.1
+        version: 2.31.1(@types/node@24.13.3)
     devDependencies:
       turbo:
         specifier: 2.10.5
@@ -261,8 +261,8 @@ importers:
         specifier: workspace:^0.0.5
         version: link:../../core
       '@fastify/swagger':
-        specifier: ^9.0.1
-        version: 9.0.1
+        specifier: ^9.8.1
+        version: 9.8.1
       '@fastify/swagger-ui':
         specifier: ^5.0.1
         version: 5.0.1
@@ -2601,8 +2601,8 @@ packages:
   '@changesets/changelog-github@0.7.0':
     resolution: {integrity: sha512-rBsbRvc4TVn+FvFnOVM3LxlFJfTXXCp8gfVJ+0BubxWNSVnLuAzowi5j+IEraLLP52w8AAs9QfKbPS3MMiXQJA==}
 
-  '@changesets/cli@2.31.0':
-    resolution: {integrity: sha512-AhI4enNTgHu2IZr6K4WZyf0EPch4XVMn1yOMFmCD9gsfBGqMYaHXls5HyDv6/CL5axVQABz68eG30eCtbr2wFg==}
+  '@changesets/cli@2.31.1':
+    resolution: {integrity: sha512-uO05WTcRBwuVOJVSW8Cmpqw6q0WDL53ajGCMyszutvOe5toOnunbpM4jZzf+qxBOz7i0AzopZ8diBuewjmF40w==}
     hasBin: true
 
   '@changesets/config@3.1.4':
@@ -3739,8 +3739,8 @@ packages:
   '@fastify/swagger-ui@5.0.1':
     resolution: {integrity: sha512-nCDV5l0OTziK8nIeHaLZ30ENFFftZ4Pcs7GHDcqOO6Jp3qSnyOsqBg1/EosM+d1mrCvH4vSlM09xolkjrbuJQQ==}
 
-  '@fastify/swagger@9.0.1':
-    resolution: {integrity: sha512-GOSR+IPJwVUgRaoebwg0a8RNCXiWDiEqvyD4JXqxGbRXygd6v4xhjxFIgz86qLqeLENkHjLCFA7L4uOhlNR8XA==}
+  '@fastify/swagger@9.8.1':
+    resolution: {integrity: sha512-VpHMnqZTY8iBZYJE8WWkbKPrXIYWy2rDfIf5qLr6DzZSpQYZ+KxQVcJFiq/AMlvNwI4gCBd66++iUlxXXGT0IQ==}
 
   '@fastify/type-provider-typebox@5.0.1':
     resolution: {integrity: sha512-zepdCWmgvpcLS06DN5vznMJLUP/5gLt/X3lVXZvddXmHSImQxm2Em+dV64b6x9P4G4V9DKuS4EL08ASjpCboNA==}
@@ -8323,9 +8323,9 @@ packages:
   json-schema-ref-resolver@3.0.0:
     resolution: {integrity: sha512-hOrZIVL5jyYFjzk7+y7n5JDzGlU8rfWDuYyHwGa2WA8/pcmMHezp2xsVwxrebD/Q9t8Nc5DboieySDpCp4WG4A==}
 
-  json-schema-resolver@2.0.0:
-    resolution: {integrity: sha512-pJ4XLQP4Q9HTxl6RVDLJ8Cyh1uitSs0CzDBAz1uoJ4sRD/Bk7cFSXL1FUXDW3zJ7YnfliJx6eu8Jn283bpZ4Yg==}
-    engines: {node: '>=10'}
+  json-schema-resolver@3.0.0:
+    resolution: {integrity: sha512-HqMnbz0tz2DaEJ3ntsqtx3ezzZyDE7G56A/pPY/NGmrPu76UzsWquOpHFRAf5beTNXoH2LU5cQePVvRli1nchA==}
+    engines: {node: '>=20'}
 
   json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
@@ -13417,7 +13417,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@changesets/cli@2.31.0(@types/node@24.13.3)':
+  '@changesets/cli@2.31.1(@types/node@24.13.3)':
     dependencies:
       '@changesets/apply-release-plan': 7.1.1
       '@changesets/assemble-release-plan': 6.0.10
@@ -15295,10 +15295,10 @@ snapshots:
       rfdc: 1.3.1
       yaml: 2.4.1
 
-  '@fastify/swagger@9.0.1':
+  '@fastify/swagger@9.8.1':
     dependencies:
-      fastify-plugin: 5.1.0
-      json-schema-resolver: 2.0.0
+      fastify-plugin: 6.0.0
+      json-schema-resolver: 3.0.0
       openapi-types: 12.1.3
       rfdc: 1.4.1
       yaml: 2.9.0
@@ -20715,11 +20715,11 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  json-schema-resolver@2.0.0:
+  json-schema-resolver@3.0.0:
     dependencies:
       debug: 4.4.3
+      fast-uri: 3.1.3
       rfdc: 1.4.1
-      uri-js: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
