@@ -299,16 +299,16 @@ Great, looks like Basica intercepted SIGINT and stopped fastify
 
 All good, but what if we want our server to start on port 3000 instead and logger to only emit logs from warning and up?
 
-`npm i @basica/config @sinclair/typebox`
+`npm i @basica/config zod`
 
 Let's add a new file to add our configuration in and a .env file.
 
 ```ts title="config.ts"
-import { Type } from "@sinclair/typebox";
+import { z } from "zod";
 import { loggerConfigSchema } from "@basica/core/logger";
 import { fastifyConfigSchema } from "@basica/fastify";
 
-export const schema = Type.Object({
+export const schema = z.object({
   logger: loggerConfigSchema,
   http: fastifyConfigSchema,
 });
@@ -335,7 +335,7 @@ We should also update our index file.
     import { schema as configSchema } from "./config"
     import { createSampleService } from "./sampleService"
 
-    const config = configure(schema, envProvider())
+    const config = configure(envProvider(), configSchema)
 
     const container = new IocContainer()
         .addSingleton("logger", () => loggerFactory(config.logger))
@@ -371,7 +371,7 @@ We should also update our index file.
     import { schema as configSchema } from "./config"
     import { createSampleService } from "./sampleService"
 
-    const config = configure(schema, envProvider())
+    const config = configure(envProvider(), configSchema)
 
     const container = new IocContainer()
         .addSingleton("logger", () => loggerFactory(config.logger))

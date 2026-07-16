@@ -13,9 +13,11 @@ Exposing configuration is of fundamental importance to ensure the versatility of
 but ensuring that said configuration comes in an expected format is also very important,
 you wouldn't want your app to still run and behave incorrectly would you?
 
-`npm i @basica/config`
+`npm i @basica/config zod`
 
-Basica validates configuration using [Typebox](https://github.com/sinclairzx81/typebox).
+Basica validates configuration using any [Standard Schema](https://standardschema.dev) library.
+The examples below use [Zod](https://zod.dev). When reading from environment variables, the schema
+must also expose a [Standard JSON Schema](https://standardschema.dev/json-schema) (e.g. zod v4).
 
 <Tabs groupId="ts-style">
   <TabItem value="classes" label="Classes">
@@ -32,8 +34,8 @@ Basica validates configuration using [Typebox](https://github.com/sinclairzx81/t
         constructor(private readonly config: Config) {}
 
         async delay() {
-            console.log(`Waiting ${config.delay}ms`)
-            await setTimeout(config.delay)
+            console.log(`Waiting ${this.config.delay}ms`)
+            await setTimeout(this.config.delay)
             console.log("Ok!")
         }
     }
@@ -62,12 +64,12 @@ Basica validates configuration using [Typebox](https://github.com/sinclairzx81/t
 </Tabs>
 
 ```ts title="config.ts"
-import { Type } from "@sinclair/typebox";
+import { z } from "zod";
 
-export const schema = Type.Object({
-  service: {
-    delay: Type.Number({ minimum: 500, maximum: 5000, default: 1000 }),
-  },
+export const schema = z.object({
+  service: z.object({
+    delay: z.number().min(500).max(5000).default(1000),
+  }),
 });
 ```
 
@@ -81,53 +83,68 @@ SERVICE_DELAY=3000
 ```
 
 :::note
-Typebox records and arrays are parsed as json content.
+Environment variables arrive as strings, but the `envProvider` coerces each value to the
+type declared in the schema, so plain `z.number()` / `z.boolean()` work — no `z.coerce` needed.
+:::
+
+:::note
+Records and arrays are parsed as json content.
 
 ```ts
-const schema = Type.Object({
+const schema = z.object({
   // Variable WORKING_VALUE will work
-  working: Type.Object({
-    value: Type.String(),
+  working: z.object({
+    value: z.string(),
   }),
 
-  // Variable ONE_PROP won't work, use ONE='{ prop: "..." }' instead
-  one: Type.Record(Type.String(), Type.String()),
+  // Variable ONE_PROP won't work, use ONE='{ "prop": "..." }' instead
+  one: z.record(z.string(), z.string()),
 
   // Variable TWO_0 won't work, use TWO='["..."]' instead
-  two: Type.Array(Type.String()),
+  two: z.array(z.string()),
 });
 
-const config = configure(configSchema, envProvider());
+const config = configure(envProvider(), schema);
 ```
 
 :::
 
 :::note
-Typebox unions and intersections are also supported.
+Unions and intersections are also supported.
 
 ```ts
-const schema = Type.Object({
-  test: Type.Intersect([
-    Type.Union([
-      Type.Object({
+const schema = z.object({
+  test: z.intersection(
+    z.union([
+      z.object({
         // Variable TEST_A
-        a: Type.String(),
-        // Either VARIABLE_D or VARIABLE_D_VALUE (VARIABLE_D takes precedence)
-        d: Type.Union([Type.String(), Type.Object({ value: Type.String() })])
+        a: z.string(),
+        // Either TEST_D or TEST_D_VALUE (TEST_D takes precedence)
+        d: z.union([z.string(), z.object({ value: z.string() })]),
       }),
-      Type.Object({
+      z.object({
         // Variable TEST_B
-        b: Type.String()
-      })
+        b: z.string(),
+      }),
     ]),
-    Type.Object({
+    z.object({
       // Variable TEST_C
-      c: Type.String()
+      c: z.string(),
     })
-  ]),
+  ),
 });
 
-const config = configure(configSchema, envProvider());
+const config = configure(envProvider(), schema);
+```
+
+:::
+
+:::note
+Pass `dotenv: false` to skip loading a `.env` file entirely (e.g. in production, where the
+environment is already populated).
+
+```ts
+const config = configure(envProvider({ dotenv: false }), schema);
 ```
 
 :::
@@ -141,7 +158,7 @@ const config = configure(configSchema, envProvider());
     import { Service } from "./service"
     import { schema as configSchema } from "./config"
 
-    const config = configure(configSchema, envProvider())
+    const config = configure(envProvider(), configSchema)
 
     const service = new Service(config.service)
 
@@ -157,7 +174,7 @@ const config = configure(configSchema, envProvider());
     import { createService } from "./service"
     import { schema as configSchema } from "./config"
 
-    const config = configure(configSchema, envProvider())
+    const config = configure(envProvider(), configSchema)
 
     const service = createService(config.service)
 
@@ -171,6 +188,87 @@ const config = configure(configSchema, envProvider());
 Waiting 3000ms
 Ok!
 ```
+
+## Bring your own provider
+
+`envProvider` is just one implementation of `ConfigProvider`
+
+```ts
+type ConfigProvider<S = unknown> = {
+  get(schema: S): Record<string, unknown>;
+};
+```
+
+`configure` validates whatever the provider returns against your schema. A provider that
+already produces a fully-shaped object (reading a static object, a JSON/YAML/TOML file, a remote config
+service) doesn't need to look at the schema at all:
+
+```ts title="json file provider"
+import { readFileSync } from "node:fs";
+import { ConfigProvider } from "@basica/config";
+
+const jsonFileProvider = (path: string): ConfigProvider => ({
+  get: () => JSON.parse(readFileSync(path, "utf-8")),
+});
+```
+
+Only providers that read from a **flat** source (like `envProvider`, or a Consul/SSM-style
+key-value store) need to introspect the schema to know which keys to look for. That's why
+they require a schema that also exposes a JSON Schema, while a shaped provider works with any
+[Standard Schema](https://standardschema.dev).
+
+### Choosing a schema library
+
+Because `configure` accepts any Standard Schema, you can author configuration with Valibot,
+ArkType, Effect, and others. Two things to keep in mind.
+
+:::note
+`envProvider` needs a library compatible with [Standard JSON Schema](https://standardschema.dev/json-schema).
+
+```ts
+import * as v from "valibot";
+import { toStandardJsonSchema } from "@valibot/to-json-schema";
+import { configure, envProvider } from "@basica/config";
+
+const schema = toStandardJsonSchema(v.object({ port: v.number() }));
+
+const config = configure(envProvider(), schema);
+```
+
+:::
+
+:::note
+You can only reuse the schemas Basica provides (`loggerConfigSchema`, `pgConfigSchema`, etc.)
+if you author config with Zod. With another library you have to reimplement
+the shape yourself to match Basica's exported types:
+
+```ts
+import * as v from "valibot";
+import { toStandardJsonSchema } from "@valibot/to-json-schema";
+import { z } from "zod";
+import { configure, envProvider } from "@basica/config";
+import { loggerFactory, loggerConfigSchema } from "@basica/core/logger";
+
+const schema = toStandardJsonSchema(
+  v.object({
+    // loggerConfigSchema is a Zod schema: reimplement its shape with valibot
+    logger: v.object({
+      level: v.optional(
+        v.picklist(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
+      ),
+    }),
+  })
+);
+
+const config = configure(envProvider(), schema);
+
+// your reimplementation must conform to Basica's exported schema type
+config.logger satisfies z.infer<typeof loggerConfigSchema>;
+
+const logger = loggerFactory(config.logger);
+```
+
+:::
 
 ## API Docs
 
