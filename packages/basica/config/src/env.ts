@@ -8,7 +8,7 @@ export type Config = {
   /**
    * Dotenv config options, or `false` to skip loading the dotenv module entirely.
    * @see {@link DotenvConfigOptions}
-   * @default undefined
+   * @default { quiet: true }
    */
   dotenv?: DotenvConfigOptions | false;
   /**
@@ -44,7 +44,6 @@ export const envProvider = (config?: Config) => {
     casing = "upper",
   } = config ?? {};
 
-  // quiet by default: suppress dotenv v17's startup summary; user-overridable
   if (dotenvConfig !== false) dotenv({ quiet: true, ...dotenvConfig });
 
   const get = (schema: StandardJSONSchemaV1) =>
@@ -52,9 +51,9 @@ export const envProvider = (config?: Config) => {
       schemaToObj(
         schema["~standard"].jsonSchema.input({
           target: "draft-07",
-        }) as JSONSchema7
+        }) as JSONSchema7,
       ),
-      { interpolator, casing }
+      { interpolator, casing },
     );
 
   return {
@@ -65,7 +64,7 @@ export const envProvider = (config?: Config) => {
 export const readEnv = (
   schema: ConfigSchema,
   options: ReadOptions,
-  prefixes: string[] = []
+  prefixes: string[] = [],
 ) => {
   const { interpolator, casing } = options;
   const parsed: Record<string, unknown> = {};
