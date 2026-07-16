@@ -44,7 +44,8 @@ export const envProvider = (config?: Config) => {
     casing = "upper",
   } = config ?? {};
 
-  if (dotenvConfig !== false) dotenv(dotenvConfig);
+  // quiet by default: suppress dotenv v17's startup summary; user-overridable
+  if (dotenvConfig !== false) dotenv({ quiet: true, ...dotenvConfig });
 
   const get = (schema: StandardJSONSchemaV1) =>
     readEnv(
