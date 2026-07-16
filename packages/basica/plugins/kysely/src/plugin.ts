@@ -79,11 +79,10 @@ class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
    */
   addKyselyMigrations(
     name: string,
-    // migrations are schema-agnostic; kysely types Migrator's db as Kysely<any>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     db: Kysely<any>,
     provider: string | MigrationProvider,
-    options?: Omit<MigratorProps, "provider" | "db">
+    options?: Omit<MigratorProps, "provider" | "db">,
   ): this;
   addKyselyMigrations(name: string, migrator: Migrator): this;
   addKyselyMigrations(
@@ -91,7 +90,7 @@ class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dbOrMigrator: Kysely<any> | Migrator,
     provider: string | MigrationProvider = "",
-    options: Omit<MigratorProps, "provider" | "db"> = {}
+    options: Omit<MigratorProps, "provider" | "db"> = {},
   ) {
     const migrator =
       dbOrMigrator instanceof Migrator
@@ -110,7 +109,7 @@ class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
               ...options,
             },
             this.#lifecycle.deps.logger,
-            name
+            name,
           );
 
     this.#lifecycle.addService(name, () => migrator);
@@ -121,7 +120,7 @@ class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
 
 /** Kysely lifecycle plugin */
 export const lifecyclePlugin = (<S extends AppRequiredDeps>(
-  base: LifecycleManagerBuilder<S>
+  base: LifecycleManagerBuilder<S>,
 ) => new KyselyLifecyclePlugin(base)) satisfies Plugin<
   LifecycleManagerBuilder<AppRequiredDeps>
 >;
