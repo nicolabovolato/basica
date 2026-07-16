@@ -1,7 +1,7 @@
 import { IStartup } from "@basica/core";
 import { ILogger } from "@basica/core/logger";
 
-import { Migrator as KyselyMigrator, MigratorProps } from "kysely";
+import { Migrator as KyselyMigrator, MigratorProps } from "kysely/migration";
 
 /** Kysely migrator */
 export class Migrator extends KyselyMigrator implements IStartup {
