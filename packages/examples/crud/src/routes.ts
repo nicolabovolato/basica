@@ -80,7 +80,7 @@ export const routes =
         schema: {
           body: insertableTodo,
           response: {
-            200: todo,
+            201: todo,
           },
         },
       },

@@ -52,6 +52,7 @@ export class TodoService {
       if (err instanceof DatabaseError && err.code == "23505") {
         throw new ConflictError(`Todo ${id} already exists`);
       }
+      throw err;
     }
   }
 
