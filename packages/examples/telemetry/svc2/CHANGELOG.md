@@ -1,5 +1,15 @@
 # telemetry-svc2
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [[`2d2ea5f`](https://github.com/nicolabovolato/basica/commit/2d2ea5f12d7ba22530f634f16ac5dff08cc9fa9e), [`2d2ea5f`](https://github.com/nicolabovolato/basica/commit/2d2ea5f12d7ba22530f634f16ac5dff08cc9fa9e), [`8d09987`](https://github.com/nicolabovolato/basica/commit/8d09987f6590e7743fc6fc916b8a21f8723469f5), [`2ba076c`](https://github.com/nicolabovolato/basica/commit/2ba076cd5077f40281c2c8d69e091fd40fe94ea6)]:
+  - @basica/config@0.0.5
+  - @basica/core@0.0.6
+  - @basica/fastify@0.1.3
+  - @basica/telemetry@0.0.4
+
 ## 0.0.6
 
 ### Patch Changes
