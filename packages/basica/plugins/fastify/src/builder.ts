@@ -168,10 +168,9 @@ export class FastifyRouterBuilder {
   ) {
     const map = fn(new FastifyErrorMapperBuilder()).build();
 
-    this.fastify.setErrorHandler(async (err, req, res) => {
-      const statusCodeFn = map.get(
-        (err as Error).constructor as Constructor<Error>
-      );
+    this.fastify.setErrorHandler(async (error, req, res) => {
+      const err = error as Error;
+      const statusCodeFn = map.get(err.constructor as Constructor<Error>);
 
       if (statusCodeFn) {
         const statusCode = statusCodeFn(err);
@@ -258,7 +257,7 @@ export class FastifyAppBuilder extends FastifyRouterBuilder {
         },
       },
     });
-    this.fastify.register(swaggerUi, swaggerUiCfg);
+    this.fastify.register(swaggerUi, swaggerUiCfg ?? {});
     return this;
   }
 }

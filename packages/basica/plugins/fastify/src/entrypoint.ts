@@ -28,7 +28,8 @@ export class FastifyEntrypoint implements IEntrypoint {
       ...config,
     });
 
-    this.fastify.setErrorHandler(async (err, req, res) => {
+    this.fastify.setErrorHandler(async (error, req, res) => {
+      const err = error as Error & { statusCode?: number };
       if (err.statusCode) throw err; // Leave to the root error handler if the error is a fastify error
 
       res.status(500);
