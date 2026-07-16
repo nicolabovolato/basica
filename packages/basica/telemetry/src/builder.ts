@@ -1,34 +1,31 @@
-import {
-  IResource,
-  Resource,
-  ResourceAttributes,
-} from "@opentelemetry/resources";
+import { Attributes } from "@opentelemetry/api";
+import { Resource, resourceFromAttributes } from "@opentelemetry/resources";
 import { MetricReader } from "@opentelemetry/sdk-metrics";
 import { NodeSDK } from "@opentelemetry/sdk-node";
-import { InstrumentationOption } from "@opentelemetry/instrumentation";
+import { Instrumentation } from "@opentelemetry/instrumentation";
 import { Sampler, SpanExporter } from "@opentelemetry/sdk-trace-node";
 import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
 } from "@opentelemetry/semantic-conventions";
 
 // TODO: sdk-trace-base instead?
 // TODO: serverless
 /** Opentelemetry builder */
 export class TelemetryBuilder {
-  #resource: IResource = new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: process.env.npm_package_name,
-    [SEMRESATTRS_SERVICE_VERSION]: process.env.npm_package_name_version,
+  #resource: Resource = resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: process.env.npm_package_name,
+    [ATTR_SERVICE_VERSION]: process.env.npm_package_name_version,
   });
 
   #traceExporter: SpanExporter | undefined;
   #metricReader: MetricReader | undefined;
   #sampler: Sampler | undefined;
-  #instrumentations: InstrumentationOption[] | undefined;
+  #instrumentations: (Instrumentation | Instrumentation[])[] | undefined;
 
   /** Adds resource attributes */
-  withAttributes(attributes: ResourceAttributes) {
-    this.#resource = this.#resource.merge(new Resource(attributes));
+  withAttributes(attributes: Attributes) {
+    this.#resource = this.#resource.merge(resourceFromAttributes(attributes));
     return this;
   }
 
@@ -45,7 +42,9 @@ export class TelemetryBuilder {
   }
 
   /** Registers node instrumentations */
-  registerInstrumentations(instrumentations: InstrumentationOption[]) {
+  registerInstrumentations(
+    instrumentations: (Instrumentation | Instrumentation[])[]
+  ) {
     this.#instrumentations = instrumentations;
     return this;
   }
