@@ -74,8 +74,8 @@ importers:
         specifier: ^1.8.0
         version: 1.8.0
       close-with-grace:
-        specifier: ^1.2.0
-        version: 1.3.0
+        specifier: ^2.5.0
+        version: 2.5.0
       pino:
         specifier: ^8.18.0
         version: 8.19.0
@@ -6410,8 +6410,8 @@ packages:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
 
-  close-with-grace@1.3.0:
-    resolution: {integrity: sha512-lvm0rmLIR5bNz4CRKW6YvCfn9Wg5Wb9A8PJ3Bb+hjyikgC1RO1W3J4z9rBXQYw97mAte7dNSQI8BmUsxdlXQyw==}
+  close-with-grace@2.5.0:
+    resolution: {integrity: sha512-MewUtZQU6N4YVHIne63zGtjIQzTINgr6lQp2Y0CutaCw2FsdYahW57dH1Wdz+aV5ipbBzEBZD5znwX2NooS+IA==}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -18538,7 +18538,7 @@ snapshots:
 
   clone@1.0.4: {}
 
-  close-with-grace@1.3.0: {}
+  close-with-grace@2.5.0: {}
 
   clsx@2.1.1: {}
 
