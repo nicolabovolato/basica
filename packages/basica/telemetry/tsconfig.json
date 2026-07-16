@@ -2,6 +2,9 @@
   "extends": "@basica/typescript-config/tsup.json",
   "include": ["src", "test"],
   "compilerOptions": {
+    // @opentelemetry/* ship platform d.ts files with unqualified node globals
+    "skipLibCheck": true,
+    "types": ["node"],
     "paths": {
       "src/*": ["./src/*"],
       "test/*": ["./test/*"]
