@@ -24,6 +24,7 @@ describe("AMQPClient", () => {
 
   test("createChannel/assertQueue/sendToQueue", async () => {
     const client = getAMQPClient(amqpUrl);
+    await client.start();
     const queue = randomUUID();
 
     const channel = client.createChannel();

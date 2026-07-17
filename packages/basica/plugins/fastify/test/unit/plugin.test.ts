@@ -1,6 +1,6 @@
 import { LifecycleManagerBuilder } from "@basica/core";
 import { lifecyclePlugin } from "src/plugin";
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, expectTypeOf, test, vi } from "vitest";
 
 import { FastifyEntrypoint } from "src/entrypoint";
 import { deps, hcManager } from "./utils";
@@ -9,25 +9,34 @@ beforeEach(() => {
   vi.restoreAllMocks();
 });
 
-test("addFastifyEntrypoint", async () => {
+test("addFastifyEntrypoint(fn) registers & announces the entrypoint", () => {
   const builder = new LifecycleManagerBuilder(deps);
   vi.spyOn(builder, "addEntrypoint");
 
-  builder.with(lifecyclePlugin, (builder) =>
-    builder
-      .addFastifyEntrypoint("test", (builder) => builder)
-      .addFastifyEntrypoint(
-        "test",
-        { host: "localhost", port: 3000 },
-        (builder) => builder
-      )
+  const app = builder.with(lifecyclePlugin, (b) =>
+    b.addFastifyEntrypoint("test", (b) => b),
   );
 
-  expect(builder.addEntrypoint).toHaveBeenCalledTimes(2);
-  for (const [name, fn] of vi.mocked(builder.addEntrypoint).mock.calls) {
-    expect(name).toBe("test");
-    expect(fn(deps, hcManager)).toBeInstanceOf(FastifyEntrypoint);
-  }
+  expect(builder.addEntrypoint).toHaveBeenCalledOnce();
+  const [name, fn] = vi.mocked(builder.addEntrypoint).mock.calls[0];
+  expect(name).toBe("test");
+  expect(fn(deps, hcManager)).toBeInstanceOf(FastifyEntrypoint);
+
+  expectTypeOf(app.entrypoints.test).toEqualTypeOf<FastifyEntrypoint>();
 });
 
-test.todo("plugin (type tests?)"); // TODO: test plugin
+test("addFastifyEntrypoint(config, fn) registers & announces the entrypoint", () => {
+  const builder = new LifecycleManagerBuilder(deps);
+  vi.spyOn(builder, "addEntrypoint");
+
+  const app = builder.with(lifecyclePlugin, (b) =>
+    b.addFastifyEntrypoint("test", { host: "localhost", port: 3000 }, (b) => b),
+  );
+
+  expect(builder.addEntrypoint).toHaveBeenCalledOnce();
+  const [name, fn] = vi.mocked(builder.addEntrypoint).mock.calls[0];
+  expect(name).toBe("test");
+  expect(fn(deps, hcManager)).toBeInstanceOf(FastifyEntrypoint);
+
+  expectTypeOf(app.entrypoints.test).toEqualTypeOf<FastifyEntrypoint>();
+});

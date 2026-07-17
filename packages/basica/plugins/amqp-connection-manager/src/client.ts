@@ -1,8 +1,9 @@
 import { IHealthcheck, IShutdown, IStartup } from "@basica/core";
 import { ILogger } from "@basica/core/logger";
 
-import amqp, {
+import {
   AmqpConnectionManager,
+  AmqpConnectionManagerClass,
   AmqpConnectionManagerOptions,
   ChannelWrapper,
   CreateChannelOpts,
@@ -45,14 +46,14 @@ export class AMQPClient implements IStartup, IShutdown, IHealthcheck {
     urls: string | string[],
     opts: AmqpConnectionManagerOptions,
     logger: ILogger,
-    name?: string
+    name?: string,
   );
   constructor(config: AMQPClientConfig, logger: ILogger, name?: string);
   constructor(
     urlsOrConfig: string | string[] | AMQPClientConfig,
     optsOrLogger: AmqpConnectionManagerOptions | ILogger,
     loggerOrMaybeName?: ILogger | string,
-    maybeName?: string
+    maybeName?: string,
   ) {
     const urls =
       typeof urlsOrConfig == "string" || Array.isArray(urlsOrConfig)
@@ -79,22 +80,22 @@ export class AMQPClient implements IStartup, IShutdown, IHealthcheck {
         url?: string;
         urls?: string[];
       } & AMQPClientConfig;
-      this.connection = amqp.connect(urls, opts);
+      this.connection = new AmqpConnectionManagerClass(urls, opts);
     } else {
-      this.connection = amqp.connect(urls, opts);
+      this.connection = new AmqpConnectionManagerClass(urls, opts);
     }
 
     this.connection.on("connectFailed", ({ err }) =>
-      this.#logger.error(err, "Failed to connect to AMQP broker")
+      this.#logger.error(err, "Failed to connect to AMQP broker"),
     );
     this.connection.on("disconnect", ({ err }) =>
-      this.#logger.warn(err, "Disconnected from AMQP broker")
+      this.#logger.warn(err, "Disconnected from AMQP broker"),
     );
     this.connection.on("blocked", (err) =>
-      this.#logger.warn(err, "Connection blocked")
+      this.#logger.warn(err, "Connection blocked"),
     );
     this.connection.on("unblocked", () =>
-      this.#logger.info("Connection unblocked")
+      this.#logger.info("Connection unblocked"),
     );
   }
 

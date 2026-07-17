@@ -1,5 +1,9 @@
 import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
-import { Plugin } from "@basica/core/utils";
+import {
+  Plugin,
+  RegistersEntrypoint,
+  RegistersService,
+} from "@basica/core/utils";
 
 import { AMQPClient } from "../client";
 import { AMQPClientConfig } from "../config";
@@ -39,20 +43,22 @@ class AMQPLifecyclePlugin<S extends AppRequiredDeps> {
    *   }
    * })
    */
-  addAMQPConsumer(
-    name: string,
+  addAMQPConsumer<const K extends string>(
+    name: K,
     clientConfig: AMQPClientConfig,
-    config: EntrypointConfig
-  ): this;
-  addAMQPConsumer(
-    name: string,
+    config: EntrypointConfig,
+  ): this &
+    RegistersService<`amqp:client:${K}`, AMQPClient> &
+    RegistersEntrypoint<K, AMQPQueueConsumerEntrypoint>;
+  addAMQPConsumer<const K extends string>(
+    name: K,
     client: AMQPClient,
-    config: EntrypointConfig
-  ): this;
-  addAMQPConsumer(
-    name: string,
+    config: EntrypointConfig,
+  ): this & RegistersEntrypoint<K, AMQPQueueConsumerEntrypoint>;
+  addAMQPConsumer<const K extends string>(
+    name: K,
     clientOrClientConfig: AMQPClientConfig | AMQPClient,
-    config: EntrypointConfig
+    config: EntrypointConfig,
   ) {
     let client =
       clientOrClientConfig instanceof AMQPClient
@@ -63,12 +69,12 @@ class AMQPLifecyclePlugin<S extends AppRequiredDeps> {
       client = new AMQPClient(
         clientOrClientConfig as AMQPClientConfig,
         this.#lifecycle.deps.logger,
-        `consumer:${name}`
+        `consumer:${name}`,
       );
 
       this.#lifecycle.addService(
         `amqp:client:${name}`,
-        () => client as AMQPClient
+        () => client as AMQPClient,
       );
     }
 
@@ -79,17 +85,17 @@ class AMQPLifecyclePlugin<S extends AppRequiredDeps> {
           name,
           client as AMQPClient,
           deps.logger,
-          config
-        )
+          config,
+        ),
     );
 
-    return this;
+    return this as this & RegistersEntrypoint<K, AMQPQueueConsumerEntrypoint>;
   }
 }
 
 /** AMQP lifecycle plugin */
 export const lifecyclePlugin = (<S extends AppRequiredDeps>(
-  lifecycle: LifecycleManagerBuilder<S>
+  lifecycle: LifecycleManagerBuilder<S>,
 ) => new AMQPLifecyclePlugin(lifecycle)) satisfies Plugin<
   LifecycleManagerBuilder<AppRequiredDeps>
 >;

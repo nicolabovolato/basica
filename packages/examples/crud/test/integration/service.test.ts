@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { setTimeout } from "node:timers/promises";
 
-import { Migrator } from "@basica/kysely";
 import {
   afterAll,
   afterEach,
@@ -22,7 +21,7 @@ let todos: TodoService;
 
 beforeAll(async () => {
   app = getTestApp(pgUrl);
-  await (app.services.migrations as Migrator).start();
+  await app.services.migrations.start();
   todos = app.deps.todos;
 }, 60000);
 

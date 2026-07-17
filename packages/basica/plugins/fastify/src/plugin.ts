@@ -1,12 +1,13 @@
 import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
-import { Plugin } from "@basica/core/utils";
+import { Plugin, RegistersEntrypoint } from "@basica/core/utils";
 
 import { FastifyEntrypointBuilder } from "./builder";
 import { FastifyConfig } from "./config";
+import { FastifyEntrypoint } from "./entrypoint";
 
-class FastifyLifecyclePlugin<S extends AppRequiredDeps> {
-  readonly #lifecycle: LifecycleManagerBuilder<S>;
-  constructor(lifecycle: LifecycleManagerBuilder<S>) {
+class FastifyLifecyclePlugin<D extends AppRequiredDeps> {
+  readonly #lifecycle: LifecycleManagerBuilder<D>;
+  constructor(lifecycle: LifecycleManagerBuilder<D>) {
     this.#lifecycle = lifecycle;
   }
 
@@ -31,18 +32,24 @@ class FastifyLifecyclePlugin<S extends AppRequiredDeps> {
    *     )
    * )
    */
-  addFastifyEntrypoint<B extends FastifyEntrypointBuilder<S>>(
-    name: string,
-    fn: (builder: B, deps: S) => B
-  ): this;
-  addFastifyEntrypoint<B extends FastifyEntrypointBuilder<S>>(
-    name: string,
-    config: FastifyConfig,
-    fn: (builder: B, deps: S) => B
-  ): this;
   addFastifyEntrypoint<
-    B extends FastifyEntrypointBuilder<S>,
-    Fn extends (builder: B, deps: S) => B,
+    const K extends string,
+    B extends FastifyEntrypointBuilder<D>,
+  >(
+    name: K,
+    fn: (builder: B, deps: D) => B,
+  ): this & RegistersEntrypoint<K, FastifyEntrypoint>;
+  addFastifyEntrypoint<
+    const K extends string,
+    B extends FastifyEntrypointBuilder<D>,
+  >(
+    name: K,
+    config: FastifyConfig,
+    fn: (builder: B, deps: D) => B,
+  ): this & RegistersEntrypoint<K, FastifyEntrypoint>;
+  addFastifyEntrypoint<
+    B extends FastifyEntrypointBuilder<D>,
+    Fn extends (builder: B, deps: D) => B,
   >(name: string, configOrFn: FastifyConfig | Fn, maybeFn?: Fn) {
     const fn = typeof configOrFn === "object" ? maybeFn! : configOrFn;
     const config = typeof configOrFn === "object" ? configOrFn : undefined;
@@ -51,19 +58,19 @@ class FastifyLifecyclePlugin<S extends AppRequiredDeps> {
       this.#lifecycle.deps,
       this.#lifecycle.healthchecks,
       name,
-      config
+      config,
     );
     const entrypoint = fn(builder as B, this.#lifecycle.deps).build();
 
     this.#lifecycle.addEntrypoint(name, () => entrypoint);
 
-    return this;
+    return this as this & RegistersEntrypoint<string, FastifyEntrypoint>;
   }
 }
 
 /** Fastify lifecycle plugin */
-export const lifecyclePlugin = (<S extends AppRequiredDeps>(
-  lifecycle: LifecycleManagerBuilder<S>
-) => new FastifyLifecyclePlugin(lifecycle)) satisfies Plugin<
+export const lifecyclePlugin = (<D extends AppRequiredDeps>(
+  lifecycle: LifecycleManagerBuilder<D>,
+) => new FastifyLifecyclePlugin<D>(lifecycle)) satisfies Plugin<
   LifecycleManagerBuilder<AppRequiredDeps>
 >;

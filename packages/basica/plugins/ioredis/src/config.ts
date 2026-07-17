@@ -27,7 +27,7 @@ export const redisWrapperConfigSchema = z.intersection(
       password: z.string().optional(),
     }),
   ]),
-  timeoutConfigSchema
+  timeoutConfigSchema,
 );
 
 /** Redis cluster wrapper configuration schema */
@@ -35,7 +35,7 @@ export const clusterWrapperConfigSchema = z.intersection(
   z.object({
     nodes: z.array(z.object({ host: z.string(), port: z.number() })).min(1),
   }),
-  timeoutConfigSchema
+  timeoutConfigSchema,
 );
 
 /** @see {@link RedisOptions} */
@@ -45,6 +45,12 @@ export type RedisWrapperConfig = RedisOptions &
 /** @see {@link ClusterOptions} */
 export type ClusterWrapperConfig = ClusterOptions &
   z.infer<typeof clusterWrapperConfigSchema>;
+
+/** Discriminates a cluster config (has `nodes`) from a single-instance redis config. */
+export const isClusterWrapperConfig = (
+  cfg: RedisWrapperConfig | ClusterWrapperConfig,
+): cfg is ClusterWrapperConfig =>
+  (cfg as ClusterWrapperConfig).nodes !== undefined;
 
 export const getRedisConfig = (options: RedisWrapperConfig) => {
   const { url, timeout, ...cfg } = options as RedisWrapperConfig & {

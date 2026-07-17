@@ -204,7 +204,8 @@ test("sample called correctly", async () => {
 ```
 
 :::note
-App does not infer the type of healthchecks/services/entrypoints registered by Plugins. Manual casting is required.
+Healthchecks/services/entrypoints registered through a plugin are typed on the App as long as
+the plugin advertises its registrations (all official plugins do, see [Writing plugins](../plugins/writing-plugins#typing-what-a-plugin-registers) for more info).
 
 ```ts title="app.ts"
 import { lifecyclePlugin } from "@basica/fastify"
@@ -227,14 +228,12 @@ export const getApp = (provider: ConfigProvider = envProvider()) => {
 ```
 
 ```ts title="app.test.ts"
-import { FastifyEntrypoint } from "@basica/fastify"
-
 //...
 
 const app = getApp(testConfigProvider)
 
-// app.entrypoints.http = unknown
-const fastify = (app.entrypoints.http as FastifyEntrypoint).fastify
+type _ = typeof app.entrypoints.http // FastifyEntrypoint
+const { fastify } = app.entrypoints.http
 
 //...
 

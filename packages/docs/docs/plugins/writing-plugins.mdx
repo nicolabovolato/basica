@@ -6,7 +6,20 @@ import TabItem from "@theme/TabItem";
 
 # Writing plugins
 
-The functionality of Basica's AppBuilder can be extended to provide reusable builder functions.
+Plugins extend Basica's `AppBuilder` with reusable builder functions.
+
+## Should you write a plugin?
+
+**Usually, no.**
+
+Write a plugin when you're **authoring a library** or otherwise expect to hand other people a
+typed API to wire something into their app, e.g. `builder.with(yourPlugin, (b) => b.addYourThing(…))`.
+A plugin exists to **package an integration for reuse** across many apps.
+
+If you just want to put something into **your own** app (a background worker, a database
+connection, an HTTP server, a healthcheck) **don't write a plugin.** Just implement and register it
+directly on the lifecycle (see [Lifecycle](../core-concepts/lifecycle) for services and
+entrypoints, and [Healthchecks](../core-concepts/healthchecks))
 
 ## Lifecycle plugin
 
@@ -56,3 +69,65 @@ const app = new AppBuilder(container)
 
 // ...
 ```
+
+## Typing what a plugin registers
+
+**Always type what your plugin registers.** When a method registers a service, entrypoint, or
+healthcheck, advertise it, so it stays typed on the built `app` (`app.services.x`,
+`app.entrypoints.x`, `app.healthchecks.x`)
+
+Advertise by doing the following:
+
+```ts title="plugin.ts"
+import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
+import { RegistersService } from "@basica/core/utils";
+
+class LifecyclePlugin<D extends AppRequiredDeps> {
+  constructor(readonly lifecycle: LifecycleManagerBuilder<D>) {}
+
+  addThing<const K extends string>(name: K) {
+    this.lifecycle.addService(name, () => new Thing());
+    return this as this & RegistersService<K, Thing>;
+  }
+}
+
+export const lifecyclePlugin = <D extends AppRequiredDeps>(
+  lifecycle: LifecycleManagerBuilder<D>
+) => new LifecyclePlugin(lifecycle);
+```
+
+```ts title="index.ts"
+const app = new AppBuilder(container)
+  .configureLifecycle((b) => b.with(lifecyclePlugin, (b) => b.addThing("cache")))
+  .build();
+
+typeof app.services.cache; // Thing
+```
+
+### Conditional registration
+
+If _what_ a method registers depends on _how_ it's called, give each input shape its own overload
+and let each one advertise exactly what that path registers. This is how the first-party plugins do
+it:
+
+```ts
+// if the configuration for `Thing` is passed we'll register both a new service and an entrypoint
+addThing<const K extends string>(
+  name: K,
+  config: Config
+): this & RegistersService<K, Thing> & RegistersEntrypoint<K, Thing>;
+
+// if `Thing` is passed to us directly, only a new entrypoint will be registered
+addThing<const K extends string>(
+  name: K,
+  thing: Thing
+): this & RegistersEntrypoint<K, Thing>;
+
+// implementation
+addThing(name: string, configOrThing: Config | Thing) {
+  // ...build/register based on the input, then:
+  return this as this & RegistersEntrypoint<string, Thing>;
+}
+```
+
+Overload signatures have no body, so you must spell their return type.
