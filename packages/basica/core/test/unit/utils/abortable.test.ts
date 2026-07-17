@@ -1,6 +1,6 @@
 import { setTimeout } from "node:timers/promises";
-import { test, expect, vi, afterEach, beforeEach } from "vitest";
 import { abortable } from "src/utils/abortable";
+import { afterEach, beforeEach, expect, test } from "vitest";
 
 beforeEach(() => {
   //vi.useFakeTimers(); // TODO: timers/promises and AbortSignal are not mocked https://github.com/vitest-dev/vitest/issues/3088
