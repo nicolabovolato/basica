@@ -95,7 +95,17 @@ export class LifecycleManager implements ILifecycleManager {
     this.#collection.push({ items: entrypoints, name: "entrypoint" });
   }
 
-  // TODO: it is not clear that among n services only some of them have "start", so starting 1/1 service(s) when you register 2 services is confusing
+  #registrationSummary() {
+    return this.#collection
+      .filter((c) => c.items.length > 0)
+      .map((c) => {
+        const startable = c.items.filter((i) => "start" in i.svc).length;
+        const stoppable = c.items.filter((i) => "shutdown" in i.svc).length;
+        return `${c.items.length} ${c.name}(s) (${startable} startable, ${stoppable} stoppable)`;
+      })
+      .join(", ");
+  }
+
   async #start(items: Item[], name: string) {
     return tracer.startActiveSpan(`start:${name}`, async (span) => {
       const ac = new AbortController();
@@ -108,9 +118,7 @@ export class LifecycleManager implements ILifecycleManager {
         (i) => "start" in i.svc,
       ) as Item<IStartup>[];
 
-      this.#logger.info(
-        `Starting ${startups.length}/${startups.length} ${name}(s)`,
-      );
+      this.#logger.info(`Starting ${startups.length} ${name}(s)`);
       const result = await Promise.allSettled(
         startups.map(async (s) =>
           tracer.startActiveSpan(`start:${name}:${s.name}`, async () => {
@@ -179,6 +187,8 @@ export class LifecycleManager implements ILifecycleManager {
 
   async start() {
     return tracer.startActiveSpan(`start`, async (span) => {
+      this.#logger.info(`Lifecycle: ${this.#registrationSummary()}`);
+
       for (const [idx, x] of this.#collection.entries()) {
         if (x.items.length > 0) {
           const result = await this.#start(x.items, x.name);
@@ -204,8 +214,7 @@ export class LifecycleManager implements ILifecycleManager {
     });
   }
 
-  // TODO: it is not clear that among n services only some of them have "stop", so stopping 1/1 service(s) when you register 2 services is confusing
-  async #stop(toStop: Item[], total: Item[], name: string) {
+  async #stop(toStop: Item[], name: string) {
     return tracer.startActiveSpan(`stop:${name}`, async (span) => {
       const ac = new AbortController();
       const acTimeout = setTimeout(
@@ -213,15 +222,11 @@ export class LifecycleManager implements ILifecycleManager {
         this.config.shutdownTimeoutMs,
       );
 
-      const totalShutdowns = total.filter((i) => "shutdown" in i.svc).length;
-
       const shutdowns = toStop.filter(
         (i) => "shutdown" in i.svc,
       ) as Item<IShutdown>[];
 
-      this.#logger.info(
-        `Stopping ${shutdowns.length}/${totalShutdowns} ${name}(s)`,
-      );
+      this.#logger.info(`Stopping ${shutdowns.length} ${name}(s)`);
 
       const result = await Promise.allSettled(
         shutdowns.map(async (s) =>
@@ -248,13 +253,13 @@ export class LifecycleManager implements ILifecycleManager {
       );
 
       this.#logger.info(
-        `Stopped ${shutdowns.length}/${totalShutdowns} ${name}(s)`,
+        `Stopped ${shutdowns.length - failed.length}/${shutdowns.length} ${name}(s)`,
       );
 
       if (failed.length > 0) {
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: `Failed to start ${failed.length} ${name}(s)`,
+          message: `Failed to stop ${failed.length} ${name}(s)`,
         });
 
         const failedNames = shutdowns
@@ -283,13 +288,10 @@ export class LifecycleManager implements ILifecycleManager {
       const reversed = this.#collection.slice(0, idx + 1).reverse();
       let success = true;
 
-      for (const [idx, x] of reversed.entries()) {
-        const toStop =
-          idx == reversed.length - 1 ? (onlyStopItems ?? x.items) : x.items;
+      for (const [pos, x] of reversed.entries()) {
+        const toStop = pos == 0 ? (onlyStopItems ?? x.items) : x.items;
         if (toStop.length > 0) {
-          success &&= await this.#stop(toStop, x.items, x.name);
-        } else {
-          this.#logger.info(`No ${x.name}(s) to stop`);
+          success &&= await this.#stop(toStop, x.name);
         }
       }
       if (!success) {
@@ -367,8 +369,8 @@ export class LifecycleManagerBuilder<
     fn: (deps: D) => V,
   ) {
     const svc = fn(this.deps);
-    const hcs = this.#healthchecks.addHealthcheck(name, svc).healthchecks;
-    return this as LifecycleManagerBuilder<D, typeof hcs, S, E>;
+    const _hcs = this.#healthchecks.addHealthcheck(name, svc).healthchecks;
+    return this as LifecycleManagerBuilder<D, typeof _hcs, S, E>;
   }
 
   /**
@@ -389,13 +391,13 @@ export class LifecycleManagerBuilder<
     }
 
     const svc = fn(this.deps);
-    const svcs = this.#services.addSingleton(name, () => svc).items;
+    const _svcs = this.#services.addSingleton(name, () => svc).items;
 
     if (svc.healthcheck) this.addHealthcheck(name, () => svc as IHealthcheck);
     return this as unknown as LifecycleManagerBuilder<
       D,
       V extends IHealthcheck ? H & { readonly [P in K]: V } : H,
-      typeof svcs,
+      typeof _svcs,
       E
     >;
   }
@@ -417,7 +419,7 @@ export class LifecycleManagerBuilder<
     }
 
     const entrypoint = fn(this.deps, this.#healthchecks);
-    const svcs = this.#entrypoints.addSingleton(name, () => entrypoint).items;
+    const _svcs = this.#entrypoints.addSingleton(name, () => entrypoint).items;
 
     if (entrypoint.healthcheck)
       this.addHealthcheck(name, () => entrypoint as IHealthcheck);
@@ -426,7 +428,7 @@ export class LifecycleManagerBuilder<
       D,
       V extends IHealthcheck ? H & { readonly [P in K]: V } : H,
       S,
-      typeof svcs
+      typeof _svcs
     >;
   }
 

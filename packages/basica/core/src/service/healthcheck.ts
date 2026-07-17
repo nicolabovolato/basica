@@ -78,8 +78,8 @@ export class HealthcheckManager<
       );
     }
 
-    const svcs = this.#builderItems.addSingleton(name, () => value).items;
-    return this as HealthcheckManager<typeof svcs>;
+    const _svcs = this.#builderItems.addSingleton(name, () => value).items;
+    return this as HealthcheckManager<typeof _svcs>;
   }
 
   async healthcheck(
