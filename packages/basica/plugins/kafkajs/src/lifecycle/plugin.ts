@@ -1,5 +1,5 @@
 import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
-import { Plugin } from "@basica/core/utils";
+import { Plugin, RegistersEntrypoint } from "@basica/core/utils";
 
 import { Kafka } from "src/client";
 import { KafkaConfig } from "src/config";
@@ -51,10 +51,10 @@ class KafkaLifecyclePlugin<S extends AppRequiredDeps> {
    *   }
    * })
    */
-  addKafkaConsumer(
-    name: string,
+  addKafkaConsumer<const K extends string>(
+    name: K,
     clientOrClientConfig: Kafka | KafkaConfig,
-    config: EntrypointConfig
+    config: EntrypointConfig,
   ) {
     const client =
       clientOrClientConfig instanceof Kafka
@@ -62,21 +62,21 @@ class KafkaLifecyclePlugin<S extends AppRequiredDeps> {
         : new Kafka(
             clientOrClientConfig as KafkaConfig,
             this.#lifecycle.deps.logger,
-            `consumer:${name}`
+            `consumer:${name}`,
           );
 
     this.#lifecycle.addEntrypoint(
       name,
-      (deps) => new KafkaConsumerEntrypoint(name, client, deps.logger, config)
+      (deps) => new KafkaConsumerEntrypoint(name, client, deps.logger, config),
     );
 
-    return this;
+    return this as this & RegistersEntrypoint<K, KafkaConsumerEntrypoint>;
   }
 }
 
 /** Kafka lifecycle plugin */
 export const lifecyclePlugin = (<S extends AppRequiredDeps>(
-  lifecycle: LifecycleManagerBuilder<S>
+  lifecycle: LifecycleManagerBuilder<S>,
 ) => new KafkaLifecyclePlugin(lifecycle)) satisfies Plugin<
   LifecycleManagerBuilder<AppRequiredDeps>
 >;

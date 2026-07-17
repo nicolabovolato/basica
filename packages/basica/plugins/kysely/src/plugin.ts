@@ -1,5 +1,5 @@
 import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
-import { Plugin } from "@basica/core/utils";
+import { Plugin, RegistersService } from "@basica/core/utils";
 
 import { Migrator } from "./migrator";
 
@@ -13,10 +13,10 @@ import {
 import fs from "node:fs/promises";
 import path from "node:path";
 
-class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
-  #lifecycle: LifecycleManagerBuilder<S>;
+class KyselyLifecyclePlugin<D extends AppRequiredDeps> {
+  #lifecycle: LifecycleManagerBuilder<D>;
 
-  constructor(lifecycle: LifecycleManagerBuilder<S>) {
+  constructor(lifecycle: LifecycleManagerBuilder<D>) {
     this.#lifecycle = lifecycle;
   }
 
@@ -77,14 +77,17 @@ class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
    *   )
    * )
    */
-  addKyselyMigrations(
-    name: string,
+  addKyselyMigrations<const K extends string>(
+    name: K,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     db: Kysely<any>,
     provider: string | MigrationProvider,
     options?: Omit<MigratorProps, "provider" | "db">,
-  ): this;
-  addKyselyMigrations(name: string, migrator: Migrator): this;
+  ): this & RegistersService<K, Migrator>;
+  addKyselyMigrations<const K extends string>(
+    name: K,
+    migrator: Migrator,
+  ): this & RegistersService<K, Migrator>;
   addKyselyMigrations(
     name: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,13 +117,13 @@ class KyselyLifecyclePlugin<S extends AppRequiredDeps> {
 
     this.#lifecycle.addService(name, () => migrator);
 
-    return this;
+    return this as this & RegistersService<string, Migrator>;
   }
 }
 
 /** Kysely lifecycle plugin */
-export const lifecyclePlugin = (<S extends AppRequiredDeps>(
-  base: LifecycleManagerBuilder<S>,
-) => new KyselyLifecyclePlugin(base)) satisfies Plugin<
+export const lifecyclePlugin = (<D extends AppRequiredDeps>(
+  base: LifecycleManagerBuilder<D>,
+) => new KyselyLifecyclePlugin<D>(base)) satisfies Plugin<
   LifecycleManagerBuilder<AppRequiredDeps>
 >;

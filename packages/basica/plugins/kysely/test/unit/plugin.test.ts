@@ -3,7 +3,7 @@ import Sqlite from "better-sqlite3";
 import { SqliteDialect } from "kysely";
 import { FileMigrationProvider } from "kysely/migration";
 import { lifecyclePlugin } from "src/plugin";
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, expectTypeOf, test, vi } from "vitest";
 
 import { Kysely } from "src/db";
 import { Migrator } from "src/migrator";
@@ -18,62 +18,72 @@ const kysely = new Kysely(
       database: new Sqlite(":memory:"),
     }),
   },
-  logger
+  logger,
 );
 
 beforeEach(() => {
   vi.restoreAllMocks();
 });
 
-test("addKyselyMigrations", async () => {
+const fileProvider = () =>
+  new FileMigrationProvider({ migrationFolder: "migrations", path, fs });
+
+test("addKyselyMigrations(db, provider) registers & announces the migrator service", () => {
   const builder = new LifecycleManagerBuilder(deps);
   vi.spyOn(builder, "addService");
 
-  builder.with(lifecyclePlugin, (builder) =>
-    builder
-      .addKyselyMigrations("test", kysely, "migrationsFolder")
-      .addKyselyMigrations("test", kysely, "migrationsFolder", {})
-      .addKyselyMigrations(
-        "test",
-        kysely,
-        new FileMigrationProvider({
-          migrationFolder: "migrations",
-          path,
-          fs,
-        })
-      )
-      .addKyselyMigrations(
-        "test",
-        kysely,
-        new FileMigrationProvider({
-          migrationFolder: "migrations",
-          path,
-          fs,
-        }),
-        {}
-      )
-      .addKyselyMigrations(
-        "test",
-        new Migrator(
-          {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            db: kysely as Kysely<any>,
-            provider: new FileMigrationProvider({
-              migrationFolder: "migrations",
-              path,
-              fs,
-            }),
-          },
-          logger
-        )
-      )
+  const app = builder.with(lifecyclePlugin, (b) =>
+    b.addKyselyMigrations("test", kysely, "migrationsFolder"),
   );
 
-  expect(builder.addService).toHaveBeenCalledTimes(5);
-  for (const [name, fn] of vi.mocked(builder.addService).mock.calls) {
-    expect(name).toBe("test");
-    expect(fn(deps)).toBeInstanceOf(Migrator);
-  }
+  expect(builder.addService).toHaveBeenCalledOnce();
+  const [name, fn] = vi.mocked(builder.addService).mock.calls[0];
+  expect(name).toBe("test");
+  expect(fn(deps)).toBeInstanceOf(Migrator);
+
+  expectTypeOf(app.services.test).toEqualTypeOf<Migrator>();
 });
 
-test.todo("plugin (type tests?)"); // TODO: test plugin
+test("addKyselyMigrations(migrator) registers & announces the migrator service", () => {
+  const builder = new LifecycleManagerBuilder(deps);
+  vi.spyOn(builder, "addService");
+
+  const migrator = new Migrator(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    { db: kysely as Kysely<any>, provider: fileProvider() },
+    logger,
+  );
+
+  const app = builder.with(lifecyclePlugin, (b) =>
+    b.addKyselyMigrations("test", migrator),
+  );
+
+  expect(builder.addService).toHaveBeenCalledOnce();
+  const [name, fn] = vi.mocked(builder.addService).mock.calls[0];
+  expect(name).toBe("test");
+  expect(fn(deps)).toBeInstanceOf(Migrator);
+
+  expectTypeOf(app.services.test).toEqualTypeOf<Migrator>();
+});
+
+test.each([
+  ["string path", "migrationsFolder", undefined],
+  ["string path + options", "migrationsFolder", {}],
+  ["FileMigrationProvider", fileProvider(), undefined],
+  ["FileMigrationProvider + options", fileProvider(), {}],
+] as const)(
+  "addKyselyMigrations builds a Migrator from a %s",
+  (_desc, provider, options) => {
+    const builder = new LifecycleManagerBuilder(deps);
+    vi.spyOn(builder, "addService");
+
+    builder.with(lifecyclePlugin, (b) =>
+      b.addKyselyMigrations("test", kysely, provider, options),
+    );
+
+    expect(builder.addService).toHaveBeenCalledOnce();
+    expect(vi.mocked(builder.addService).mock.calls[0][1](deps)).toBeInstanceOf(
+      Migrator,
+    );
+  },
+);

@@ -16,8 +16,7 @@ you wouldn't want your app to still run and behave incorrectly would you?
 `npm i @basica/config zod`
 
 Basica validates configuration using any [Standard Schema](https://standardschema.dev) library.
-The examples below use [Zod](https://zod.dev). When reading from environment variables, the schema
-must also expose a [Standard JSON Schema](https://standardschema.dev/json-schema) (e.g. zod v4).
+The examples below use [Zod](https://zod.dev).
 
 <Tabs groupId="ts-style">
   <TabItem value="classes" label="Classes">
@@ -83,8 +82,13 @@ SERVICE_DELAY=3000
 ```
 
 :::note
+When reading from environment variables, the schema
+must also expose a [Standard JSON Schema](https://standardschema.dev/json-schema) (e.g. zod v4).
+:::
+
+:::note
 Environment variables arrive as strings, but the `envProvider` coerces each value to the
-type declared in the schema, so plain `z.number()` / `z.boolean()` work — no `z.coerce` needed.
+type declared in the schema, so plain `z.number()` / `z.boolean()` work.
 :::
 
 :::note
@@ -203,13 +207,13 @@ type ConfigProvider<S = unknown> = {
 already produces a fully-shaped object (reading a static object, a JSON/YAML/TOML file, a remote config
 service) doesn't need to look at the schema at all:
 
-```ts title="json file provider"
+```ts title="Reading config from a JSON file"
 import { readFileSync } from "node:fs";
 import { ConfigProvider } from "@basica/config";
 
-const jsonFileProvider = (path: string): ConfigProvider => ({
+const jsonFileProvider = (path: string) => ({
   get: () => JSON.parse(readFileSync(path, "utf-8")),
-});
+} satisfies ConfigProvider);
 ```
 
 Only providers that read from a **flat** source (like `envProvider`, or a Consul/SSM-style

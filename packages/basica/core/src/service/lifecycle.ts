@@ -4,7 +4,13 @@ import { SpanStatusCode } from "@opentelemetry/api";
 
 import { IocContainer } from "src/ioc";
 import { ILogger } from "src/logger";
-import { abortable, Plugin } from "src/utils";
+import {
+  abortable,
+  Plugin,
+  RegisteredEntrypoints,
+  RegisteredHealthchecks,
+  RegisteredServices,
+} from "src/utils";
 import { tracer } from "src/utils/tracer";
 import { AppRequiredDeps } from ".";
 import {
@@ -39,7 +45,7 @@ export const lifecycleManagerConfigSchema = z.intersection(
      */
     shutdownTimeoutMs: z.number().min(0),
   }),
-  healthcheckManagerConfigSchema
+  healthcheckManagerConfigSchema,
 );
 
 export type LifecycleManagerBuilderConfig = z.infer<
@@ -77,7 +83,7 @@ export class LifecycleManager implements ILifecycleManager {
     logger: ILogger,
     services: Item[],
     entrypoints: Item[],
-    config?: Partial<LifecycleManagerConfig>
+    config?: Partial<LifecycleManagerConfig>,
   ) {
     this.#logger = logger.child({ name: "@basica:app:lifecycle" });
     this.config = {
@@ -96,15 +102,15 @@ export class LifecycleManager implements ILifecycleManager {
       const ac = new AbortController();
       const acTimeout = setTimeout(
         () => ac.abort(),
-        this.config.shutdownTimeoutMs
+        this.config.shutdownTimeoutMs,
       );
 
       const startups = items.filter(
-        (i) => "start" in i.svc
+        (i) => "start" in i.svc,
       ) as Item<IStartup>[];
 
       this.#logger.info(
-        `Starting ${startups.length}/${startups.length} ${name}(s)`
+        `Starting ${startups.length}/${startups.length} ${name}(s)`,
       );
       const result = await Promise.allSettled(
         startups.map(async (s) =>
@@ -112,7 +118,7 @@ export class LifecycleManager implements ILifecycleManager {
             try {
               return await abortable(
                 ac.signal,
-                async () => await s.svc.start(ac.signal)
+                async () => await s.svc.start(ac.signal),
               );
             } catch (err) {
               span.recordException(err as Error);
@@ -121,17 +127,17 @@ export class LifecycleManager implements ILifecycleManager {
             } finally {
               span.end();
             }
-          })
-        )
+          }),
+        ),
       );
       clearTimeout(acTimeout);
 
       const failed = result.filter(
-        (res): res is PromiseRejectedResult => res.status == "rejected"
+        (res): res is PromiseRejectedResult => res.status == "rejected",
       );
 
       this.#logger.info(
-        `Started ${startups.length - failed.length}/${startups.length} ${name}(s)`
+        `Started ${startups.length - failed.length}/${startups.length} ${name}(s)`,
       );
 
       if (failed.length > 0) {
@@ -150,14 +156,14 @@ export class LifecycleManager implements ILifecycleManager {
         });
 
         const startedItems = startups.filter(
-          (i) => !failedNames.includes(i.name)
+          (i) => !failedNames.includes(i.name),
         );
         const timedoutItems = startups.filter(
           (_, idx) =>
             result[idx].status == "rejected" &&
             (result[idx] as PromiseRejectedResult).reason instanceof
               DOMException &&
-            (result[idx] as PromiseRejectedResult).reason.name == "AbortError"
+            (result[idx] as PromiseRejectedResult).reason.name == "AbortError",
         );
 
         span.end();
@@ -205,17 +211,17 @@ export class LifecycleManager implements ILifecycleManager {
       const ac = new AbortController();
       const acTimeout = setTimeout(
         () => ac.abort(),
-        this.config.shutdownTimeoutMs
+        this.config.shutdownTimeoutMs,
       );
 
       const totalShutdowns = total.filter((i) => "shutdown" in i.svc).length;
 
       const shutdowns = toStop.filter(
-        (i) => "shutdown" in i.svc
+        (i) => "shutdown" in i.svc,
       ) as Item<IShutdown>[];
 
       this.#logger.info(
-        `Stopping ${shutdowns.length}/${totalShutdowns} ${name}(s)`
+        `Stopping ${shutdowns.length}/${totalShutdowns} ${name}(s)`,
       );
 
       const result = await Promise.allSettled(
@@ -224,7 +230,7 @@ export class LifecycleManager implements ILifecycleManager {
             try {
               return await abortable(
                 ac.signal,
-                async () => await s.svc.shutdown(ac.signal)
+                async () => await s.svc.shutdown(ac.signal),
               );
             } catch (err) {
               span.recordException(err as Error);
@@ -233,17 +239,17 @@ export class LifecycleManager implements ILifecycleManager {
             } finally {
               span.end();
             }
-          })
-        )
+          }),
+        ),
       );
       clearTimeout(acTimeout);
 
       const failed = result.filter(
-        (res): res is PromiseRejectedResult => res.status == "rejected"
+        (res): res is PromiseRejectedResult => res.status == "rejected",
       );
 
       this.#logger.info(
-        `Stopped ${shutdowns.length}/${totalShutdowns} ${name}(s)`
+        `Stopped ${shutdowns.length}/${totalShutdowns} ${name}(s)`,
       );
 
       if (failed.length > 0) {
@@ -272,7 +278,7 @@ export class LifecycleManager implements ILifecycleManager {
 
   async #stopDownwards(
     idx: number = this.#collection.length - 1,
-    onlyStopItems?: Item[]
+    onlyStopItems?: Item[],
   ) {
     return tracer.startActiveSpan(`stop`, async (span) => {
       const reversed = this.#collection.slice(0, idx + 1).reverse();
@@ -322,7 +328,7 @@ export class LifecycleManagerBuilder<
 
   constructor(
     readonly deps: D,
-    config?: Partial<LifecycleManagerBuilderConfig>
+    config?: Partial<LifecycleManagerBuilderConfig>,
   ) {
     this.#logger = deps.logger.child({ name: "@basica:app:lifecycle" });
     this.#config = config;
@@ -332,7 +338,7 @@ export class LifecycleManagerBuilder<
         ? {
             healthcheckTimeoutMs: this.#config?.healthcheckTimeoutMs,
           }
-        : undefined
+        : undefined,
     );
   }
 
@@ -355,7 +361,7 @@ export class LifecycleManagerBuilder<
    */
   addHealthcheck<K extends string, V extends IHealthcheck>(
     name: K,
-    fn: (deps: D) => V
+    fn: (deps: D) => V,
   ) {
     const svc = fn(this.deps);
     const hcs = this.#healthchecks.addHealthcheck(name, svc).healthchecks;
@@ -375,7 +381,7 @@ export class LifecycleManagerBuilder<
     if (name in this.services) {
       this.#logger.warn(
         { name },
-        "Duplicate service name, previous value will be overwritten"
+        "Duplicate service name, previous value will be overwritten",
       );
     }
 
@@ -403,7 +409,7 @@ export class LifecycleManagerBuilder<
     if (name in this.entrypoints) {
       this.#logger.warn(
         { name },
-        "Duplicate entrypoint name, previous value will be overwritten"
+        "Duplicate entrypoint name, previous value will be overwritten",
       );
     }
 
@@ -423,12 +429,18 @@ export class LifecycleManagerBuilder<
 
   /**
    * Use a plugin
+   *
    * @example
    * builder.with(myPlugin, (builder) => builder.newFunctionality())
    */
-  with<B>(plugin: Plugin<this, B>, fn: (builder: B) => unknown) {
+  with<B, R>(plugin: Plugin<this, B>, fn: (builder: B) => R) {
     fn(plugin(this));
-    return this;
+    return this as unknown as LifecycleManagerBuilder<
+      D,
+      H & RegisteredHealthchecks<R>,
+      S & RegisteredServices<R>,
+      E & RegisteredEntrypoints<R>
+    >;
   }
 
   build() {
@@ -440,12 +452,12 @@ export class LifecycleManagerBuilder<
     return new LifecycleManager(
       this.deps.logger,
       Object.entries(
-        this.#services.items as Record<string, IStartup | IShutdown>
+        this.#services.items as Record<string, IStartup | IShutdown>,
       ).map(mapFn),
       Object.entries(
-        this.#entrypoints.items as Record<string, IEntrypoint>
+        this.#entrypoints.items as Record<string, IEntrypoint>,
       ).map(mapFn),
-      this.#config
+      this.#config,
     );
   }
 }

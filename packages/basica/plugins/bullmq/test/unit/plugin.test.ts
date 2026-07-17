@@ -1,108 +1,141 @@
 import { LifecycleManagerBuilder } from "@basica/core";
 import { lifecyclePlugin } from "src/lifecycle/plugin";
-import { beforeEach, expect, test, vi } from "vitest";
+import { beforeEach, expect, expectTypeOf, test, vi } from "vitest";
 
 import { ClusterWrapper, RedisWrapper } from "@basica/ioredis";
-import { Job } from "bullmq";
 import { BullMqWorkerEntrypoint } from "src/lifecycle/entrypoint";
 import { deps, hcManager } from "./utils";
+
+const redisConfig = {
+  url: "redis://localhost:6379",
+  timeout: 1000,
+  maxRetriesPerRequest: null,
+};
+const clusterConfig = {
+  nodes: [{ host: "localhost", port: 6379 }],
+  timeout: 1000,
+  maxRetriesPerRequest: null,
+};
+const redis = new RedisWrapper(redisConfig, deps.logger).ioredis;
+
+type Entry = BullMqWorkerEntrypoint<unknown, void>;
+type WrapperService = RedisWrapper | ClusterWrapper;
 
 beforeEach(() => {
   vi.restoreAllMocks();
 });
 
-test("addFastifyEntrypoint", async () => {
+test("addBullMqWorker(config) registers & announces the wrapper service + worker entrypoint", () => {
   const builder = new LifecycleManagerBuilder(deps);
-  vi.spyOn(builder, "addEntrypoint");
   vi.spyOn(builder, "addService");
+  vi.spyOn(builder, "addEntrypoint");
 
-  const ioredis = new RedisWrapper(
-    {
-      url: "redis://localhost:6379",
-      timeout: 1000,
-      maxRetriesPerRequest: null,
-    },
-    deps.logger,
-    "ioredis"
+  const app = builder.with(lifecyclePlugin, (b) =>
+    b.addBullMqWorker("test", { connection: redisConfig }, async () => {}),
   );
 
-  builder.with(lifecyclePlugin, (builder) =>
-    builder
-      .addBullMqWorker(
-        "test",
-        { connection: ioredis.ioredis },
-        async (x: Job) => {}
-      )
-      .addBullMqWorker(
-        "test",
-        "queue",
-        { connection: ioredis.ioredis },
-        async (x: Job) => {}
-      )
-      .addBullMqWorker(
-        "test",
-        {
-          connection: {
-            url: "redis://localhost:6379",
-            timeout: 1000,
-            maxRetriesPerRequest: null,
-          },
-        },
-        async (x: Job) => {}
-      )
-      .addBullMqWorker(
-        "test",
-        "queue",
-        {
-          connection: {
-            url: "redis://localhost:6379",
-            timeout: 1000,
-            maxRetriesPerRequest: null,
-          },
-        },
-        async (x: Job) => {}
-      )
-      .addBullMqWorker(
-        "test",
-        {
-          connection: {
-            nodes: [{ host: "localhost", port: 6379 }],
-            timeout: 1000,
-            maxRetriesPerRequest: null,
-          },
-        },
-        async (x: Job) => {}
-      )
-      .addBullMqWorker(
-        "test",
-        "queue",
-        {
-          connection: {
-            nodes: [{ host: "localhost", port: 6379 }],
-            timeout: 1000,
-            maxRetriesPerRequest: null,
-          },
-        },
-        async (x: Job) => {}
-      )
+  expect(builder.addService).toHaveBeenCalledOnce();
+  const [serviceName, serviceFactory] = vi.mocked(builder.addService).mock
+    .calls[0];
+  expect(serviceName).toBe("redis:bullmq:test");
+  expect(serviceFactory(deps)).toBeInstanceOf(RedisWrapper);
+
+  expect(builder.addEntrypoint).toHaveBeenCalledOnce();
+  const [entrypointName, entrypointFactory] = vi.mocked(builder.addEntrypoint)
+    .mock.calls[0];
+  expect(entrypointName).toBe("test");
+  expect(entrypointFactory(deps, hcManager)).toBeInstanceOf(
+    BullMqWorkerEntrypoint,
   );
 
-  expect(builder.addService).toHaveBeenCalledTimes(4);
-  for (const [name, fn] of vi.mocked(builder.addService).mock.calls) {
-    expect(name).toBe("redis:bullmq:test");
-    let cls: unknown = RedisWrapper;
-    const service = fn(deps);
-    if (!(service instanceof RedisWrapper)) {
-      cls = ClusterWrapper;
-    }
-    expect(service).toBeInstanceOf(cls);
-  }
-
-  expect(builder.addEntrypoint).toHaveBeenCalledTimes(6);
-  for (const [name, fn] of vi.mocked(builder.addEntrypoint).mock.calls) {
-    expect(name).toBe("test");
-    expect(fn(deps, hcManager)).toBeInstanceOf(BullMqWorkerEntrypoint);
-  }
+  expectTypeOf(
+    app.services["redis:bullmq:test"],
+  ).toEqualTypeOf<WrapperService>();
+  expectTypeOf(app.entrypoints.test).toEqualTypeOf<Entry>();
 });
 
-test.todo("plugin (type tests?)"); // TODO: test plugin
+test("addBullMqWorker(queueName, config) registers & announces the wrapper service + worker entrypoint", () => {
+  const builder = new LifecycleManagerBuilder(deps);
+  vi.spyOn(builder, "addService");
+  vi.spyOn(builder, "addEntrypoint");
+
+  const app = builder.with(lifecyclePlugin, (b) =>
+    b.addBullMqWorker(
+      "test",
+      "queue",
+      { connection: redisConfig },
+      async () => {},
+    ),
+  );
+
+  expect(builder.addService).toHaveBeenCalledOnce();
+  const [serviceName, serviceFactory] = vi.mocked(builder.addService).mock
+    .calls[0];
+  expect(serviceName).toBe("redis:bullmq:test");
+  expect(serviceFactory(deps)).toBeInstanceOf(RedisWrapper);
+
+  expect(builder.addEntrypoint).toHaveBeenCalledOnce();
+  const [entrypointName, entrypointFactory] = vi.mocked(builder.addEntrypoint)
+    .mock.calls[0];
+  expect(entrypointName).toBe("test");
+  expect(entrypointFactory(deps, hcManager)).toBeInstanceOf(
+    BullMqWorkerEntrypoint,
+  );
+
+  expectTypeOf(
+    app.services["redis:bullmq:test"],
+  ).toEqualTypeOf<WrapperService>();
+  expectTypeOf(app.entrypoints.test).toEqualTypeOf<Entry>();
+});
+
+test("addBullMqWorker(instance) registers & announces only the worker entrypoint", () => {
+  const builder = new LifecycleManagerBuilder(deps);
+  vi.spyOn(builder, "addService");
+  vi.spyOn(builder, "addEntrypoint");
+
+  const app = builder.with(lifecyclePlugin, (b) =>
+    b.addBullMqWorker("test", { connection: redis }, async () => {}),
+  );
+
+  expect(builder.addService).not.toHaveBeenCalled();
+  expect(builder.addEntrypoint).toHaveBeenCalledOnce();
+  const [name, fn] = vi.mocked(builder.addEntrypoint).mock.calls[0];
+  expect(name).toBe("test");
+  expect(fn(deps, hcManager)).toBeInstanceOf(BullMqWorkerEntrypoint);
+
+  expectTypeOf(app.entrypoints.test).toEqualTypeOf<Entry>();
+  expectTypeOf(app.services["redis:bullmq:test"]).toBeUnknown();
+});
+
+test("addBullMqWorker(queueName, instance) registers & announces only the worker entrypoint", () => {
+  const builder = new LifecycleManagerBuilder(deps);
+  vi.spyOn(builder, "addService");
+  vi.spyOn(builder, "addEntrypoint");
+
+  const app = builder.with(lifecyclePlugin, (b) =>
+    b.addBullMqWorker("test", "queue", { connection: redis }, async () => {}),
+  );
+
+  expect(builder.addService).not.toHaveBeenCalled();
+  expect(builder.addEntrypoint).toHaveBeenCalledOnce();
+  const [name, fn] = vi.mocked(builder.addEntrypoint).mock.calls[0];
+  expect(name).toBe("test");
+  expect(fn(deps, hcManager)).toBeInstanceOf(BullMqWorkerEntrypoint);
+
+  expectTypeOf(app.entrypoints.test).toEqualTypeOf<Entry>();
+  expectTypeOf(app.services["redis:bullmq:test"]).toBeUnknown();
+});
+
+test("addBullMqWorker with a cluster config registers a ClusterWrapper service", () => {
+  const builder = new LifecycleManagerBuilder(deps);
+  vi.spyOn(builder, "addService");
+
+  builder.with(lifecyclePlugin, (b) =>
+    b.addBullMqWorker("test", { connection: clusterConfig }, async () => {}),
+  );
+
+  expect(builder.addService).toHaveBeenCalledOnce();
+  expect(vi.mocked(builder.addService).mock.calls[0][1](deps)).toBeInstanceOf(
+    ClusterWrapper,
+  );
+});

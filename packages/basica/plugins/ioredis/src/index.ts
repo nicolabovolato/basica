@@ -3,8 +3,9 @@ export { RedisWrapper } from "./redis";
 
 export {
   ClusterWrapperConfig,
-  RedisWrapperConfig,
   clusterWrapperConfigSchema,
+  isClusterWrapperConfig,
+  RedisWrapperConfig,
   redisWrapperConfigSchema,
 } from "./config";
 

@@ -1,3 +1,13 @@
 export { abortable } from "./abortable";
-export { Plugin } from "./plugin";
+export {
+  LifecyclePluginRegistrations,
+  lifecyclePluginRegistrations,
+  Plugin,
+  RegisteredEntrypoints,
+  RegisteredHealthchecks,
+  RegisteredServices,
+  RegistersEntrypoint,
+  RegistersHealthcheck,
+  RegistersService,
+} from "./plugin";
 export { Constructor } from "./types";

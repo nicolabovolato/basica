@@ -1,11 +1,20 @@
 import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
-import { Plugin } from "@basica/core/utils";
+import {
+  Plugin,
+  RegistersEntrypoint,
+  RegistersService,
+} from "@basica/core/utils";
 import { ClusterWrapper, RedisWrapper } from "@basica/ioredis";
 
 import { Processor } from "bullmq";
 import { Cluster, Redis } from "ioredis";
 
-import { WorkerConfig, isClusterWrapperConfig } from "../config";
+import {
+  ClusterWrapperConfig,
+  RedisWrapperConfig,
+  WorkerConfig,
+  isClusterWrapperConfig,
+} from "../config";
 import { BullMqWorkerEntrypoint } from "./entrypoint";
 
 class BullMqLifecyclePlugin<S extends AppRequiredDeps> {
@@ -38,22 +47,41 @@ class BullMqLifecyclePlugin<S extends AppRequiredDeps> {
    *   // ...
    * })
    */
-  addBullMqWorker<T, R>(
-    name: string,
-    config: WorkerConfig,
-    fn: Processor<T, R>
-  ): this;
-  addBullMqWorker<T, R>(
-    name: string,
+  addBullMqWorker<const K extends string, T, R>(
+    name: K,
+    config: WorkerConfig & {
+      connection: RedisWrapperConfig | ClusterWrapperConfig;
+    },
+    fn: Processor<T, R>,
+  ): this &
+    RegistersEntrypoint<K, BullMqWorkerEntrypoint<T, R>> &
+    RegistersService<`redis:bullmq:${K}`, RedisWrapper | ClusterWrapper>;
+  addBullMqWorker<const K extends string, T, R>(
+    name: K,
+    config: WorkerConfig & { connection: Redis | Cluster },
+    fn: Processor<T, R>,
+  ): this & RegistersEntrypoint<K, BullMqWorkerEntrypoint<T, R>>;
+  addBullMqWorker<const K extends string, T, R>(
+    name: K,
     queueName: string,
-    config: WorkerConfig,
-    fn: Processor<T, R>
-  ): this;
+    config: WorkerConfig & {
+      connection: RedisWrapperConfig | ClusterWrapperConfig;
+    },
+    fn: Processor<T, R>,
+  ): this &
+    RegistersEntrypoint<K, BullMqWorkerEntrypoint<T, R>> &
+    RegistersService<`redis:bullmq:${K}`, RedisWrapper | ClusterWrapper>;
+  addBullMqWorker<const K extends string, T, R>(
+    name: K,
+    queueName: string,
+    config: WorkerConfig & { connection: Redis | Cluster },
+    fn: Processor<T, R>,
+  ): this & RegistersEntrypoint<K, BullMqWorkerEntrypoint<T, R>>;
   addBullMqWorker<T, R>(
     name: string,
     queueNameOrConfig: string | WorkerConfig,
     configOrFn: WorkerConfig | Processor<T, R>,
-    maybeFn?: Processor<T, R>
+    maybeFn?: Processor<T, R>,
   ) {
     const queueName =
       typeof queueNameOrConfig === "string" ? queueNameOrConfig : name;
@@ -72,12 +100,12 @@ class BullMqLifecyclePlugin<S extends AppRequiredDeps> {
         ? new ClusterWrapper(
             connection,
             this.#lifecycle.deps.logger,
-            `bullmq:${name}`
+            `bullmq:${name}`,
           )
         : new RedisWrapper(
             connection,
             this.#lifecycle.deps.logger,
-            `bullmq:${name}`
+            `bullmq:${name}`,
           );
       connection = wrapper.ioredis;
       this.#lifecycle.addService(`redis:bullmq:${name}`, () => wrapper);
@@ -89,15 +117,16 @@ class BullMqLifecyclePlugin<S extends AppRequiredDeps> {
         new BullMqWorkerEntrypoint(deps.logger, name, queueName, fn, {
           ...config,
           connection,
-        })
+        }),
     );
-    return this;
+    return this as this &
+      RegistersEntrypoint<string, BullMqWorkerEntrypoint<T, R>>;
   }
 }
 
 /** BullMQ lifecycle plugin */
 export const lifecyclePlugin = (<S extends AppRequiredDeps>(
-  lifecycle: LifecycleManagerBuilder<S>
+  lifecycle: LifecycleManagerBuilder<S>,
 ) => new BullMqLifecyclePlugin(lifecycle)) satisfies Plugin<
   LifecycleManagerBuilder<AppRequiredDeps>
 >;
