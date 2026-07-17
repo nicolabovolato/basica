@@ -1,5 +1,13 @@
 # telemetry-svc1
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`76a83c6`](https://github.com/nicolabovolato/basica/commit/76a83c678a7597d3ae5c860baf961c41e8c2a781), [`76a83c6`](https://github.com/nicolabovolato/basica/commit/76a83c678a7597d3ae5c860baf961c41e8c2a781)]:
+  - @basica/core@0.0.7
+  - @basica/fastify@0.1.4
+
 ## 0.0.7
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @basica/core
 
+## 0.0.7
+
+### Patch Changes
+
+- [#26](https://github.com/nicolabovolato/basica/pull/26) [`76a83c6`](https://github.com/nicolabovolato/basica/commit/76a83c678a7597d3ae5c860baf961c41e8c2a781) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - `LifecycleManagerBuilder.healthchecks` now returns the registered healthcheck items, symmetric with `services` and `entrypoints`. The manager that runs them is available through the new `healthcheckManager` getter.
+
+- [#26](https://github.com/nicolabovolato/basica/pull/26) [`76a83c6`](https://github.com/nicolabovolato/basica/commit/76a83c678a7597d3ae5c860baf961c41e8c2a781) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Stop exporting the plugin registration internals (`RegisteredServices`, `RegisteredEntrypoints`, `RegisteredHealthchecks`, `LifecyclePluginRegistrations`) from `@basica/core/utils`.
+
 ## 0.0.6
 
 ### Patch Changes
