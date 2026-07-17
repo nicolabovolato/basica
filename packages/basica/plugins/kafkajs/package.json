@@ -36,7 +36,7 @@
   },
   "peerDependencies": {
     "@basica/core": "workspace:^0.0.7",
-    "kafkajs": "^2.2.4"
+    "kafkajs": ">=2.0.0 <3.0.0"
   },
   "devDependencies": {
     "@basica/core": "workspace:^0.0.7",

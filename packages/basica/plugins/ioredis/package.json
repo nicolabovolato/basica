@@ -36,7 +36,7 @@
   },
   "peerDependencies": {
     "@basica/core": "workspace:^0.0.7",
-    "ioredis": "^5.3.2"
+    "ioredis": ">=5.3.0 <6.0.0"
   },
   "devDependencies": {
     "@basica/core": "workspace:^0.0.7",
