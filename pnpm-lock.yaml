@@ -120,10 +120,10 @@ importers:
         specifier: ^1.9.1
         version: 1.9.1
       amqp-connection-manager:
-        specifier: ^4.1.14
+        specifier: '>=4.0.0 <5.0.0'
         version: 4.1.14(amqplib@0.10.9)
       amqplib:
-        specifier: ^0.10.8
+        specifier: '>=0.10.0 <0.11.0'
         version: 0.10.9
       zod:
         specifier: ^4.4.3
@@ -212,10 +212,10 @@ importers:
         specifier: ^1.9.1
         version: 1.9.1
       bullmq:
-        specifier: ^5.5.1
+        specifier: '>=5.0.0 <6.0.0'
         version: 5.5.1
       ioredis:
-        specifier: ^5.3.2
+        specifier: '>=5.3.0 <6.0.0'
         version: 5.3.2
     devDependencies:
       '@basica/core':
@@ -257,9 +257,6 @@ importers:
 
   packages/basica/plugins/fastify:
     dependencies:
-      '@basica/core':
-        specifier: workspace:^0.0.7
-        version: link:../../core
       '@fastify/swagger':
         specifier: ^9.8.1
         version: 9.8.1
@@ -267,12 +264,15 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0
       fastify:
-        specifier: ^5.10.0
+        specifier: '>=5.6.0 <6.0.0'
         version: 5.10.0
       zod:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
+      '@basica/core':
+        specifier: workspace:^0.0.7
+        version: link:../../core
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
         version: link:../../../shared/eslint-config
@@ -310,7 +310,7 @@ importers:
         specifier: ^1.9.1
         version: 1.9.1
       ioredis:
-        specifier: ^5.3.2
+        specifier: '>=5.3.0 <6.0.0'
         version: 5.3.2
       zod:
         specifier: ^4.4.3
@@ -359,7 +359,7 @@ importers:
         specifier: ^1.9.1
         version: 1.9.1
       kafkajs:
-        specifier: ^2.2.4
+        specifier: '>=2.0.0 <3.0.0'
         version: 2.2.4
       zod:
         specifier: ^4.4.3
@@ -405,7 +405,7 @@ importers:
   packages/basica/plugins/kysely:
     dependencies:
       kysely:
-        specifier: ^0.29.3
+        specifier: '>=0.29.0 <0.30.0'
         version: 0.29.3
     devDependencies:
       '@basica/core':
@@ -448,8 +448,8 @@ importers:
   packages/basica/plugins/pg:
     dependencies:
       pg:
-        specifier: ^8.11.3
-        version: 8.11.3
+        specifier: '>=8.0.0 <9.0.0'
+        version: 8.22.0
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -6137,10 +6137,6 @@ packages:
   buffer-more-ints@1.0.0:
     resolution: {integrity: sha512-EMetuGFz5SLsT0QTnXzINh4Ksr+oo4i+UGTXEshiGCQWnsgSs7ZhJ8fzlwQ+OzEMs0MpDAMr1hxnblp5a4vcHg==}
 
-  buffer-writer@2.0.0:
-    resolution: {integrity: sha512-a7ZpuTZU1TRtnwyCNW3I5dc0wWNC3VR9S++Ewyk2HHZdrO3CQJqSpd+95Us590V6AL7JqUAH2IwZ/398PmNFgw==}
-    engines: {node: '>=4'}
-
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
 
@@ -8449,10 +8445,6 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lru-cache@6.0.0:
-    resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
-    engines: {node: '>=10'}
-
   luxon@3.4.4:
     resolution: {integrity: sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA==}
     engines: {node: '>=12'}
@@ -9156,9 +9148,6 @@ packages:
   package-manager-detector@1.7.0:
     resolution: {integrity: sha512-xg1eHpwYL/D/HEdWw2goFZP6vV0FH7W+PZ5rFkGjdIDLtxq7EkzBUeT3m+lndYCt8wKbmofUu1MUdMCXkCk9ZQ==}
 
-  packet-reader@1.0.0:
-    resolution: {integrity: sha512-HAKu/fG3HpHFO0AA8WE8q2g+gBJaZ9MG7fcKk+IJPLTGAD6Psw4443l+9DGRbOIh3/aXr7Phy0TjilYivJo5XQ==}
-
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
@@ -9251,17 +9240,11 @@ packages:
   periscopic@3.1.0:
     resolution: {integrity: sha512-vKiQ8RRtkl9P+r/+oefh25C3fhybptkHKCZSPlcXiJux2tJF55GnEj3BVn4A5gKfq9NWWXXrxkHBwVPUfH0opw==}
 
-  pg-cloudflare@1.1.1:
-    resolution: {integrity: sha512-xWPagP/4B6BgFO+EKz3JONXv3YDgvkbVrGw2mTo3D6tVDQRh1e7cqVGvyR3BE+eQgAvx1XhW/iEASj4/jCWl3Q==}
-
   pg-cloudflare@1.4.0:
     resolution: {integrity: sha512-Vo7z/6rrQYxpNRylp4Tlob2elzbh+N/MOQbxFVWCxS7oEx6jF53GTJFxK2WWpKuBRkmiin4Mt+xofFDjx09R0A==}
 
   pg-connection-string@2.14.0:
     resolution: {integrity: sha512-XwWDGcLRGCXAR8F/AM5bG7Q+A3Wm2s6QeEjlOKZLlH3UYcguiqCWKyWXVag5TLTIjR7oOJUY8kcADaZgWPyLeg==}
-
-  pg-connection-string@2.6.2:
-    resolution: {integrity: sha512-ch6OwaeaPYcova4kKZ15sbJ2hKb/VP48ZD2gE7i1J+L4MspCtBMAx8nMgz7bksc7IojCIIWuEhHibSMFH8m8oA==}
 
   pg-int8@1.0.1:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
@@ -9269,11 +9252,6 @@ packages:
 
   pg-pool@3.14.0:
     resolution: {integrity: sha512-gKtPkFdQPU3DksooVLi9LsjZxrsBUZIpa+7aVx+LV5pNh0KzP4Zleud2po+ConrxbuXGBJ6Hfer6hdgpIBpBaw==}
-    peerDependencies:
-      pg: '>=8.0'
-
-  pg-pool@3.6.1:
-    resolution: {integrity: sha512-jizsIzhkIitxCGfPRzJn1ZdcosIt3pz9Sh3V01fm1vZnbnCMgmGl5wvGGdNN2EL9Rmb0EcFoCkixH4Pu+sP9Og==}
     peerDependencies:
       pg: '>=8.0'
 
@@ -9286,15 +9264,6 @@ packages:
   pg-types@2.2.0:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
     engines: {node: '>=4'}
-
-  pg@8.11.3:
-    resolution: {integrity: sha512-+9iuvG8QfaaUrrph+kpF24cXkH1YOOUeArRNYIxq1viYHZagBxrTno7cecY1Fa44tJeZvaoG+Djpkc3JwehN5g==}
-    engines: {node: '>= 8.0.0'}
-    peerDependencies:
-      pg-native: '>=3.0.1'
-    peerDependenciesMeta:
-      pg-native:
-        optional: true
 
   pg@8.22.0:
     resolution: {integrity: sha512-8wih1vVIBMxoUM2oB4soJsD9tDnDpLv4OXBJ+EJzFsvycD+lfyIreC2gGHq78f8jbLLt+bvlPTFdFZfJkOuzAA==}
@@ -10300,11 +10269,6 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
-  semver@7.6.0:
-    resolution: {integrity: sha512-EnwXhrlwXMk9gKu5/flx5sv/an57AkRplG3hTK68W7FRDN+k+OWBj65M7719OkA82XLBxrcX0KSHj+X5COhOVg==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   semver@7.8.5:
     resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
@@ -10908,9 +10872,6 @@ packages:
   tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
 
-  tslib@2.6.2:
-    resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -11502,9 +11463,6 @@ packages:
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
-
-  yallist@4.0.0:
-    resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
   yaml@2.9.0:
     resolution: {integrity: sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==}
@@ -18146,8 +18104,6 @@ snapshots:
 
   buffer-more-ints@1.0.0: {}
 
-  buffer-writer@2.0.0: {}
-
   buffer@5.7.1:
     dependencies:
       base64-js: 1.5.1
@@ -18167,8 +18123,8 @@ snapshots:
       ioredis: 5.3.2
       msgpackr: 1.10.1
       node-abort-controller: 3.1.1
-      semver: 7.6.0
-      tslib: 2.6.2
+      semver: 7.8.5
+      tslib: 2.8.1
       uuid: 9.0.1
     transitivePeerDependencies:
       - supports-color
@@ -20674,10 +20630,6 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lru-cache@6.0.0:
-    dependencies:
-      yallist: 4.0.0
-
   luxon@3.4.4: {}
 
   magic-string@0.30.17:
@@ -21651,8 +21603,6 @@ snapshots:
 
   package-manager-detector@1.7.0: {}
 
-  packet-reader@1.0.0: {}
-
   pako@1.0.11: {}
 
   param-case@3.0.4:
@@ -21746,25 +21696,16 @@ snapshots:
       estree-walker: 3.0.3
       is-reference: 3.0.2
 
-  pg-cloudflare@1.1.1:
-    optional: true
-
   pg-cloudflare@1.4.0:
     optional: true
 
   pg-connection-string@2.14.0: {}
-
-  pg-connection-string@2.6.2: {}
 
   pg-int8@1.0.1: {}
 
   pg-pool@3.14.0(pg@8.22.0):
     dependencies:
       pg: 8.22.0
-
-  pg-pool@3.6.1(pg@8.11.3):
-    dependencies:
-      pg: 8.11.3
 
   pg-protocol@1.15.0: {}
 
@@ -21777,18 +21718,6 @@ snapshots:
       postgres-bytea: 1.0.0
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
-
-  pg@8.11.3:
-    dependencies:
-      buffer-writer: 2.0.0
-      packet-reader: 1.0.0
-      pg-connection-string: 2.6.2
-      pg-pool: 3.6.1(pg@8.11.3)
-      pg-protocol: 1.6.0
-      pg-types: 2.2.0
-      pgpass: 1.0.5
-    optionalDependencies:
-      pg-cloudflare: 1.1.1
 
   pg@8.22.0:
     dependencies:
@@ -22949,10 +22878,6 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.6.0:
-    dependencies:
-      lru-cache: 6.0.0
-
   semver@7.8.5: {}
 
   send@0.19.2:
@@ -23592,8 +23517,6 @@ snapshots:
       strip-bom: 3.0.0
 
   tslib@1.14.1: {}
-
-  tslib@2.6.2: {}
 
   tslib@2.8.1: {}
 
@@ -24284,8 +24207,6 @@ snapshots:
   y18n@5.0.8: {}
 
   yallist@3.1.1: {}
-
-  yallist@4.0.0: {}
 
   yaml@2.9.0: {}
 
