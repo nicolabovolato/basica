@@ -95,7 +95,7 @@ export class AppBuilder<
       this.#deps
     );
 
-    this.#healthchecks = builder.healthchecks.healthchecks;
+    this.#healthchecks = builder.healthchecks;
     this.#services = builder.services;
     this.#entrypoints = builder.entrypoints;
     this.#lifecycle = builder.build();
