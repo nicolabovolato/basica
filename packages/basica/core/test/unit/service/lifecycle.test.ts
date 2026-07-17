@@ -53,7 +53,7 @@ test("builder", async () => {
 
   const manager = m.build();
 
-  await m.healthchecks.healthcheck();
+  await m.healthcheckManager.healthcheck();
   expect(healthcheck1).toHaveBeenCalledOnce();
   expect(healthcheck2).toHaveBeenCalledOnce();
 
@@ -77,7 +77,7 @@ test("start ok", async () => {
       },
     ],
     [],
-    config
+    config,
   );
 
   const result = await manager.start();
@@ -97,7 +97,7 @@ test("start failure", async () => {
       },
     ],
     [],
-    config
+    config,
   );
 
   const result = await manager.start();
@@ -140,7 +140,7 @@ test("start failure, stops started, timedout and not startable services", async 
       },
     ],
     [],
-    config
+    config,
   );
 
   const result = await manager.start();
@@ -168,7 +168,7 @@ test("stop ok", async () => {
       },
     ],
     [],
-    config
+    config,
   );
 
   const result = await manager.stop();
@@ -188,7 +188,7 @@ test("stop failure", async () => {
       },
     ],
     [],
-    config
+    config,
   );
 
   const result = await manager.stop();
@@ -223,7 +223,7 @@ test("invocation order", async () => {
         svc: { start: startentrypoint, shutdown: shutdownentrypoint },
       },
     ],
-    config
+    config,
   );
 
   const start = await manager.start();
@@ -233,10 +233,10 @@ test("invocation order", async () => {
   expect(startsvc2).toHaveBeenCalledOnce();
   expect(startentrypoint).toHaveBeenCalledOnce();
   expect(startentrypoint.mock.invocationCallOrder[0]).toBeGreaterThan(
-    startsvc1.mock.invocationCallOrder[0]
+    startsvc1.mock.invocationCallOrder[0],
   );
   expect(startentrypoint.mock.invocationCallOrder[0]).toBeGreaterThan(
-    startsvc2.mock.invocationCallOrder[0]
+    startsvc2.mock.invocationCallOrder[0],
   );
 
   const stop = await manager.stop();
@@ -245,9 +245,9 @@ test("invocation order", async () => {
   expect(shutdownsvc2).toHaveBeenCalledOnce();
   expect(shutdownentrypoint).toHaveBeenCalledOnce();
   expect(shutdownentrypoint.mock.invocationCallOrder[0]).toBeLessThan(
-    shutdownsvc1.mock.invocationCallOrder[0]
+    shutdownsvc1.mock.invocationCallOrder[0],
   );
   expect(shutdownentrypoint.mock.invocationCallOrder[0]).toBeLessThan(
-    shutdownsvc2.mock.invocationCallOrder[0]
+    shutdownsvc2.mock.invocationCallOrder[0],
   );
 });

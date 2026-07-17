@@ -56,7 +56,7 @@ class FastifyLifecyclePlugin<D extends AppRequiredDeps> {
 
     const builder = new FastifyEntrypointBuilder(
       this.#lifecycle.deps,
-      this.#lifecycle.healthchecks,
+      this.#lifecycle.healthcheckManager,
       name,
       config,
     );

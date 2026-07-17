@@ -4,13 +4,12 @@ import { SpanStatusCode } from "@opentelemetry/api";
 
 import { IocContainer } from "src/ioc";
 import { ILogger } from "src/logger";
+import { abortable, Plugin } from "src/utils";
 import {
-  abortable,
-  Plugin,
   RegisteredEntrypoints,
   RegisteredHealthchecks,
   RegisteredServices,
-} from "src/utils";
+} from "src/utils/plugin";
 import { tracer } from "src/utils/tracer";
 import { AppRequiredDeps } from ".";
 import {
@@ -343,7 +342,11 @@ export class LifecycleManagerBuilder<
   }
 
   get healthchecks() {
-    return this.#healthchecks;
+    return this.#healthchecks.healthchecks;
+  }
+
+  get healthcheckManager() {
+    return this.#healthchecks as IHealthcheckManager;
   }
 
   get services() {
