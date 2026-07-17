@@ -136,14 +136,15 @@ Let's start it.
 `npx tsx index.ts`
 
 ```js
-{...,"name":"@basica:app:lifecycle","msg":"Starting 1/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Lifecycle: 1 entrypoint(s) (1 startable, 1 stoppable)"}
+{...,"name":"@basica:app:lifecycle","msg":"Starting 1 entrypoint(s)"}
 {...,"name":"test","msg":"Hello World!"}
 {...,"name":"@basica:app:lifecycle","msg":"Started 1/1 entrypoint(s)"}
 {...,"name":"@basica:app","msg":"Empty event loop, invoking shutdown..."}
 {...,"name":"@basica:app","msg":"Received manual shutdown, shutting down..."}
-{...,"name":"@basica:app:lifecycle","msg":"Stopping gracefully 1/1 service(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopping 1 entrypoint(s)"}
 {...,"name":"test","msg":"Goodbye!"}
-{...,"name":"@basica:app:lifecycle","msg":"Stopped gracefully 1/1 service(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopped 1/1 entrypoint(s)"}
 ```
 
 It looks like our service was started, and because there was no computation keeping the event loop alive, it also got stopped.
@@ -289,8 +290,8 @@ We should stop the service now, Crtl+C on the terminal.
 
 ```js
 ^C{..."name":"@basica:app","signal":"SIGINT","msg":"Received signal SIGINT, shutting down..."}
-{...,"name":"@basica:app:lifecycle","msg":"Stopping gracefully 1/1 service(s)"}
-{...,"name":"@basica:app:lifecycle","msg":"Stopped gracefully 1/1 service(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopping 1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopped 1/1 entrypoint(s)"}
 ```
 
 Great, looks like Basica intercepted SIGINT and stopped fastify
@@ -464,11 +465,10 @@ Let's see what happens...
 Okokok, so Basica caught the error on startup, but it didn't call stop on that service...
 
 ```js
-{...,"name":"@basica:app:lifecycle","msg":"Starting 1/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Lifecycle: 1 entrypoint(s) (1 startable, 1 stoppable)"}
+{...,"name":"@basica:app:lifecycle","msg":"Starting 1 entrypoint(s)"}
 {...,"name":"@basica:app:lifecycle","msg":"Started 0/1 entrypoint(s)"}
 {...,"name":"@basica:app:lifecycle","err":{"type":"Error","message":"oops!","stack":"Error: oops! ..."}, "msg":"Failed to start 'sample'"}
-{...,"name":"@basica:app:lifecycle","msg":"Stopping gracefully 0/1 entrypoint(s)"}
-{...,"name":"@basica:app:lifecycle","msg":"Stopped gracefully 0/1 entrypoint(s)"}
 {...,"name":"@basica:app","msg":"Startup failed"}
 ```
 
@@ -477,13 +477,14 @@ Let's comment out the error on startup and try again...
 `npx tsx index.ts`
 
 ```js
-{...,"name":"@basica:app:lifecycle","msg":"Starting 1/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Lifecycle: 1 entrypoint(s) (1 startable, 1 stoppable)"}
+{...,"name":"@basica:app:lifecycle","msg":"Starting 1 entrypoint(s)"}
 {...,"name":"test","msg":"Hello World!"}
 {...,"name":"@basica:app:lifecycle","msg":"Started 1/1 entrypoint(s)"}
 {...,"name":"@basica:app","msg":"Empty event loop, invoking shutdown..."}
 {...,"name":"@basica:app","msg":"Received manual shutdown, shutting down..."}
-{...,"name":"@basica:app:lifecycle","msg":"Stopping gracefully 1/1 entrypoint(s)"}
-{...,"name":"@basica:app:lifecycle","msg":"Stopped gracefully 0/1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopping 1 entrypoint(s)"}
+{...,"name":"@basica:app:lifecycle","msg":"Stopped 0/1 entrypoint(s)"}
 {...,"name":"@basica:app:lifecycle","err":{"type":"DOMException","message":"This operation was aborted","stack":"AbortError: This operation was aborted ..."}, "msg":"Failed to stop 'sample'"}
 {...,"name":"@basica:app","msg":"Shutdown failed"}
 ```
