@@ -95,8 +95,6 @@ export class LifecycleManager implements ILifecycleManager {
     this.#collection.push({ items: entrypoints, name: "entrypoint" });
   }
 
-  // one-line summary of what the lifecycle manages, e.g.
-  // "2 service(s) (1 startable, 1 stoppable), 1 entrypoint(s) (1 startable, 1 stoppable)"
   #registrationSummary() {
     return this.#collection
       .filter((c) => c.items.length > 0)
@@ -290,9 +288,8 @@ export class LifecycleManager implements ILifecycleManager {
       const reversed = this.#collection.slice(0, idx + 1).reverse();
       let success = true;
 
-      for (const [idx, x] of reversed.entries()) {
-        const toStop =
-          idx == reversed.length - 1 ? (onlyStopItems ?? x.items) : x.items;
+      for (const [pos, x] of reversed.entries()) {
+        const toStop = pos == 0 ? (onlyStopItems ?? x.items) : x.items;
         if (toStop.length > 0) {
           success &&= await this.#stop(toStop, x.name);
         }
