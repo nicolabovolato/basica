@@ -38,12 +38,12 @@ Any registered service or entrypoint implementing `IHealthcheck` will also be re
 
     export class MyEntrypoint implements IEntrypoint {
 
-        constructor(private readonly healthcheckManager) {}
+        constructor(private readonly healthcheckManager: IHealthcheckManager) {}
 
         async start(signal: AbortSignal) {
-            const result = this.healthcheckManager.healthcheck();
-            if(result.status != "healthy") {
-              throw new Error(result);
+            const results = await this.healthcheckManager.healthcheck();
+            if (Object.values(results).some((r) => r.status != "healthy")) {
+              throw new Error("some healthchecks are unhealthy");
             }
         }
 
@@ -70,9 +70,9 @@ Any registered service or entrypoint implementing `IHealthcheck` will also be re
 
     export const createMyEntrypoint = (healthcheckManager: IHealthcheckManager) => ({
         start: async (signal: AbortSignal) => {
-            const result = healthcheckManager.healthcheck();
-            if(result.status != "healthy") {
-              throw new Error(result);
+            const results = await healthcheckManager.healthcheck();
+            if (Object.values(results).some((r) => r.status != "healthy")) {
+              throw new Error("some healthchecks are unhealthy");
             }
         },
         stop: async (signal: AbortSignal) => {
@@ -86,11 +86,31 @@ Any registered service or entrypoint implementing `IHealthcheck` will also be re
 ```ts title="index.ts"
 // ...
 const app = new AppBuilder(container)
-    .configureLifecycle(b =>
+    .configureLifecycle((b) =>
         b.addHealthcheck("my-service", () => container.myService)
-        .addEntrypoint("test", (s, h) => createMyEntrypoint(h))
+        .addEntrypoint("test", (deps, healthchecks) => createMyEntrypoint(healthchecks))
     )
     .build();
 
 app.run()
 ```
+
+## The healthcheck manager
+
+`IHealthcheckManager` runs every registered healthcheck and returns their results keyed by name.
+Entrypoints receive it as the second argument of their factory, so they can expose health over
+their transport:
+
+```ts
+b.addEntrypoint("test", (deps, healthchecks) => createMyEntrypoint(healthchecks))
+```
+
+If you need it outside an entrypoint, the builder exposes it directly:
+
+```ts
+await b.healthcheckManager.healthcheck(); // runs every registered healthcheck
+```
+
+The registered checks themselves are available as items on `app.healthchecks` (and
+`builder.healthchecks`), the same way registered services and entrypoints are on `app.services` and
+`app.entrypoints`.

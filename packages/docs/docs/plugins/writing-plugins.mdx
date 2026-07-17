@@ -1,8 +1,6 @@
 ---
 sidebar_position: 2
 ---
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
 
 # Writing plugins
 
@@ -23,67 +21,15 @@ entrypoints, and [Healthchecks](../core-concepts/healthchecks))
 
 ## Lifecycle plugin
 
-<Tabs groupId="ts-style">
-  <TabItem value="classes" label="Classes">
-    ```ts title="plugin.ts"
-    import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
-
-    class LifecyclePlugin<S extends AppRequiredDeps> {
-      constructor(readonly lifecycle: LifecycleManagerBuilder<S>) {}
-
-      newMethod() {
-        //...
-      }
-    }
-
-    export const lifecyclePlugin = <S extends AppRequiredDeps>(
-      lifecycle: LifecycleManagerBuilder<S>
-    ) => new LifecyclePlugin(lifecycle);
-    ```
-
-  </TabItem>
-  <TabItem value="objects" label="Object Factory">
-    ```ts title="sampleService.ts"
-    import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
-
-    export const lifecyclePlugin = <S extends AppRequiredDeps>(
-      lifecycle: LifecycleManagerBuilder<S>
-    ) => ({
-      newMethod: () => {
-        //...
-      }
-    });
-    ```
-
-  </TabItem>
-</Tabs>
-
-```ts title="index.ts"
-// ...
-
-const app = new AppBuilder(container)
-  .configureLifecycle((b) =>
-    b.with(lifecyclePlugin, (b) => b.newMethod())
-  )
-  .build();
-
-// ...
-```
-
-## Typing what a plugin registers
-
-**Always type what your plugin registers.** When a method registers a service, entrypoint, or
-healthcheck, advertise it, so it stays typed on the built `app` (`app.services.x`,
-`app.entrypoints.x`, `app.healthchecks.x`)
-
-Advertise by doing the following:
+A plugin is a class that receives the lifecycle `builder` and exposes methods that wire things into
+it. You use it through `builder.with`:
 
 ```ts title="plugin.ts"
 import { AppRequiredDeps, LifecycleManagerBuilder } from "@basica/core";
 import { RegistersService } from "@basica/core/utils";
 
 class LifecyclePlugin<D extends AppRequiredDeps> {
-  constructor(readonly lifecycle: LifecycleManagerBuilder<D>) {}
+  constructor(private readonly lifecycle: LifecycleManagerBuilder<D>) {}
 
   addThing<const K extends string>(name: K) {
     this.lifecycle.addService(name, () => new Thing());
@@ -104,7 +50,28 @@ const app = new AppBuilder(container)
 typeof app.services.cache; // Thing
 ```
 
-### Conditional registration
+## Typing what a plugin registers
+
+**Always type what your plugin registers.** When a method registers a service, entrypoint, or
+healthcheck, advertise it, so it stays typed on the built `app` (`app.services.x`,
+`app.entrypoints.x`, `app.healthchecks.x`).
+
+There's one marker per registration kind, all from `@basica/core/utils`:
+
+- `RegistersService<K, V>`
+- `RegistersEntrypoint<K, V>`
+- `RegistersHealthcheck<K, V>`
+
+Return `this` intersected with the marker(s) for whatever the method registered, and the markers accumulate across chained calls:
+
+```ts
+addThing<const K extends string>(name: K) {
+  this.lifecycle.addService(name, () => new Thing());
+  return this as this & RegistersService<K, Thing>;
+}
+```
+
+### When registration depends on the input
 
 If _what_ a method registers depends on _how_ it's called, give each input shape its own overload
 and let each one advertise exactly what that path registers. This is how the first-party plugins do
@@ -131,3 +98,10 @@ addThing(name: string, configOrThing: Config | Thing) {
 ```
 
 Overload signatures have no body, so you must spell their return type.
+
+:::warning
+This works because overloads key on the **input**, which the compiler sees. Registration can't be
+made dynamic: a method must advertise the same markers every time it's called with a given
+signature. A registration that only happens on a runtime condition (a config flag, an env var)
+can't be advertised as guaranteed: split it into overloads keyed on the input.
+:::
