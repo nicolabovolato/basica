@@ -1,5 +1,13 @@
 # @basica/bullmq
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [[`76a83c6`](https://github.com/nicolabovolato/basica/commit/76a83c678a7597d3ae5c860baf961c41e8c2a781), [`76a83c6`](https://github.com/nicolabovolato/basica/commit/76a83c678a7597d3ae5c860baf961c41e8c2a781)]:
+  - @basica/core@0.0.7
+  - @basica/ioredis@0.0.9
+
 ## 0.0.6
 
 ### Patch Changes

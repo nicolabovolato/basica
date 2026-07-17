@@ -1,5 +1,12 @@
 # @basica/kafkajs
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`76a83c6`](https://github.com/nicolabovolato/basica/commit/76a83c678a7597d3ae5c860baf961c41e8c2a781), [`76a83c6`](https://github.com/nicolabovolato/basica/commit/76a83c678a7597d3ae5c860baf961c41e8c2a781)]:
+  - @basica/core@0.0.7
+
 ## 0.0.4
 
 ### Patch Changes

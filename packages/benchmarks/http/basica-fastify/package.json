@@ -1,6 +1,6 @@
 {
   "name": "bench-http-basica-fastify",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": true,
   "author": "Nicola Bovolato",
   "license": "MIT",
@@ -14,8 +14,8 @@
     "lint": "tsc --noEmit && eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@basica/core": "workspace:^0.0.6",
-    "@basica/fastify": "workspace:^0.1.3",
+    "@basica/core": "workspace:^0.0.7",
+    "@basica/fastify": "workspace:^0.1.4",
     "fastify": "^5.10.0"
   },
   "devDependencies": {
