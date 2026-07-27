@@ -109,7 +109,7 @@ test("abort", async () => {
   const manager = new HealthcheckManager(logger, config).addHealthcheck(
     "test",
     {
-      healthcheck: (signal) => setTimeout(2000, { status: "healthy" }),
+      healthcheck: (_signal) => setTimeout(2000, { status: "healthy" }),
     }
   );
 

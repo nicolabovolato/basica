@@ -157,6 +157,29 @@ test("start failure, stops started, timedout and not startable services", async 
   expect(shutdown4).toHaveBeenCalled();
 });
 
+test("start failure rolls back started items below the failure, not the failed one", async () => {
+  const startDb = vi.fn();
+  const shutdownDb = vi.fn();
+  const startHttp = vi.fn().mockRejectedValue(new Error("cannot bind port"));
+  const shutdownHttp = vi.fn();
+
+  const manager = new LifecycleManager(
+    logger,
+    [{ name: "db", svc: { start: startDb, shutdown: shutdownDb } }],
+    [{ name: "http", svc: { start: startHttp, shutdown: shutdownHttp } }],
+    config,
+  );
+
+  const result = await manager.start();
+  expect(result).toBe(false);
+
+  expect(startDb).toHaveBeenCalledOnce();
+  expect(startHttp).toHaveBeenCalledOnce();
+
+  expect(shutdownDb).toHaveBeenCalledOnce();
+  expect(shutdownHttp).not.toHaveBeenCalled();
+});
+
 test("stop ok", async () => {
   const shutdown = vi.fn();
   const manager = new LifecycleManager(
