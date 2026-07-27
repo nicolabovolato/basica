@@ -205,9 +205,6 @@ importers:
 
   packages/basica/plugins/bullmq:
     dependencies:
-      '@basica/ioredis':
-        specifier: workspace:^0.0.9
-        version: link:../ioredis
       '@opentelemetry/api':
         specifier: ^1.9.1
         version: 1.9.1
@@ -224,6 +221,9 @@ importers:
       '@basica/eslint-config':
         specifier: workspace:^0.0.0
         version: link:../../../shared/eslint-config
+      '@basica/ioredis':
+        specifier: workspace:^0.0.9
+        version: link:../ioredis
       '@basica/tsup-config':
         specifier: workspace:^0.0.0
         version: link:../../../shared/tsup-config
