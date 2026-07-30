@@ -73,9 +73,9 @@ A startup item is a service that performs a one off operation, such as running d
 
 ```ts title="index.ts"
 // ...
-const app = new AppBuilder(container)
-    .configureLifecycle(b => b
-        b.addStartup("my-service", () => container.myService)
+const app = AppBuilder.registerDependencies()
+    .configureLifecycle((b, c) =>
+        b.addStartup("my-service", () => c.myService)
     )
     .build();
 // ...
@@ -115,9 +115,9 @@ A shutdown item is a service that performs a cleanup of resources before shutdow
 
 ```ts title="index.ts"
 // ...
-const app = new AppBuilder(container)
-    .configureLifecycle(b => b
-        b.addGracefulShutdown("my-service", () => container.myService)
+const app = AppBuilder.registerDependencies()
+    .configureLifecycle((b, c) =>
+        b.addGracefulShutdown("my-service", () => c.myService)
     )
     .build();
 // ...
@@ -165,9 +165,9 @@ It should be used as the starting point for your business logic, such as a messa
 
 ```ts title="index.ts"
 // ...
-const app = new AppBuilder(container)
-    .configureLifecycle(b => b
-        b.addEntrypoint("my-service", () => container.myService)
+const app = AppBuilder.registerDependencies()
+    .configureLifecycle((b, c) =>
+        b.addEntrypoint("my-service", () => c.myService)
     )
     .build();
 // ...

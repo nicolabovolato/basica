@@ -85,9 +85,9 @@ Any registered service or entrypoint implementing `IHealthcheck` will also be re
 
 ```ts title="index.ts"
 // ...
-const app = new AppBuilder(container)
-    .configureLifecycle((b) =>
-        b.addHealthcheck("my-service", () => container.myService)
+const app = AppBuilder.registerDependencies()
+    .configureLifecycle((b, c) =>
+        b.addHealthcheck("my-service", () => c.myService)
         .addEntrypoint("test", (deps, healthchecks) => createMyEntrypoint(healthchecks))
     )
     .build();
