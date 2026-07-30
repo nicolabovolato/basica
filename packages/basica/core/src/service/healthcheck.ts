@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { SpanStatusCode } from "@opentelemetry/api";
 
-import { IocContainer } from "src/ioc";
+import { IocContainer, UnknownContainerItems } from "src/ioc";
 import { ILogger } from "src/logger";
 import { abortable } from "src/utils";
 import { tracer } from "src/utils/tracer";
@@ -38,8 +38,6 @@ export type HealthcheckManagerConfig = z.infer<
   typeof healthcheckManagerConfigSchema
 >;
 
-export type HealthcheckServices = Record<string, unknown>;
-
 /** Healthchecks manager */
 export interface IHealthcheckManager {
   /**
@@ -49,12 +47,12 @@ export interface IHealthcheckManager {
    * healthcheckManager.healthcheck((x) => x == "db") // only healthchecks with name db will be run
    */
   healthcheck(
-    filter?: (name: string) => boolean
+    filter?: (name: string) => boolean,
   ): Promise<Record<string, HealthcheckResult>>;
 }
 
 export class HealthcheckManager<
-  H extends HealthcheckServices,
+  H extends UnknownContainerItems,
 > implements IHealthcheckManager {
   readonly #builderItems = new IocContainer<H>();
 
@@ -74,7 +72,7 @@ export class HealthcheckManager<
     if (name in this.healthchecks) {
       this.#logger.warn(
         { name },
-        "Duplicate healthcheck name, previous value will be overwritten"
+        "Duplicate healthcheck name, previous value will be overwritten",
       );
     }
 
@@ -83,13 +81,13 @@ export class HealthcheckManager<
   }
 
   async healthcheck(
-    filter?: (name: string) => boolean
+    filter?: (name: string) => boolean,
   ): Promise<Record<string, HealthcheckResult>> {
     return tracer.startActiveSpan(`healthcheck`, async (span) => {
       const ac = new AbortController();
       const acTimeout = setTimeout(
         () => ac.abort(),
-        this.#config.healthcheckTimeoutMs
+        this.#config.healthcheckTimeoutMs,
       );
 
       const healthchecks = Array.from(
@@ -97,7 +95,7 @@ export class HealthcheckManager<
         ([key, value]) => ({
           name: key,
           value: value as IHealthcheck,
-        })
+        }),
       ).filter((x) => (filter ? filter(x.name) : true));
 
       const result = await Promise.allSettled(
@@ -106,7 +104,7 @@ export class HealthcheckManager<
             try {
               return await abortable(
                 ac.signal,
-                async () => await h.value.healthcheck(ac.signal)
+                async () => await h.value.healthcheck(ac.signal),
               );
             } catch (err) {
               span.recordException(err as Error);
@@ -115,8 +113,8 @@ export class HealthcheckManager<
             } finally {
               span.end();
             }
-          })
-        )
+          }),
+        ),
       );
 
       clearTimeout(acTimeout);
@@ -143,7 +141,7 @@ export class HealthcheckManager<
             r[e.name] = e.value;
             return r;
           },
-          {} as Record<string, HealthcheckResult>
+          {} as Record<string, HealthcheckResult>,
         );
 
       span.end();

@@ -1,14 +1,15 @@
 import closeWithGrace from "close-with-grace";
-import { IocContainer } from "src/ioc";
+import {
+  EmptyContainerItems,
+  IocContainer,
+  UnknownContainerItems,
+} from "src/ioc";
 import { ILogger } from "src/logger";
-import { HealthcheckServices } from "./healthcheck";
 import {
   ILifecycleManager,
-  LifecycleEntrypoints,
   LifecycleManager,
   LifecycleManagerBuilder,
   LifecycleManagerConfig,
-  LifecycleServices,
 } from "./lifecycle";
 
 export type AppRequiredDeps = {
@@ -18,21 +19,21 @@ export type AppRequiredDeps = {
 type ConfigureLifecycleReturn<
   CB,
   D extends AppRequiredDeps,
-  H extends HealthcheckServices,
-  S extends LifecycleServices,
-  E extends LifecycleEntrypoints,
+  H extends UnknownContainerItems,
+  S extends UnknownContainerItems,
+  E extends UnknownContainerItems,
 > = CB extends (
   builder: LifecycleManagerBuilder<D, H, S, E>,
-  services: D
+  services: D,
 ) => LifecycleManagerBuilder<D, infer H1, infer S1, infer E1>
   ? AppBuilder<D, H1, S1, E1>
   : never;
 
 export class AppBuilder<
   D extends AppRequiredDeps,
-  H extends HealthcheckServices,
-  S extends LifecycleServices,
-  E extends LifecycleEntrypoints,
+  H extends UnknownContainerItems = EmptyContainerItems,
+  S extends UnknownContainerItems = EmptyContainerItems,
+  E extends UnknownContainerItems = EmptyContainerItems,
 > {
   #deps: D;
   #services: S;
@@ -69,22 +70,22 @@ export class AppBuilder<
   configureLifecycle<
     Fn extends (
       builder: LifecycleManagerBuilder<D, H, S, E>,
-      services: D
+      services: D,
     ) => LifecycleManagerBuilder<D, H, S, E>,
   >(fn: Fn): Pick<ConfigureLifecycleReturn<Fn, D, H, S, E>, "build">;
   configureLifecycle<
     Fn extends (
       builder: LifecycleManagerBuilder<D, H, S, E>,
-      services: D
+      services: D,
     ) => LifecycleManagerBuilder<D, H, S, E>,
   >(
     cfg: LifecycleManagerConfig,
-    fn: Fn
+    fn: Fn,
   ): Pick<ConfigureLifecycleReturn<Fn, D, H, S, E>, "build">;
   configureLifecycle<
     Fn extends (
       builder: LifecycleManagerBuilder<D, H, S, E>,
-      services: D
+      services: D,
     ) => LifecycleManagerBuilder<D, H, S, E>,
   >(configOrFn: LifecycleManagerConfig | Fn, maybeFn?: Fn) {
     const fn = typeof configOrFn === "object" ? maybeFn! : configOrFn;
@@ -92,7 +93,7 @@ export class AppBuilder<
 
     const builder = fn(
       new LifecycleManagerBuilder<D, H, S, E>(this.#deps, config),
-      this.#deps
+      this.#deps,
     );
 
     this.#healthchecks = builder.healthchecks;
@@ -109,16 +110,16 @@ export class AppBuilder<
       this.#healthchecks,
       this.#services,
       this.#entrypoints,
-      this.#lifecycle
+      this.#lifecycle,
     );
   }
 }
 
 export class App<
   D extends AppRequiredDeps,
-  H extends HealthcheckServices,
-  S extends LifecycleServices,
-  E extends LifecycleEntrypoints,
+  H extends UnknownContainerItems,
+  S extends UnknownContainerItems,
+  E extends UnknownContainerItems,
 > {
   #logger: ILogger;
 
@@ -127,7 +128,7 @@ export class App<
     readonly healthchecks: H,
     readonly services: S,
     readonly entrypoints: E,
-    readonly lifecycle: ILifecycleManager
+    readonly lifecycle: ILifecycleManager,
   ) {
     this.#logger = deps.logger.child({ name: "@basica:app" });
   }
@@ -142,7 +143,7 @@ export class App<
         } else if (signal) {
           this.#logger.info(
             { signal },
-            `Received signal ${signal}, shutting down...`
+            `Received signal ${signal}, shutting down...`,
           );
         } else if (manual) {
           this.#logger.info("Received manual shutdown, shutting down...");
@@ -152,7 +153,7 @@ export class App<
           this.#logger.info("Shutdown failed");
           process.exit(1);
         }
-      }
+      },
     );
 
     if (!(await this.lifecycle.start())) {
