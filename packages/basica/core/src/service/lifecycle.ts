@@ -2,7 +2,11 @@ import { z } from "zod";
 
 import { SpanStatusCode } from "@opentelemetry/api";
 
-import { IocContainer } from "src/ioc";
+import {
+  EmptyContainerItems,
+  IocContainer,
+  UnknownContainerItems,
+} from "src/ioc";
 import { ILogger } from "src/logger";
 import { abortable, Plugin } from "src/utils";
 import {
@@ -15,7 +19,6 @@ import { AppRequiredDeps } from ".";
 import {
   HealthcheckManager,
   healthcheckManagerConfigSchema,
-  HealthcheckServices,
   IHealthcheck,
   IHealthcheckManager,
 } from "./healthcheck";
@@ -312,14 +315,11 @@ export class LifecycleManager implements ILifecycleManager {
 
 type NotIHealthcheck = { healthcheck?: never };
 
-export type LifecycleServices = Record<string, unknown>;
-export type LifecycleEntrypoints = Record<string, unknown>;
-
 export class LifecycleManagerBuilder<
   D extends AppRequiredDeps = AppRequiredDeps,
-  H extends HealthcheckServices = HealthcheckServices,
-  S extends LifecycleServices = LifecycleServices,
-  E extends LifecycleEntrypoints = LifecycleEntrypoints,
+  H extends UnknownContainerItems = EmptyContainerItems,
+  S extends UnknownContainerItems = EmptyContainerItems,
+  E extends UnknownContainerItems = EmptyContainerItems,
 > {
   readonly #logger: ILogger;
   readonly #services = new IocContainer<S>();

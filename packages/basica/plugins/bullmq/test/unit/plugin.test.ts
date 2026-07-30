@@ -104,7 +104,7 @@ test("addBullMqWorker(instance) registers & announces only the worker entrypoint
   expect(fn(deps, hcManager)).toBeInstanceOf(BullMqWorkerEntrypoint);
 
   expectTypeOf(app.entrypoints.test).toEqualTypeOf<Entry>();
-  expectTypeOf(app.services["redis:bullmq:test"]).toBeUnknown();
+  expectTypeOf(app.services).not.toHaveProperty("redis:bullmq:test");
 });
 
 test("addBullMqWorker(queueName, instance) registers & announces only the worker entrypoint", () => {
@@ -123,7 +123,7 @@ test("addBullMqWorker(queueName, instance) registers & announces only the worker
   expect(fn(deps, hcManager)).toBeInstanceOf(BullMqWorkerEntrypoint);
 
   expectTypeOf(app.entrypoints.test).toEqualTypeOf<Entry>();
-  expectTypeOf(app.services["redis:bullmq:test"]).toBeUnknown();
+  expectTypeOf(app.services).not.toHaveProperty("redis:bullmq:test");
 });
 
 test("addBullMqWorker with a cluster config registers a ClusterWrapper service", () => {

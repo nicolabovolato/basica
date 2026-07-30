@@ -75,5 +75,5 @@ test("addAMQPConsumer(client) registers & announces only the consumer entrypoint
   expectTypeOf(
     app.entrypoints.test,
   ).toEqualTypeOf<AMQPQueueConsumerEntrypoint>();
-  expectTypeOf(app.services["amqp:client:test"]).toBeUnknown();
+  expectTypeOf(app.services).not.toHaveProperty("amqp:client:test");
 });
