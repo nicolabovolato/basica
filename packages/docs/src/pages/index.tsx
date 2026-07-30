@@ -65,8 +65,7 @@ function Card({
 }
 
 const npm = `npm install @basica/core @basica/config @basica/fastify`;
-const code = `import { IocContainer } from "@basica/core/ioc";
-import { loggerFactory } from "@basica/core/logger";
+const code = `import { loggerFactory } from "@basica/core/logger";
 import { AppBuilder } from "@basica/core";
 import { configure, envProvider } from "@basica/config";
 
@@ -80,17 +79,17 @@ const config = configure(envProvider(), Type.Object({
 }));
 
 // Dependency injection
-const container = new IocContainer()
-  .addSingleton("logger", () => loggerFactory(config.logger))
-  .addSingleton("svc", (s) => ({
-    hello: () => {
-      s.logger.info("svc called!");
-      return "hello world";
-    },
-    healthcheck: () => ({ status: "healthy" }),
-  }));
-
-const app = new AppBuilder(container)
+const app = AppBuilder.registerDependencies((di) =>
+  di
+    .addSingleton("logger", () => loggerFactory(config.logger))
+    .addSingleton("svc", (s) => ({
+      hello: () => {
+        s.logger.info("svc called!");
+        return "hello world";
+      },
+      healthcheck: () => ({ status: "healthy" }),
+    })),
+)
   // Lifecycle management
   .configureLifecycle((b, c) => b
     // Healthchecks

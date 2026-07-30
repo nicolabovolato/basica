@@ -4,7 +4,7 @@ import {
   IocContainer,
   UnknownContainerItems,
 } from "src/ioc";
-import { ILogger } from "src/logger";
+import { ILogger, loggerFactory } from "src/logger";
 import {
   ILifecycleManager,
   LifecycleManager,
@@ -47,6 +47,27 @@ export class AppBuilder<
     this.#healthchecks = {} as H;
     this.#services = {} as S;
     this.#entrypoints = {} as E;
+  }
+
+  /**
+   * Registers the application's dependencies and returns the app builder.
+   *
+   * The container passed to `fn` is pre-seeded with a default `logger`, so
+   * `deps.logger` is always available. Override it by registering your own
+   * `"logger"`.
+   * @param fn dependency registration function
+   * @example
+   * AppBuilder.registerDependencies((di) =>
+   *   di.addSingleton("db", (deps) => new Db(deps.logger))
+   * )
+   */
+  static registerDependencies<D extends AppRequiredDeps = AppRequiredDeps>(
+    fn?: (di: IocContainer<AppRequiredDeps>) => IocContainer<D>,
+  ) {
+    const seed = new IocContainer().addSingleton("logger", () =>
+      loggerFactory(),
+    );
+    return new AppBuilder((fn ? fn(seed) : seed) as IocContainer<D>);
   }
 
   /**

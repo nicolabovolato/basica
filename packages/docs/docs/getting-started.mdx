@@ -78,26 +78,23 @@ We then implement start, shutdown and healthcheck methods.
 
 Now, we should write our index.ts.
 
-Let's start by bringing into scope IocContainer and loggerFactory from @basica/core, and initializing both the logger and our service.
+Let's start by bringing AppBuilder into scope and registering our dependencies through `registerDependencies`. Basica provides a default logger automatically, so we only need to register our service.
 
-We then import AppBuilder and start registering sample, our service as an entrypoint.
+We then register sample, our service, as an entrypoint.
 
 We then build our app and start it.
 
 <Tabs groupId="ts-style">
   <TabItem value="classes" label="Classes">
     ```ts title="index.ts"
-    import { IocContainer } from "@basica/core/ioc";
-    import { loggerFactory } from "@basica/core/logger";
     import { AppBuilder } from "@basica/core";
 
     import { SampleService } from "./sampleService"
 
-    const container = new IocContainer()
-        .addSingleton("logger", () => loggerFactory())
-        .addSingleton("sample", (c) => new SampleService(c.logger))
-
-    const app = new AppBuilder(container)
+    const app = AppBuilder.registerDependencies((di) =>
+      di
+        .addSingleton("sample", (c) => new SampleService(c.logger)),
+    )
       .configureLifecycle((b, c) => b
         .addEntrypoint("sample", () => c.sample)
       )
@@ -109,17 +106,14 @@ We then build our app and start it.
   </TabItem>
   <TabItem value="objects" label="Object Factory">
     ```ts title="index.ts"
-    import { IocContainer } from "@basica/core/ioc";
-    import { loggerFactory } from "@basica/core/logger";
     import { AppBuilder } from "@basica/core";
 
     import { createSampleService } from "./sampleService"
 
-    const container = new IocContainer()
-        .addSingleton("logger", () => loggerFactory())
-        .addSingleton("sample", (c) => createSampleService(c.logger))
-
-    const app = new AppBuilder(container)
+    const app = AppBuilder.registerDependencies((di) =>
+      di
+        .addSingleton("sample", (c) => createSampleService(c.logger)),
+    )
       .configureLifecycle((b, c) => b
         .addEntrypoint("sample", () => c.sample)
       )
@@ -208,19 +202,16 @@ With that in mind, let's set up fastify to handle our healthchecks, map sayHello
 <Tabs groupId="ts-style">
   <TabItem value="classes" label="Classes">
     ```ts title="index.ts"
-    import { IocContainer } from "@basica/core/ioc";
-    import { loggerFactory } from "@basica/core/logger";
     import { AppBuilder } from "@basica/core";
 
     import { lifecyclePlugin } from "@basica/fastify";
 
     import { SampleService } from "./sampleService"
 
-    const container = new IocContainer()
-        .addSingleton("logger", () => loggerFactory())
-        .addSingleton("sample", (c) => new SampleService(c.logger))
-
-    const app = new AppBuilder(container)
+    const app = AppBuilder.registerDependencies((di) =>
+      di
+        .addSingleton("sample", (c) => new SampleService(c.logger)),
+    )
       .configureLifecycle((b, c) => b
         .addHealthcheck("sample", () => c.sample)
         .with(lifecyclePlugin, (b)
@@ -239,19 +230,16 @@ With that in mind, let's set up fastify to handle our healthchecks, map sayHello
   </TabItem>
   <TabItem value="objects" label="Object Factory">
     ```ts title="index.ts"
-    import { IocContainer } from "@basica/core/ioc";
-    import { loggerFactory } from "@basica/core/logger";
     import { AppBuilder } from "@basica/core";
 
     import { lifecyclePlugin } from "@basica/fastify";
 
     import { createSampleService } from "./sampleService"
 
-    const container = new IocContainer()
-        .addSingleton("logger", () => loggerFactory())
-        .addSingleton("sample", (c) => createSampleService(c.logger))
-
-    const app = new AppBuilder(container)
+    const app = AppBuilder.registerDependencies((di) =>
+      di
+        .addSingleton("sample", (c) => createSampleService(c.logger)),
+    )
       .configureLifecycle((b, c) => b
         .addHealthcheck("sample", () => c.sample)
         .with(lifecyclePlugin, (b)
@@ -325,7 +313,6 @@ We should also update our index file.
 <Tabs groupId="ts-style">
   <TabItem value="classes" label="Classes">
     ```ts title="index.ts"
-    import { IocContainer } from "@basica/core/ioc";
     import { loggerFactory } from "@basica/core/logger";
     import { AppBuilder } from "@basica/core";
 
@@ -338,11 +325,11 @@ We should also update our index file.
 
     const config = configure(envProvider(), configSchema)
 
-    const container = new IocContainer()
+    const app = AppBuilder.registerDependencies((di) =>
+      di
         .addSingleton("logger", () => loggerFactory(config.logger))
-        .addSingleton("sample", (c) => new SampleService(c.logger))
-
-    const app = new AppBuilder(container)
+        .addSingleton("sample", (c) => new SampleService(c.logger)),
+    )
       .configureLifecycle((b, c) => b
         .addHealthcheck("sample", () => c.sample)
         .with(lifecyclePlugin, (b)
@@ -361,7 +348,6 @@ We should also update our index file.
   </TabItem>
   <TabItem value="objects" label="Object Factory">
     ```ts title="index.ts"
-    import { IocContainer } from "@basica/core/ioc";
     import { loggerFactory } from "@basica/core/logger";
     import { AppBuilder } from "@basica/core";
 
@@ -374,11 +360,11 @@ We should also update our index file.
 
     const config = configure(envProvider(), configSchema)
 
-    const container = new IocContainer()
+    const app = AppBuilder.registerDependencies((di) =>
+      di
         .addSingleton("logger", () => loggerFactory(config.logger))
-        .addSingleton("sample", (c) => createSampleService(c.logger))
-
-    const app = new AppBuilder(container)
+        .addSingleton("sample", (c) => createSampleService(c.logger)),
+    )
       .configureLifecycle((b, c) => b
         .addHealthcheck("sample", () => c.sample)
         .with(lifecyclePlugin, (b)

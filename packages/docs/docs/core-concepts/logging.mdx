@@ -65,14 +65,14 @@ Hello world!
     ```
 
     ```ts title="index.ts"
-    import { IocContainer } from "@basica/core/ioc";
-    import { loggerFactory } from "@basica/core/logger";
+    import { AppBuilder } from "@basica/core";
 
     import { MyService } from "./service";
 
-    const container = new IocContainer()
-        .addSingleton("logger", () => loggerFactory())
-        .addSingleton("my-svc", (c) => new MyService(c.logger))
+    const app = AppBuilder.registerDependencies((di) =>
+      di
+        .addSingleton("my-svc", (c) => new MyService(c.logger)),
+    )
 
     // ...
     ```
@@ -92,14 +92,14 @@ Hello world!
     ```
 
     ```ts title="index.ts"
-    import { IocContainer } from "@basica/core/ioc";
-    import { loggerFactory } from "@basica/core/logger";
+    import { AppBuilder } from "@basica/core";
 
     import { createMyService } from "./service";
 
-    const container = new IocContainer()
-        .addSingleton("logger", () => loggerFactory())
-        .addSingleton("my-svc", (c) => createMyService(c.logger))
+    const app = AppBuilder.registerDependencies((di) =>
+      di
+        .addSingleton("my-svc", (c) => createMyService(c.logger)),
+    )
 
     // ...
     ```
@@ -112,18 +112,22 @@ Hello world!
 ```
 
 :::note
-Basica's AppBuilder requires you to have a logger in the provided IocContainer.
+Basica provides a default logger automatically. If you override it by registering your own under
+the `logger` key, it must satisfy `ILogger`.
 
 ```ts
-const c1 = new IocContainer();
-const c2 = new IocContainer().addSingleton("test", () => loggerFactory());
-const c3 = new IocContainer().addSingleton("logger", () => "not a logger");
-const c4 = new IocContainer().addSingleton("logger", () => loggerFactory());
+// A default logger is provided automatically
+const app1 = AppBuilder.registerDependencies().build(); // OK
 
-const app1 = new AppBuilder(c1).build(); // Error: no key logger
-const app2 = new AppBuilder(c2).build(); // Error: no key logger
-const app3 = new AppBuilder(c3).build(); // Error: logger is not of type ILogger
-const app4 = new AppBuilder(c4).build(); // OK
+// Overriding it with something that isn't an ILogger is an error
+const app2 = AppBuilder.registerDependencies((di) =>
+  di.addSingleton("logger", () => "not a logger"),
+).build(); // Error: logger is not of type ILogger
+
+// Overriding it with a real logger is fine
+const app3 = AppBuilder.registerDependencies((di) =>
+  di.addSingleton("logger", () => loggerFactory()),
+).build(); // OK
 ```
 
 :::

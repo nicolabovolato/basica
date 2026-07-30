@@ -2,8 +2,6 @@ const time = process.hrtime();
 
 import { configure, envProvider } from "@basica/config";
 import { AppBuilder } from "@basica/core";
-import { IocContainer } from "@basica/core/ioc";
-import { loggerFactory } from "@basica/core/logger";
 
 import {
   Kysely,
@@ -25,26 +23,25 @@ const config = configure(
   envProvider(),
   z.object({
     db: pgConfigSchema,
-  })
+  }),
 );
 
-const container = new IocContainer()
-  .addSingleton("logger", () => loggerFactory())
-  .addSingleton(
-    "db",
-    (deps) =>
-      new Kysely<Database>(
-        {
-          dialect: new PostgresDialect({
-            pool: new Pool(config.db),
-          }),
-        },
-        deps.logger
-      )
-  )
-  .addSingleton("todos", (deps) => new TodoService(deps.db));
-
-const app = new AppBuilder(container)
+const app = AppBuilder.registerDependencies((di) =>
+  di
+    .addSingleton(
+      "db",
+      (deps) =>
+        new Kysely<Database>(
+          {
+            dialect: new PostgresDialect({
+              pool: new Pool(config.db),
+            }),
+          },
+          deps.logger,
+        ),
+    )
+    .addSingleton("todos", (deps) => new TodoService(deps.db)),
+)
   .configureLifecycle((builder, deps) =>
     builder
       .addService("db", () => deps.db)
@@ -52,8 +49,8 @@ const app = new AppBuilder(container)
         builder.addKyselyMigrations(
           "migrations",
           deps.db,
-          __dirname + "/../migrations"
-        )
+          __dirname + "/../migrations",
+        ),
       )
       .with(fastifyLifecyclePlugin, (builder) =>
         builder.addFastifyEntrypoint("http", (builder) =>
@@ -64,13 +61,13 @@ const app = new AppBuilder(container)
                 .mapErrors((builder) =>
                   builder
                     .mapError(NotFoundError, 404)
-                    .mapError(ConflictError, 409)
+                    .mapError(ConflictError, 409),
                 )
-                .fastify.register(routes(deps.todos))
+                .fastify.register(routes(deps.todos)),
             )
-            .mapHealthchecks()
-        )
-      )
+            .mapHealthchecks(),
+        ),
+      ),
   )
   .build();
 

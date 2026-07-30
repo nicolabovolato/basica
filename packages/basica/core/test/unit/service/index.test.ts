@@ -1,5 +1,5 @@
-import { loggerFactory } from "src/logger";
-import { App } from "src/service";
+import { ILogger, loggerFactory } from "src/logger";
+import { App, AppBuilder } from "src/service";
 import { ILifecycleManager } from "src/service/lifecycle";
 import { MockInstance, afterEach, beforeEach, expect, test, vi } from "vitest";
 
@@ -24,8 +24,28 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-test.todo("builder", () => {
-  //TODO
+test("registerDependencies can be called with no dependencies", () => {
+  const app = AppBuilder.registerDependencies().build();
+
+  expect(typeof app.deps.logger.info).toBe("function");
+});
+
+test("registerDependencies lets you override the default logger", () => {
+  const myLogger = loggerFactory({ level: "silent" });
+
+  const app = AppBuilder.registerDependencies((di) =>
+    di.addSingleton("logger", () => myLogger),
+  ).build();
+
+  expect(app.deps.logger).toBe(myLogger);
+});
+
+test("registerDependencies exposes the seeded logger to sibling factories", () => {
+  const app = AppBuilder.registerDependencies((di) =>
+    di.addSingleton("svc", (deps) => ({ log: deps.logger as ILogger })),
+  ).build();
+
+  expect(app.deps.svc.log).toBe(app.deps.logger);
 });
 
 test.todo("app ok", async () => {

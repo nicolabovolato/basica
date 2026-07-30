@@ -1,6 +1,5 @@
 import { ConfigProvider, configure, envProvider } from "@basica/config";
 import { AppBuilder } from "@basica/core";
-import { IocContainer } from "@basica/core/ioc";
 import { loggerConfigSchema, loggerFactory } from "@basica/core/logger";
 
 import {
@@ -29,23 +28,23 @@ export type Config = z.infer<typeof configSchema>;
 export const getApp = (provider: ConfigProvider = envProvider()) => {
   const config = configure(provider, configSchema);
 
-  const container = new IocContainer()
-    .addSingleton("logger", () => loggerFactory(config.logger))
-    .addSingleton(
-      "db",
-      (deps) =>
-        new Kysely<Database>(
-          {
-            dialect: new PostgresDialect({
-              pool: new Pool(config.db),
-            }),
-          },
-          deps.logger
-        )
-    )
-    .addSingleton("todos", (deps) => new TodoService(deps.db));
-
-  return new AppBuilder(container)
+  return AppBuilder.registerDependencies((di) =>
+    di
+      .addSingleton("logger", () => loggerFactory(config.logger))
+      .addSingleton(
+        "db",
+        (deps) =>
+          new Kysely<Database>(
+            {
+              dialect: new PostgresDialect({
+                pool: new Pool(config.db),
+              }),
+            },
+            deps.logger,
+          ),
+      )
+      .addSingleton("todos", (deps) => new TodoService(deps.db)),
+  )
     .configureLifecycle((builder, deps) =>
       builder
         .addService("db", () => deps.db)
@@ -53,8 +52,8 @@ export const getApp = (provider: ConfigProvider = envProvider()) => {
           builder.addKyselyMigrations(
             "migrations",
             deps.db,
-            __dirname + "/../migrations"
-          )
+            __dirname + "/../migrations",
+          ),
         )
         .with(fastifyLifecyclePlugin, (builder) =>
           builder.addFastifyEntrypoint("http", (builder) =>
@@ -65,13 +64,13 @@ export const getApp = (provider: ConfigProvider = envProvider()) => {
                   .mapErrors((builder) =>
                     builder
                       .mapError(NotFoundError, 404)
-                      .mapError(ConflictError, 409)
+                      .mapError(ConflictError, 409),
                   )
-                  .fastify.register(routes(deps.todos))
+                  .fastify.register(routes(deps.todos)),
               )
-              .mapHealthchecks()
-          )
-        )
+              .mapHealthchecks(),
+          ),
+        ),
     )
     .build();
 };

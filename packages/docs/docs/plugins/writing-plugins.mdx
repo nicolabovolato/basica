@@ -43,7 +43,7 @@ export const lifecyclePlugin = <D extends AppRequiredDeps>(
 ```
 
 ```ts title="index.ts"
-const app = new AppBuilder(container)
+const app = AppBuilder.registerDependencies()
   .configureLifecycle((b) => b.with(lifecyclePlugin, (b) => b.addThing("cache")))
   .build();
 

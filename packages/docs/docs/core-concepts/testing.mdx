@@ -34,7 +34,7 @@ export const createSample = (logger: ILogger, config: Config) => ({
 
 ```ts title="index.ts"
 import { loggerFactory, loggerConfigSchema } from "@basica/core/logger"
-import { IocContainer } from "@basica/core/ioc"
+import { AppBuilder } from "@basica/core"
 import { configure, envProvider } from "@basica/config"
 
 import { z } from "zod"
@@ -51,11 +51,11 @@ const config = configure(
     })
 )
 
-const container = new IocContainer()
-    .addSingleton("logger", () => loggerFactory(config.logger))
-    .addSingleton("sample", (deps) => createSample(deps.logger, config.sample))
-
-const app = new AppBuilder(container)
+const app = AppBuilder.registerDependencies((di) =>
+    di
+        .addSingleton("logger", () => loggerFactory(config.logger))
+        .addSingleton("sample", (deps) => createSample(deps.logger, config.sample)),
+)
     .configureLifecycle((b) => b
         .addService("sample", (deps) => deps.sample)
     )
@@ -107,7 +107,6 @@ We can easily do that by first moving the application boostrap in its own file.
 
 ```ts title="app.ts"
 import { loggerFactory, loggerConfigSchema } from "@basica/core/logger"
-import { IocContainer } from "@basica/core/ioc"
 import { AppBuilder } from "@basica/core"
 import { configure, envProvider, ConfigProvider } from "@basica/config"
 
@@ -127,11 +126,11 @@ export type Config = z.infer<typeof configSchema>
 export const getApp = (provider: ConfigProvider = envProvider()) => {
     const config = configure(provider, configSchema);
 
-    const container = new IocContainer()
-        .addSingleton("logger", () => loggerFactory(config.logger))
-        .addSingleton("sample", (deps) => createSample(deps.logger, config.sample))
-
-    return new AppBuilder(container)
+    return AppBuilder.registerDependencies((di) =>
+        di
+            .addSingleton("logger", () => loggerFactory(config.logger))
+            .addSingleton("sample", (deps) => createSample(deps.logger, config.sample)),
+    )
         .configureLifecycle((b) => b
             .addService("sample", (deps) => deps.sample)
         )
@@ -215,7 +214,7 @@ import { lifecyclePlugin } from "@basica/fastify"
 export const getApp = (provider: ConfigProvider = envProvider()) => {
 
     // ...
-    return new AppBuilder(container)
+    return AppBuilder.registerDependencies()
         .configureLifecycle((b) => b
             .with(lifecyclePlugin, (b) => 
                 b.addFastifyEntrypoint("http", (b) => {
