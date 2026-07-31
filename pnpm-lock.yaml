@@ -111,6 +111,45 @@ importers:
         specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(@vitest/ui@4.1.10)(vite@6.4.3(@types/node@24.13.3)(jiti@1.21.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
 
+  packages/basica/platforms/deno:
+    devDependencies:
+      '@basica/core':
+        specifier: workspace:^0.0.7
+        version: link:../../core
+      '@basica/eslint-config':
+        specifier: workspace:^0.0.0
+        version: link:../../../shared/eslint-config
+      '@basica/tsup-config':
+        specifier: workspace:^0.0.0
+        version: link:../../../shared/tsup-config
+      '@basica/typescript-config':
+        specifier: workspace:^0.0.0
+        version: link:../../../shared/typescript-config
+      '@basica/vitest-config':
+        specifier: workspace:^0.0.0
+        version: link:../../../shared/vitest-config
+      '@types/deno':
+        specifier: ^2.7.0
+        version: 2.7.0
+      '@types/node':
+        specifier: 24.13.3
+        version: 24.13.3
+      '@vitest/coverage-v8':
+        specifier: ^4.1.10
+        version: 4.1.10(vitest@4.1.10)
+      eslint:
+        specifier: ^10.7.0
+        version: 10.7.0(jiti@1.21.0)
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@1.21.0)(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)(yaml@2.9.0)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(@vitest/ui@4.1.10)(vite@6.4.3(@types/node@24.13.3)(jiti@1.21.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+
   packages/basica/platforms/node:
     dependencies:
       close-with-grace:
@@ -5387,6 +5426,9 @@ packages:
 
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
+
+  '@types/deno@2.7.0':
+    resolution: {integrity: sha512-Y6fWcV8KpYeO3Lik/RiYnUxtr/LWqoeACciU0CA+dr1U/45tGgaX3HWQQAPCNN53raN4Rr4Fht4y6qsUH57fDA==}
 
   '@types/docker-modem@3.0.6':
     resolution: {integrity: sha512-yKpAGEuKRSS8wwx0joknWxsmLha78wNMe9R2S3UNsVOkZded8UqOrV8KoeDXoXsjndxwyF3eIhyClGbO1SEhEg==}
@@ -17153,6 +17195,8 @@ snapshots:
       '@types/ms': 0.7.34
 
   '@types/deep-eql@4.0.2': {}
+
+  '@types/deno@2.7.0': {}
 
   '@types/docker-modem@3.0.6':
     dependencies:
