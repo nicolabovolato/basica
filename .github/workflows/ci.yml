@@ -29,10 +29,16 @@ jobs:
         include:
           - runtime: bun
             packages: ["@basica/platform-node"]
+          - runtime: deno
+            packages: ["@basica/platform-deno"]
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/base
       - if: matrix.runtime == 'bun'
         uses: oven-sh/setup-bun@v2
+      - if: matrix.runtime == 'deno'
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
       - run: pnpm build --filter ${{ join(matrix.packages, ' --filter ') }}
       - run: pnpm --filter ${{ join(matrix.packages, ' --filter ') }} test:${{ matrix.runtime }}

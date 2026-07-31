@@ -1,10 +1,10 @@
 {
-  "name": "@basica/platform-node",
+  "name": "@basica/platform-deno",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicolabovolato/basica.git",
-    "directory": "packages/basica/platforms/node"
+    "directory": "packages/basica/platforms/deno"
   },
   "author": "Nicola Bovolato",
   "license": "MIT",
@@ -24,19 +24,15 @@
     }
   },
   "engines": {
-    "node": ">=24.0.0",
-    "bun": ">=1.0.0"
+    "deno": ">=2.0.0"
   },
   "scripts": {
     "build": "tsup-node",
-    "test": "vitest run",
+    "test": "vitest run --dir test/unit",
     "test:unit": "vitest run --dir test/unit",
     "test:integration": "vitest run --dir test/integration",
-    "test:bun": "RUNTIME=bun vitest run --dir test/integration",
+    "test:deno": "RUNTIME=deno vitest run --dir test/integration",
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
-  },
-  "dependencies": {
-    "close-with-grace": "^2.5.0"
   },
   "peerDependencies": {
     "@basica/core": "workspace:^0.0.7"
@@ -52,6 +48,7 @@
     "eslint": "^10.7.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "@types/deno": "^2.7.0"
   }
 }
