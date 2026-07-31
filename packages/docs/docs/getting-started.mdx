@@ -88,6 +88,7 @@ We then build our app and start it.
   <TabItem value="classes" label="Classes">
     ```ts title="index.ts"
     import { AppBuilder } from "@basica/core";
+    import { run } from "@basica/platform-node";
 
     import { SampleService } from "./sampleService"
 
@@ -100,13 +101,14 @@ We then build our app and start it.
       )
       .build();
 
-    app.run()
+    run(app)
     ```
 
   </TabItem>
   <TabItem value="objects" label="Object Factory">
     ```ts title="index.ts"
     import { AppBuilder } from "@basica/core";
+    import { run } from "@basica/platform-node";
 
     import { createSampleService } from "./sampleService"
 
@@ -119,7 +121,7 @@ We then build our app and start it.
       )
       .build();
 
-    app.run()
+    run(app)
     ```
 
   </TabItem>
@@ -203,6 +205,7 @@ With that in mind, let's set up fastify to handle our healthchecks, map sayHello
   <TabItem value="classes" label="Classes">
     ```ts title="index.ts"
     import { AppBuilder } from "@basica/core";
+    import { run } from "@basica/platform-node";
 
     import { lifecyclePlugin } from "@basica/fastify";
 
@@ -224,13 +227,14 @@ With that in mind, let's set up fastify to handle our healthchecks, map sayHello
       )
       .build();
 
-    app.run()
+    run(app)
     ```
 
   </TabItem>
   <TabItem value="objects" label="Object Factory">
     ```ts title="index.ts"
     import { AppBuilder } from "@basica/core";
+    import { run } from "@basica/platform-node";
 
     import { lifecyclePlugin } from "@basica/fastify";
 
@@ -252,7 +256,7 @@ With that in mind, let's set up fastify to handle our healthchecks, map sayHello
       )
       .build();
 
-    app.run()
+    run(app)
     ```
 
   </TabItem>
@@ -315,6 +319,7 @@ We should also update our index file.
     ```ts title="index.ts"
     import { loggerFactory } from "@basica/core/logger";
     import { AppBuilder } from "@basica/core";
+    import { run } from "@basica/platform-node";
 
     import { configure, envProvider } from "@basica/config";
 
@@ -342,7 +347,7 @@ We should also update our index file.
       )
       .build();
 
-    app.run()
+    run(app)
     ```
 
   </TabItem>
@@ -350,6 +355,7 @@ We should also update our index file.
     ```ts title="index.ts"
     import { loggerFactory } from "@basica/core/logger";
     import { AppBuilder } from "@basica/core";
+    import { run } from "@basica/platform-node";
 
     import { configure, envProvider } from "@basica/config";
 
@@ -377,7 +383,7 @@ We should also update our index file.
       )
       .build();
 
-    app.run()
+    run(app)
     ```
 
   </TabItem>

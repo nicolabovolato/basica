@@ -20,6 +20,7 @@
   "dependencies": {
     "@basica/config": "workspace:^0.0.5",
     "@basica/core": "workspace:^0.0.7",
+    "@basica/platform-node": "workspace:^0.0.0",
     "@basica/fastify": "workspace:^0.1.4",
     "@basica/kysely": "workspace:^0.0.7",
     "@basica/pg": "workspace:^0.0.8",

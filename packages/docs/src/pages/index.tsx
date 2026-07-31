@@ -67,6 +67,7 @@ function Card({
 const npm = `npm install @basica/core @basica/config @basica/fastify`;
 const code = `import { loggerFactory } from "@basica/core/logger";
 import { AppBuilder } from "@basica/core";
+import { run } from "@basica/platform-node";
 import { configure, envProvider } from "@basica/config";
 
 import { lifecyclePlugin } from "@basica/fastify";
@@ -108,7 +109,8 @@ const app = AppBuilder.registerDependencies((di) =>
     )
   ).build();
 
-app.run();
+// Platform specific runner
+run(app);
 `;
 
 export default function Home(): ReactNode {

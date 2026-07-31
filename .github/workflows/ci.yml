@@ -4,10 +4,13 @@ on:
     branches:
       - master
   pull_request:
+
 concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -17,3 +20,19 @@ jobs:
       - run: pnpm build
       - run: pnpm lint
       - run: pnpm run test --concurrency=1
+
+  runtime-specific-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime: bun
+            packages: ["@basica/platform-node"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/base
+      - if: matrix.runtime == 'bun'
+        uses: oven-sh/setup-bun@v2
+      - run: pnpm build --filter ${{ join(matrix.packages, ' --filter ') }}
+      - run: pnpm --filter ${{ join(matrix.packages, ' --filter ') }} test:${{ matrix.runtime }}

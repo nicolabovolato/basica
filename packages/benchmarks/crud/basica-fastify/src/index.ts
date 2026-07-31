@@ -2,6 +2,7 @@ const time = process.hrtime();
 
 import { configure, envProvider } from "@basica/config";
 import { AppBuilder } from "@basica/core";
+import { run } from "@basica/platform-node";
 
 import {
   Kysely,
@@ -71,7 +72,7 @@ const app = AppBuilder.registerDependencies((di) =>
   )
   .build();
 
-app.run().then(() => {
+run(app).then(() => {
   const diff = process.hrtime(time);
   const ms = (diff[0] * 1e9 + diff[1]) / 1e6;
   console.log(`STARTUP_TIME: ${ms}ms`);

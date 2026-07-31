@@ -16,6 +16,7 @@
   "dependencies": {
     "@basica/config": "workspace:^",
     "@basica/core": "workspace:^0.0.7",
+    "@basica/platform-node": "workspace:^0.0.0",
     "@basica/fastify": "workspace:^0.1.4",
     "@basica/kysely": "workspace:^",
     "@basica/pg": "workspace:^",

@@ -35,6 +35,7 @@ export const createSample = (logger: ILogger, config: Config) => ({
 ```ts title="index.ts"
 import { loggerFactory, loggerConfigSchema } from "@basica/core/logger"
 import { AppBuilder } from "@basica/core"
+import { run } from "@basica/platform-node";
 import { configure, envProvider } from "@basica/config"
 
 import { z } from "zod"
@@ -61,7 +62,7 @@ const app = AppBuilder.registerDependencies((di) =>
     )
     .build()
 
-app.run()
+run(app)
 ```
 
 We are of course, free from any constraint when trying to test sample.ts. Using vitest we could write the following:
@@ -140,10 +141,11 @@ export const getApp = (provider: ConfigProvider = envProvider()) => {
 
 ```ts title="index.ts"
 import { getApp } from "./app"
+import { run } from "@basica/platform-node";
 
 const app = getApp()
 
-app.run()
+run(app)
 ```
 
 Now, we can call getApp in our tests, passing another config provider.
