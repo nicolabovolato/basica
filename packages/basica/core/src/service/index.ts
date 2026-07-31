@@ -1,4 +1,3 @@
-import closeWithGrace from "close-with-grace";
 import {
   EmptyContainerItems,
   IocContainer,
@@ -126,7 +125,7 @@ export class AppBuilder<
   }
 
   build() {
-    return new App(
+    return new Application(
       this.#deps,
       this.#healthchecks,
       this.#services,
@@ -136,55 +135,26 @@ export class AppBuilder<
   }
 }
 
-export class App<
+/** A built Basica application */
+export interface IApplication {
+  readonly deps: AppRequiredDeps;
+  readonly healthchecks: UnknownContainerItems;
+  readonly services: UnknownContainerItems;
+  readonly entrypoints: UnknownContainerItems;
+  readonly lifecycle: ILifecycleManager;
+}
+
+export class Application<
   D extends AppRequiredDeps,
   H extends UnknownContainerItems,
   S extends UnknownContainerItems,
   E extends UnknownContainerItems,
-> {
-  #logger: ILogger;
-
+> implements IApplication {
   constructor(
     readonly deps: D,
     readonly healthchecks: H,
     readonly services: S,
     readonly entrypoints: E,
     readonly lifecycle: ILifecycleManager,
-  ) {
-    this.#logger = deps.logger.child({ name: "@basica:app" });
-  }
-
-  /** Start the application */
-  async run(): Promise<void> {
-    const { close } = closeWithGrace(
-      { delay: this.lifecycle.config.shutdownTimeoutMs + 1000 },
-      async ({ err, signal, manual }) => {
-        if (err) {
-          this.#logger.fatal(err, "Caught error, shutting down...");
-        } else if (signal) {
-          this.#logger.info(
-            { signal },
-            `Received signal ${signal}, shutting down...`,
-          );
-        } else if (manual) {
-          this.#logger.info("Received manual shutdown, shutting down...");
-        }
-
-        if (!(await this.lifecycle.stop())) {
-          this.#logger.info("Shutdown failed");
-          process.exit(1);
-        }
-      },
-    );
-
-    if (!(await this.lifecycle.start())) {
-      this.#logger.info("Startup failed");
-      process.exit(1);
-    }
-
-    process.on("beforeExit", (_code) => {
-      this.#logger.info("Empty event loop, invoking shutdown...");
-      close();
-    });
-  }
+  ) {}
 }

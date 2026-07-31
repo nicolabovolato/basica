@@ -1,6 +1,7 @@
 import { configure, envProvider } from "@basica/config";
 import { AppBuilder } from "@basica/core";
 import { loggerConfigSchema, loggerFactory } from "@basica/core/logger";
+import { run } from "@basica/platform-node";
 
 import {
   fastifyConfigSchema,
@@ -39,4 +40,4 @@ const app = AppBuilder.registerDependencies((di) =>
   )
   .build();
 
-app.run();
+run(app);

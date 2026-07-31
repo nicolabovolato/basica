@@ -16,6 +16,7 @@
   "dependencies": {
     "@basica/config": "workspace:^0.0.5",
     "@basica/core": "workspace:^0.0.7",
+    "@basica/platform-node": "workspace:^0.0.0",
     "@basica/fastify": "workspace:^0.1.4",
     "@basica/telemetry": "workspace:^0.0.4",
     "@opentelemetry/auto-instrumentations-node": "^0.78.0",

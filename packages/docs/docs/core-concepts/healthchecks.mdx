@@ -85,6 +85,8 @@ Any registered service or entrypoint implementing `IHealthcheck` will also be re
 
 ```ts title="index.ts"
 // ...
+import { run } from "@basica/platform-node";
+
 const app = AppBuilder.registerDependencies()
     .configureLifecycle((b, c) =>
         b.addHealthcheck("my-service", () => c.myService)
@@ -92,7 +94,7 @@ const app = AppBuilder.registerDependencies()
     )
     .build();
 
-app.run()
+run(app)
 ```
 
 ## The healthcheck manager

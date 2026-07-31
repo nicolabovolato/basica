@@ -1,10 +1,10 @@
 {
-  "name": "@basica/core",
-  "version": "0.0.7",
+  "name": "@basica/platform-node",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicolabovolato/basica.git",
-    "directory": "packages/basica/core"
+    "directory": "packages/basica/platforms/node"
   },
   "author": "Nicola Bovolato",
   "license": "MIT",
@@ -21,36 +21,6 @@
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"
       }
-    },
-    "./ioc": {
-      "require": {
-        "types": "./dist/ioc/index.d.ts",
-        "default": "./dist/ioc/index.js"
-      },
-      "import": {
-        "types": "./dist/ioc/index.d.mts",
-        "default": "./dist/ioc/index.mjs"
-      }
-    },
-    "./logger": {
-      "require": {
-        "types": "./dist/logger/index.d.ts",
-        "default": "./dist/logger/index.js"
-      },
-      "import": {
-        "types": "./dist/logger/index.d.mts",
-        "default": "./dist/logger/index.mjs"
-      }
-    },
-    "./utils": {
-      "require": {
-        "types": "./dist/utils/index.d.ts",
-        "default": "./dist/utils/index.js"
-      },
-      "import": {
-        "types": "./dist/utils/index.d.mts",
-        "default": "./dist/utils/index.mjs"
-      }
     }
   },
   "engines": {
@@ -59,17 +29,19 @@
   "scripts": {
     "build": "tsup-node",
     "test": "vitest run",
-    "test:ui": "vitest --ui",
     "test:unit": "vitest run --dir test/unit",
     "test:integration": "vitest run --dir test/integration",
+    "test:bun": "RUNTIME=bun vitest run --dir test/integration",
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "dependencies": {
-    "@opentelemetry/api": "^1.9.1",
-    "pino": "^10.3.1",
-    "zod": "^4.4.3"
+    "close-with-grace": "^2.5.0"
+  },
+  "peerDependencies": {
+    "@basica/core": "workspace:^0.0.7"
   },
   "devDependencies": {
+    "@basica/core": "workspace:^0.0.7",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",

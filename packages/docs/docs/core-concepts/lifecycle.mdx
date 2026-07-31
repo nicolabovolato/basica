@@ -175,20 +175,22 @@ const app = AppBuilder.registerDependencies()
 
 ## Running the app
 
-Once the lifecycle is configured, `app.run()` hands the process over to Basica:
+Once the lifecycle is configured, a platform runner hands the process over to Basica. For a long-running Node process that's `run` from `@basica/platform-node`:
 
 - it starts every registered service and entrypoint; if startup fails it logs the error and exits with code `1`;
 - it installs graceful-shutdown handlers, so a control signal (`SIGINT`/`SIGTERM`) or an empty event loop stops the lifecycle in reverse order (as shown in the flowchart above), exiting `0` on a clean shutdown or `1` on failure or timeout.
 
 ```ts title="index.ts"
+import { run } from "@basica/platform-node";
+
 const app = AppBuilder.registerDependencies()
     // ...
     .build();
 
-app.run();
+run(app);
 ```
 
-Because `run()` owns `process.exit` and the signal handlers, it's **not** meant for tests, or for embedding an app inside a larger process. For those, drive the lifecycle yourself:
+Because the runner owns `process.exit` and the signal handlers, it's **not** meant for tests, or for embedding an app inside a larger process. For those, drive the lifecycle yourself:
 
 ```ts
 // `app` is your built AppBuilder result
