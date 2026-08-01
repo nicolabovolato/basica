@@ -1,6 +1,6 @@
 {
   "name": "@basica/bullmq",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicolabovolato/basica.git",
@@ -35,14 +35,14 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.7",
-    "@basica/ioredis": "workspace:^0.0.9",
+    "@basica/core": "workspace:^0.0.8",
+    "@basica/ioredis": "workspace:^0.0.10",
     "bullmq": ">=5.0.0 <6.0.0",
     "ioredis": ">=5.3.0 <6.0.0"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.7",
-    "@basica/ioredis": "workspace:^0.0.9",
+    "@basica/core": "workspace:^0.0.8",
+    "@basica/ioredis": "workspace:^0.0.10",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",

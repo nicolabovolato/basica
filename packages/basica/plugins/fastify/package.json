@@ -1,6 +1,6 @@
 {
   "name": "@basica/fastify",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicolabovolato/basica.git",
@@ -40,11 +40,11 @@
     "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.7",
+    "@basica/core": "workspace:^0.0.8",
     "fastify": ">=5.6.0 <6.0.0"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.7",
+    "@basica/core": "workspace:^0.0.8",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",
