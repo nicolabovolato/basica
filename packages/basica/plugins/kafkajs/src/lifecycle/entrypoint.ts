@@ -22,11 +22,11 @@ export type EntrypointConfig = {
   run: ConsumerRunConfig & {
     eachMessage?: (
       payload: EachMessagePayload,
-      consumer: Consumer
+      consumer: Consumer,
     ) => Promise<void>;
     eachBatch?: (
       payload: EachBatchPayload,
-      consumer: Consumer
+      consumer: Consumer,
     ) => Promise<void>;
   };
 };
@@ -41,7 +41,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
     name: string,
     client: Kafka,
     logger: ILogger,
-    config: EntrypointConfig
+    config: EntrypointConfig,
   ) {
     this.#config = config;
     this.#logger = logger.child({
@@ -68,7 +68,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
       async (span) => {
         this.#logger.info(
           { topic, partition, firstOffset },
-          `Received batch on topic ${topic}`
+          `Received batch on topic ${topic}`,
         );
 
         try {
@@ -76,7 +76,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
         } catch (err) {
           this.#logger.error(
             { err, topic, partition, firstOffset },
-            `Error handling message on topic ${topic}`
+            `Error handling message on topic ${topic}`,
           );
           span.recordException(err as Error);
           span.setStatus({ code: SpanStatusCode.ERROR });
@@ -84,7 +84,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
         } finally {
           span.end();
         }
-      }
+      },
     );
   }
 
@@ -105,7 +105,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
       async (span) => {
         this.#logger.info(
           { topic, partition, offset },
-          `Received message on topic ${topic}`
+          `Received message on topic ${topic}`,
         );
 
         try {
@@ -113,7 +113,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
         } catch (err) {
           this.#logger.error(
             { err, topic, partition, offset },
-            `Error handling message on topic ${topic}`
+            `Error handling message on topic ${topic}`,
           );
           span.recordException(err as Error);
           span.setStatus({ code: SpanStatusCode.ERROR });
@@ -122,7 +122,7 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
         } finally {
           span.end();
         }
-      }
+      },
     );
   }
 
@@ -130,6 +130,14 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
     await this.#consumer.start();
 
     await this.#consumer.subscribe(this.#config.subscribe);
+
+    const joined = new Promise<void>((resolve) => {
+      const off = this.#consumer.on(this.#consumer.events.GROUP_JOIN, () => {
+        off();
+        resolve();
+      });
+    });
+
     await this.#consumer.run({
       ...this.#config.run,
       eachMessage: this.#config.run.eachMessage
@@ -139,10 +147,12 @@ export class KafkaConsumerEntrypoint implements IEntrypoint {
         ? (x) => this.#handleEachBatch(x)
         : undefined,
     });
+
+    await joined;
   }
 
   async shutdown() {
-    await this.#consumer.stop();
+    await this.#consumer.disconnect();
   }
 
   async healthcheck() {
