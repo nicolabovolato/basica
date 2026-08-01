@@ -14,7 +14,7 @@ import { tracer } from "src/tracer";
 
 export type Handler = (
   msg: ConsumeMessage,
-  channel: ChannelWrapper
+  channel: ChannelWrapper,
 ) => Promise<void>;
 
 export type EntrypointConfig = {
@@ -35,7 +35,7 @@ export class AMQPQueueConsumerEntrypoint implements IEntrypoint {
     name: string,
     client: AmqpConnectionManager | AMQPClient,
     logger: ILogger,
-    config: EntrypointConfig
+    config: EntrypointConfig,
   ) {
     this.#config = config;
     this.#logger = logger.child({
@@ -59,7 +59,7 @@ export class AMQPQueueConsumerEntrypoint implements IEntrypoint {
       async (span) => {
         this.#logger.info(
           { queue, msgId },
-          `Received message on queue ${queue}`
+          `Received message on queue ${queue}`,
         );
 
         try {
@@ -68,7 +68,7 @@ export class AMQPQueueConsumerEntrypoint implements IEntrypoint {
         } catch (err) {
           this.#logger.error(
             { err, queue, msgId },
-            `Error handling message on queue ${queue}`
+            `Error handling message on queue ${queue}`,
           );
           span.recordException(err as Error);
           span.setStatus({ code: SpanStatusCode.ERROR });
@@ -77,13 +77,13 @@ export class AMQPQueueConsumerEntrypoint implements IEntrypoint {
         }
 
         span.end();
-      }
+      },
     );
   }
 
   async start() {
     await this.#channel.addSetup(async (channel: Channel) => {
-      channel.assertQueue(this.#config.queueName, {
+      await channel.assertQueue(this.#config.queueName, {
         durable: true,
         ...this.#config.assertQueue,
       });
@@ -92,8 +92,10 @@ export class AMQPQueueConsumerEntrypoint implements IEntrypoint {
     await this.#channel.consume(
       this.#config.queueName,
       (msg) => this.#handle(msg),
-      this.#config.consume
+      this.#config.consume,
     );
+
+    await this.#channel.waitForConnect();
   }
 
   async shutdown() {
