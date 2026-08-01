@@ -1,5 +1,27 @@
 # @basica/amqp-connection-manager
 
+## 0.0.7
+
+### Patch Changes
+
+- [#36](https://github.com/nicolabovolato/basica/pull/36) [`7514233`](https://github.com/nicolabovolato/basica/commit/75142338387538ed62bdbc7d2ac22520bfc23e63) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Fix `AMQPQueueConsumerEntrypoint.start()` not awaiting its channel setup. The `assertQueue` call inside the channel setup callback was not awaited, and `start()` returned before the channel was actually established. It now awaits the queue assertion and the channel connect (`waitForConnect()`), so `start()` means "channel established and consuming" — and a fast `start()`/`stop()` through the app lifecycle no longer races the setup and leaves a pending reply that rejects with `"Channel ended, no reply will be forthcoming"` on shutdown.
+
+- [#28](https://github.com/nicolabovolato/basica/pull/28) [`515ad3b`](https://github.com/nicolabovolato/basica/commit/515ad3be8c2bbe5de6c0bd763c994e6b63765e3b) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Widen each third-party `peerDependency` to the widest honest range — `>=<earliest version whose API the plugin actually uses> <<next breaking major>>` — determined from the concrete API surface each plugin depends on:
+
+  - **kysely** `>=0.29.0 <0.30.0` — needs the `kysely/migration` subpath export, first added in 0.29.0 (0.x, so capped at the next minor since the plugin subclasses `Kysely`/`Migrator`)
+  - **pg** `>=8.0.0 <9.0.0` — needs the ES6-class `Pool`/`Client` that `extends` relies on, shipped in 8.0.0
+  - **ioredis** `>=5.3.0 <6.0.0` — needs sharded pub/sub (`ssubscribe`/`sunsubscribe`), added in 5.3.0
+  - **kafkajs** `>=2.0.0 <3.0.0` — needs the `enforceRequestTimeout` config field, added in 2.0.0
+  - **amqp-connection-manager** `>=4.0.0 <5.0.0` — needs the `connectFailed` event, added in 4.0.0; **amqplib** `>=0.10.0 <0.11.0` (0.x → next-minor cap; 0.10.0 is the promise-rewrite boundary)
+  - **bullmq** `>=5.0.0 <6.0.0` — all surface used is stable since 5.0.0
+
+  `@basica/bullmq` and `@basica/ioredis` declare the identical `ioredis` range so a consumer resolves a single ioredis copy (bullmq's `connection instanceof Redis`/`Cluster` checks depend on it).
+
+  Also removes the redundant `@basica/ioredis` entry from `@basica/bullmq`'s `dependencies` — it is already a `peerDependency`.
+
+- Updated dependencies [[`4921f0c`](https://github.com/nicolabovolato/basica/commit/4921f0c9ee737fb7dc7f03811668ededeb412d6c), [`79f53e7`](https://github.com/nicolabovolato/basica/commit/79f53e777f6fed73e0a9a3762a3b305bb4354da6), [`0d9a18c`](https://github.com/nicolabovolato/basica/commit/0d9a18cb26964b3903b6007a72e8b8c04b0872cf), [`ab3190f`](https://github.com/nicolabovolato/basica/commit/ab3190f6f2f258409e3a58cbfe6fb1f906aaf3cc), [`3007746`](https://github.com/nicolabovolato/basica/commit/3007746d430ca8689ee3f13d34dd265fdd1788d8)]:
+  - @basica/core@0.0.8
+
 ## 0.0.6
 
 ### Patch Changes

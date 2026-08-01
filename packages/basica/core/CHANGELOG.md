@@ -1,5 +1,58 @@
 # @basica/core
 
+## 0.0.8
+
+### Patch Changes
+
+- [#32](https://github.com/nicolabovolato/basica/pull/32) [`4921f0c`](https://github.com/nicolabovolato/basica/commit/4921f0c9ee737fb7dc7f03811668ededeb412d6c) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Add `AppBuilder.registerDependencies` as the recommended entry point for building an app.
+
+  It collapses the `new IocContainer()` + `new AppBuilder(container)` dance into a single static call (the `new AppBuilder(container)` constructor still works). The container passed to the callback is pre-seeded with a default `logger`, so `deps.logger` is always available — override it by registering your own `"logger"` first. The callback is optional: `AppBuilder.registerDependencies()` builds an app that only needs the default logger.
+
+  Before:
+
+  ```ts
+  const container = new IocContainer()
+    .addSingleton("logger", () => loggerFactory(config.logger))
+    .addSingleton("db", (deps) => new Db(deps.logger));
+
+  const app = new AppBuilder(container).configureLifecycle(/* ... */).build();
+  ```
+
+  After:
+
+  ```ts
+  const app = AppBuilder.registerDependencies((di) =>
+    di
+      .addSingleton("logger", () => loggerFactory(config.logger)) // optional override
+      .addSingleton("db", (deps) => new Db(deps.logger)),
+  )
+    .configureLifecycle(/* ... */)
+    .build();
+  ```
+
+- [#34](https://github.com/nicolabovolato/basica/pull/34) [`79f53e7`](https://github.com/nicolabovolato/basica/commit/79f53e777f6fed73e0a9a3762a3b305bb4354da6) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Rename the `App` class to `Application`, add an exported `IApplication` interface it implements, and remove `Application.run()`.
+
+  `IApplication` is the minimal built-application contract — `deps`, `healthchecks`, `services`, `entrypoints`, `lifecycle` — that lets a platform runner drive an app without depending on its concrete generic types.
+
+  Running an app now lives in a per-platform package rather than in core, so core no longer depends on `close-with-grace` or calls `process.exit`. Replace `app.run()` with a runner:
+
+  ```ts
+  import { run } from "@basica/platform-node";
+
+  run(getApp());
+  ```
+
+- [#29](https://github.com/nicolabovolato/basica/pull/29) [`0d9a18c`](https://github.com/nicolabovolato/basica/commit/0d9a18cb26964b3903b6007a72e8b8c04b0872cf) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Clearer application lifecycle logging. On startup the manager now logs a one-line pre-flight summary of everything it manages — e.g. `Lifecycle: 2 service(s) (1 startable, 1 stoppable), 1 entrypoint(s) (1 startable, 1 stoppable)` — before starting anything, and the per-phase lines drop the confusing `N/N` counts (previously you'd see `Starting 1/1 service(s)` even after registering more). Shutdown also no longer logs a `No <kind>(s) to stop` line for empty collections (matching startup, which stays silent for them). Also fixes a shutdown-failure log/span message that incorrectly read "Failed to start".
+
+- [#29](https://github.com/nicolabovolato/basica/pull/29) [`ab3190f`](https://github.com/nicolabovolato/basica/commit/ab3190f6f2f258409e3a58cbfe6fb1f906aaf3cc) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - Fix start-failure rollback stopping the wrong items. When startup failed, the lifecycle manager applied the "only stop these" partial set to the bottom collection instead of the failure-level one — so it called `shutdown` on the item that had just failed to start (and on its whole collection) while skipping the items below it that had actually started. Now a failed-to-start item is left alone and everything that did start is rolled back correctly.
+
+- [#31](https://github.com/nicolabovolato/basica/pull/31) [`3007746`](https://github.com/nicolabovolato/basica/commit/3007746d430ca8689ee3f13d34dd265fdd1788d8) Thanks [@nicolabovolato](https://github.com/nicolabovolato)! - The app's registered item maps — `app.deps` / `app.services` / `app.entrypoints` / `app.healthchecks` — are now readonly, at both the type level and at runtime.
+
+  - The accumulator generics that fall back to a default (`IocContainer`, `AppBuilder`, `LifecycleManagerBuilder`) now default to a closed `Record<never, never>` instead of the `Record<string, unknown>` constraint. As a result `D`/`H`/`S`/`E` no longer carry a string index signature: reassigning or adding a key is a compile error. (Note: indexing with an _unregistered_ key now errors as "property does not exist" instead of resolving to `unknown` — `app.services["not-registered"]` is a type error rather than `unknown`.)
+  - `IocContainer.items` returns a frozen shallow copy, so JS / `as any` callers can't mutate the map at runtime either.
+
+  The registered items themselves are untouched — not frozen and not deeply readonly — so spying on and calling methods of `app.services.x` etc. works exactly as before.
+
 ## 0.0.7
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@basica/platform-deno",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicolabovolato/basica.git",
@@ -35,10 +35,10 @@
     "lint": "tsc --noEmit && eslint \"{src,test}/**/*.ts\""
   },
   "peerDependencies": {
-    "@basica/core": "workspace:^0.0.7"
+    "@basica/core": "workspace:^0.0.8"
   },
   "devDependencies": {
-    "@basica/core": "workspace:^0.0.7",
+    "@basica/core": "workspace:^0.0.8",
     "@basica/eslint-config": "workspace:^0.0.0",
     "@basica/tsup-config": "workspace:^0.0.0",
     "@basica/typescript-config": "workspace:^0.0.0",
